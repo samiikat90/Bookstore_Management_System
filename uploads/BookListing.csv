@@ -1,0 +1,3 @@
+﻿isbn,title,author,price,quantity,cover_type,description
+9.78013E+12,Clean Code,Robert C. Martin,29.99,5,Hard,"A foundational guide to writing readable, maintainable, and efficient software. Martin emphasizes principles of craftsmanship, refactoring, and naming conventions, helping developers transform messy code into elegant solutions."
+9.78149E+12,Fluent Python,Luciano Ramalho,45,3,Paper,"An advanced exploration of Python’s most expressive features, including data structures, functions, and object-oriented patterns. Ramalho teaches how to write idiomatic Python that’s both powerful and Pythonic, ideal for experienced developers looking to deepen their fluency"

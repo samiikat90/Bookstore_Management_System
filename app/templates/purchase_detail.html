@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Purchase {{p.id}}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+  <body class="bg-light">
+    <div class="container mt-4">
+      <h1>Purchase {{p.id}}</h1>
+      <dl class="row">
+        <dt class="col-sm-3">Customer</dt><dd class="col-sm-9">{{p.customer_name}}</dd>
+        <dt class="col-sm-3">Email</dt><dd class="col-sm-9">{{p.customer_email}}</dd>
+        <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">{{p.customer_phone}}</dd>
+        <dt class="col-sm-3">Address</dt><dd class="col-sm-9">{{p.customer_address}}</dd>
+        <dt class="col-sm-3">Book ISBN</dt><dd class="col-sm-9">{{p.book_isbn}}</dd>
+        <dt class="col-sm-3">Quantity</dt><dd class="col-sm-9">{{p.quantity}}</dd>
+        <dt class="col-sm-3">Status</dt><dd class="col-sm-9">{{p.status}}</dd>
+        <dt class="col-sm-3">Timestamp</dt><dd class="col-sm-9">{{p.timestamp}}</dd>
+      </dl>
+      <a href="{{ url_for('purchases_view') }}" class="btn btn-secondary">Back</a>
+    </div>
+  </body>
+</html>

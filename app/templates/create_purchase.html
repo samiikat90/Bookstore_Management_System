@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Create Purchase</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+  <body class="bg-light">
+    <div class="container mt-4">
+      <h1>Create Purchase</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{category}}">{{message}}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <form method="post">
+        <div class="form-group">
+          <label>Full name</label>
+          <input name="customer_name" class="form-control" required value="{{ user_info.customer_name }}">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input name="customer_email" class="form-control" value="{{ user_info.customer_email }}">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input name="customer_phone" class="form-control" value="{{ user_info.customer_phone }}">
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input name="customer_address" class="form-control" value="{{ user_info.customer_address }}">
+        </div>
+        <div class="form-group">
+          <label>Add Book by ISBN</label>
+          <input name="book_isbn" class="form-control" placeholder="Enter ISBN">
+        </div>
+        <div class="form-group">
+          <label>Or select from catalog</label>
+          <select name="catalog_isbn" class="form-control">
+            <option value="">-- Select a book --</option>
+            {% for book in catalog %}
+              <option value="{{book.isbn}}">{{book.title}} by {{book.author}} ({{book.isbn}})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input name="quantity" type="number" class="form-control" value="1">
+        </div>
+        <button class="btn btn-secondary" name="add_to_cart" value="1" type="submit">Add to Cart</button>
+        <button class="btn btn-primary" name="checkout" value="1" type="submit">Checkout</button>
+      </form>
+      {% if cart and cart|length > 0 %}
+      <hr>
+      <h4>Cart</h4>
+      <ul class="list-group mb-3">
+        {% for item in cart %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              {{item.title}} by {{item.author}} ({{item.isbn}}) x {{item.quantity}}
+            </div>
+            <form method="post" action="{{ url_for('cart_remove') }}">
+              <input type="hidden" name="remove_isbn" value="{{ item.isbn }}">
+              <button class="btn btn-sm btn-danger">Remove</button>
+            </form>
+          </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      </form>
+    </div>
+  </body>
+</html>

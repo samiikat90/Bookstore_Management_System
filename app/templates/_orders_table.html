@@ -1,0 +1,84 @@
+{% if orders %}
+<form id="bulkForm" method="post" action="{{ url_for('orders_bulk_update') }}">
+  <div class="mb-2 d-flex align-items-center">
+    <select name="new_status" class="form-control form-control-sm mr-2" style="width:200px;">
+      <option value="">Set status...</option>
+      <option value="Pending">Pending</option>
+      <option value="Processing">Processing</option>
+      <option value="Shipped">Shipped</option>
+      <option value="Completed">Completed</option>
+      <option value="Cancelled">Cancelled</option>
+    </select>
+    <button type="submit" class="btn btn-sm btn-primary mr-2">Update Selected</button>
+    <a class="btn btn-sm btn-secondary" href="{{ url_for('export_orders_csv') }}">Export CSV</a>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th><input type="checkbox" id="selectAll"></th>
+        <th>Order ID</th>
+        <th>Customer Name</th>
+        <th>Contact Info</th>
+        <th>Book ISBN</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td><input type="checkbox" name="selected" value="{{ order.id }}"></td>
+        <td>{{ order.id }}</td>
+        <td>{{ order.customer_name }}</td>
+        <td>{{ order.customer_email }}<br>{{ order.customer_phone }}</td>
+        <td>{{ order.book_isbn }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>
+          <div class="input-group input-group-sm">
+            <select id="status-{{ order.id }}" class="form-control form-control-sm">
+              <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>Pending</option>
+              <option value="Processing" {% if order.status=='Processing' %}selected{% endif %}>Processing</option>
+              <option value="Shipped" {% if order.status=='Shipped' %}selected{% endif %}>Shipped</option>
+              <option value="Completed" {% if order.status=='Completed' %}selected{% endif %}>Completed</option>
+              <option value="Cancelled" {% if order.status=='Cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+            <div class="input-group-append">
+              <button class="btn btn-sm btn-primary" type="button" onclick="updateOrder('{{ order.id }}')">Update</button>
+            </div>
+          </div>
+        </td>
+        <td>{{ order.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+
+<script>
+document.getElementById('selectAll')?.addEventListener('change', function(e){
+  const checked = e.target.checked;
+  document.querySelectorAll('input[name="selected"]').forEach(cb=> cb.checked = checked);
+});
+</script>
+<script>
+function updateOrder(orderId){
+  orderId = parseInt(orderId, 10);
+  const sel = document.getElementById('status-' + orderId);
+  const status = sel ? sel.value : '';
+  if(!status){ alert('No status selected'); return; }
+  const url = '{{ url_for("update_order", order_id=0) }}'.replace('/0','/' + orderId);
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+    body: new URLSearchParams({ status: status })
+  }).then(r=> r.json().then(payload => ({ok:r.ok, payload}))).then(({ok,payload})=>{
+    if(ok && payload.success){ alert(payload.message); location.reload(); }
+    else { alert('Update failed: ' + (payload && payload.message || 'unknown')); }
+  }).catch(e=> alert('Network error: ' + e));
+}
+</script>
+{% else %}
+  <p class="text-muted">No orders have been placed yet.</p>
+{% endif %}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Purchases</title>
+  </head>
+  <body class="bg-light">
+    <div class="container mt-4">
+      <h1>Purchases</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{category}}">{{message}}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% if purchases %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Contact</th>
+            <th>Book ISBN</th>
+            <th>Qty</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in purchases %}
+          <tr>
+            <td>{{p.id}}</td>
+            <td>{{p.customer_name}}</td>
+            <td>{{p.customer_email}}<br>{{p.customer_phone}}<br>{{p.customer_address}}</td>
+            <td>{{p.book_isbn}}</td>
+            <td>{{p.quantity}}</td>
+            <td>
+              <form method="post" action="{{ url_for('update_purchase', purchase_id=p.id) }}">
+                <div class="input-group">
+                  <select name="status" class="form-control form-control-sm">
+                    <option value="Pending" {% if p.status=='Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Processing" {% if p.status=='Processing' %}selected{% endif %}>Processing</option>
+                    <option value="Shipped" {% if p.status=='Shipped' %}selected{% endif %}>Shipped</option>
+                    <option value="Completed" {% if p.status=='Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Cancelled" {% if p.status=='Cancelled' %}selected{% endif %}>Cancelled</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button class="btn btn-sm btn-primary" type="submit">Update</button>
+                  </div>
+                </div>
+              </form>
+            </td>
+            <td>{{p.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p>No purchases yet.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

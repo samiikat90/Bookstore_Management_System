@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+  <body class="bg-light">
+    <div class="container mt-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Your Cart</h1>
+        <div>
+          <a class="btn btn-outline-secondary" href="{{ url_for('browse') }}">Continue Shopping</a>
+          <a class="btn btn-outline-primary" href="{{ url_for('create_purchase') }}">Checkout</a>
+        </div>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{category}}">{{message}}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% if cart and cart|length > 0 %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+          <tr>
+            <td>{{ item.title }}</td>
+            <td>{{ item.author }}</td>
+            <td>{{ item.isbn }}</td>
+            <td>${{ '%.2f'|format(item.price) }}</td>
+            <td>
+              <form class="form-inline" method="post" action="{{ url_for('update_cart', isbn=item.isbn) }}">
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="form-control form-control-sm mr-2" style="width:90px">
+                <button class="btn btn-sm btn-primary" type="submit">Update</button>
+              </form>
+            </td>
+            <td>${{ '%.2f'|format(item.price * item.quantity) }}</td>
+            <td>
+              <form method="post" action="{{ url_for('remove_from_cart', isbn=item.isbn) }}">
+                <button class="btn btn-sm btn-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="5" class="text-right">Total</th>
+            <th colspan="2">${{ '%.2f'|format(total) }}</th>
+          </tr>
+        </tfoot>
+      </table>
+      <a class="btn btn-outline-warning" href="{{ url_for('reset_cart') }}">Reset Cart</a>
+      {% else %}
+        <p class="text-muted">Your cart is empty.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

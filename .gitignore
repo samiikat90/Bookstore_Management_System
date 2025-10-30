@@ -1,0 +1,36 @@
+# Python
+venv/
+instance/
+__pycache__/
+*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment variables (keep .env.example)
+.env
+
+# Database files
+*.db
+*.sqlite
+
+# Uploads (but keep sample files)
+uploads/*.csv
+!uploads/BookListing.csv
+!uploads/UpdatedBookListing.csv
+
+# Backups
+repo_backup_*.zip
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Browse Books</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+  <body class="bg-light">
+    <div class="container mt-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <h1>Browse Books</h1>
+        <div>
+          <a href="{{ url_for('view_cart') }}" class="btn btn-outline-primary">View Cart</a>
+          {% if current_user.is_authenticated %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">Admin</a>
+          {% endif %}
+        </div>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{category}}">{{message}}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form class="form-inline mb-3" method="get" action="{{ url_for('browse') }}">
+        <input type="text" class="form-control mr-2" style="width:320px" placeholder="Search by title, author, or ISBN" name="q" value="{{ search_query or '' }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+
+      {% if inventory %}
+      <div class="row">
+        {% for book in inventory %}
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ book.title }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ book.author }}</h6>
+              <p class="card-text">ISBN: {{ book.isbn }}</p>
+              <p class="card-text">${{ '%.2f'|format(book.price) }}</p>
+              <form method="post" action="{{ url_for('add_to_cart', isbn=book.isbn) }}" class="form-inline">
+                <input type="number" min="1" name="quantity" value="1" class="form-control form-control-sm mr-2" style="width:100px">
+                <button class="btn btn-sm btn-success" type="submit">Add to Cart</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <p class="text-muted">No books found.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

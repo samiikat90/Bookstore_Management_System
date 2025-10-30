@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Admin User - Chapter 6: A Plot Twist</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('index') }}">📚 Chapter 6: A Plot Twist</a>
+        <div class="navbar-nav ml-auto">
+            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+            <a class="nav-link" href="{{ url_for('catalog_view') }}">Catalog</a>
+            <a class="nav-link" href="{{ url_for('admin_users') }}">Admin Users</a>
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-edit"></i> Edit Admin User: {{ user.username }}
+                            {% if user.id == current_user.id %}
+                                <span class="badge badge-info ml-2">Your Account</span>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert">
+                                            <span>&times;</span>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                                </div>
+                                <small class="form-text text-muted">Username cannot be changed.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    </div>
+                                    <input type="email" class="form-control" id="email" name="email" 
+                                           value="{{ user.email or '' }}" placeholder="Enter email address" required>
+                                </div>
+                                <small class="form-text text-muted">Email address must be unique and will be used for notifications.</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="full_name">Full Name</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="full_name" name="full_name" 
+                                           value="{{ user.full_name or '' }}" placeholder="Enter full name (optional)">
+                                </div>
+                                <small class="form-text text-muted">Display name for the user (optional).</small>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="receive_notifications" 
+                                           name="receive_notifications" {{ 'checked' if user.receive_notifications else '' }}>
+                                    <label class="custom-control-label" for="receive_notifications">
+                                        <i class="fas fa-bell text-primary"></i> Enable Email Notifications
+                                    </label>
+                                </div>
+                                <small class="form-text text-muted">
+                                    When enabled, this user will receive email notifications for new orders and status changes.
+                                </small>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group">
+                                <label for="password">New Password (Optional)</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    </div>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Leave blank to keep current password">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                                            <i class="fas fa-eye" id="toggleIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Only enter a password if you want to change it.</small>
+                            </div>
+
+                            <hr>
+
+                            <div class="form-group mb-0">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Back to Admin Users
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Update Admin User
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- User Info Card -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="fas fa-info-circle"></i> User Information</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>User ID:</strong> {{ user.id }}</p>
+                                <p><strong>Role:</strong> 
+                                    <span class="badge badge-success">Manager</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Current Email:</strong> {{ user.email or 'No email set' }}</p>
+                                <p><strong>Notifications:</strong> 
+                                    {% if user.receive_notifications %}
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-bell"></i> Enabled
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">
+                                            <i class="fas fa-bell-slash"></i> Disabled
+                                        </span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

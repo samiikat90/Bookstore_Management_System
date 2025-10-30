@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Inventory</title>
+
+  <!-- Bootstrap CSS for styling -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4">
+    <a class="navbar-brand" href="#">Book Inventory</a>
+    <div class="ml-auto d-flex gap-2">
+      {% if current_user.is_authenticated and current_user.is_manager %}
+        <a class="btn btn-outline-primary mr-2" href="{{ url_for('admin_dashboard') }}">All Orders</a>
+      {% endif %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Sign Out</a>
+    </div>
+  </nav>
+  <div class="container mt-4">
+    <h1 class="mb-4">Book Inventory System</h1>
+
+    <!-- Display flash messages (success, error, info) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Form to manually add a new book -->
+    <div class="card mb-4">
+      <div class="card-header">Add a New Book</div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('add_book') }}">
+          <!-- ISBN input -->
+          <div class="form-group">
+            <label for="isbn">ISBN</label>
+            <input type="text" name="isbn" class="form-control" required>
+          </div>
+
+          <!-- Title input -->
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" name="title" class="form-control" required>
+          </div>
+
+          <!-- Author input -->
+          <div class="form-group">
+            <label for="author">Author</label>
+            <input type="text" name="author" class="form-control" required>
+          </div>
+
+          <!-- Price input -->
+          <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number" step="0.01" name="price" class="form-control" required>
+          </div>
+
+          <!-- Quantity input -->
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" name="quantity" class="form-control" required>
+          </div>
+
+          <!-- Cover type dropdown -->
+          <div class="form-group">
+            <label for="cover_type">Cover Type</label>
+            <select name="cover_type" class="form-control">
+              <option value="Hardcover">Hardcover</option>
+              <option value="Paperback">Paperback</option>
+            </select>
+          </div>
+
+          <!-- Description textarea -->
+          <div class="form-group">
+            <label for="description">Book Description</label>
+            <textarea name="description" class="form-control" rows="3"></textarea>
+          </div>
+
+          <!-- Submit button -->
+          <button type="submit" class="btn btn-primary">Add Book</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Form to upload a CSV file -->
+    <div class="card mb-4">
+      <div class="card-header">Import Inventory from CSV</div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('upload_csv') }}" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="file">Choose CSV File</label>
+            <input type="file" name="file" class="form-control-file" required>
+          </div>
+          <button type="submit" class="btn btn-success">Upload CSV</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Inventory table displaying all books -->
+    <h2>Current Inventory</h2>
+    {% if inventory %}
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th>ISBN</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Cover Type</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in inventory %}
+        <tr>
+          <td>{{ book.isbn }}</td>
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>${{ "%.2f"|format(book.price) }}</td>
+          <td>{{ book.quantity }}</td>
+          <td>{{ book.cover_type }}</td>
+          <td>{{ book.description }}</td>
+          <td>{{ "In Stock" if book.in_stock else "Out of Stock" }}</td>
+          <td>
+            <!-- Edit button -->
+            <a href="{{ url_for('edit_book', isbn=book.isbn) }}" class="btn btn-primary btn-sm mr-2">Edit</a>
+            <!-- Button to mark book as out of stock -->
+            {% if book.in_stock %}
+            <form method="POST" action="{{ url_for('mark_out_of_stock', isbn=book.isbn) }}" style="display: inline;">
+              <button type="submit" class="btn btn-warning btn-sm">Mark Out of Stock</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <!-- Message if no books are available -->
+      <p class="text-muted">No books in inventory yet.</p>
+    {% endif %}
+  </div>
+
+  <!-- Bootstrap JS for interactive components -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
