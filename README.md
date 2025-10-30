@@ -64,16 +64,17 @@ A comprehensive Flask-based bookstore management system with advanced security f
    - Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
    - Login with existing admin accounts (2FA required)
 
-## Admin Accounts (Pre-configured)
+## Admin Accounts (Current)
 
-The system includes 5 admin users with 2FA enabled:
-- **samiikat**: Email `samiikat90@gmail.com`
-- **katrina**: Email `katrinastrain@gmail.com`
-- **mike**: Email `mikezander@gmail.com`
-- **sarah**: Email `sarah@gmail.com`
-- **john**: Email `john@gmail.com`
+The system includes 6 admin users with 2FA capabilities:
+- **admin**: Email `admin@plottwist.com` (Primary Administrator)
+- **sfranco**: Email `samiikat90@gmail.com` (Samy Franco)
+- **bmorris**: Email `mbrmorris@gmail.com` (Becky Morris)
+- **fbrown**: Email `felicia.brown.711@gmail.com` (Felicia Brown)
+- **amurphy**: Email `almurphy469@gmail.com` (Anthony Murphy)
+- **admin2**: No email configured (incomplete setup)
 
-Password: `admin123` for all accounts
+Note: Passwords are set individually per account. Use the admin creation script to add more users.
 
 ## Project Structure
 
