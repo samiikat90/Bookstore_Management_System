@@ -1,233 +1,228 @@
-# Chapter-6-A-Plot-Twist — repository layout
+# Chapter 6: A Plot Twist - Bookstore Management System
 
-This repo was reorganized to a conventional Flask layout.
+A comprehensive Flask-based bookstore management system with automated setup, admin features, and order management capabilities.
 
-Top-level structure
-  - app.py — Flask app entrypoint (was Sprint1.py)
-  - templates/ — HTML templates moved from `book_inventory/templates`
-  - static/ — CSS/JS/assets
+## Quick Start for New Team Members
 
-Run (using the project's virtualenv):
-Windows PowerShell
-```powershell
-.\venv\Scripts\Activate.ps1
-python -m app.app
+### Prerequisites
+Make sure you have these installed:
+- **Python 3.7+** - Download from [python.org](https://python.org)
+- **Git** - Download from [git-scm.com](https://git-scm.com)
+- **Visual Studio Code** (recommended) - Download from [code.visualstudio.com](https://code.visualstudio.com)
+
+### Setup Instructions
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/samiikat90/Bookstore_Management_System.git
+   cd Bookstore_Management_System
+   ```
+
+2. **Install Python Dependencies**
+   ```bash
+   pip install flask flask-sqlalchemy flask-login werkzeug
+   ```
+
+3. **Start the Application**
+   ```bash
+   # Option 1: Quick start (Windows)
+   .\start.ps1
+   
+   # Option 2: Manual start (All platforms)
+   python app/app.py
+   ```
+
+4. **Access the Bookstore**
+   - Open your browser to: **http://127.0.0.1:5000**
+   - Use any of these login credentials:
+
+### Login Credentials
+All admin accounts use the same password for easy access:
+
+| Username | Password | Email |
+|----------|----------|-------|
+| sfranco | admin123 | samiikat90@gmail.com |
+| bmorris | admin123 | mbrmorris@gmail.com |
+| fbrown | admin123 | felicia.brown.711@gmail.com |
+| amurphy | admin123 | almurphy469@gmail.com |
+| admin | admin123 | admin@plottwist.com |
+| manager1 | admin123 | manager1@plottwist.com |
+| supervisor | admin123 | supervisor@plottwist.com |
+
+**Note**: After entering username/password, you'll need to check your email for a 6-digit security code to complete login (Two-Factor Authentication).
+
+## What's Included Out of the Box
+
+The system comes pre-populated with sample data:
+- **15 Popular Books** - Ready-to-manage inventory
+- **8 Admin Users** - Various roles and permissions  
+- **15 Sample Orders** - Different statuses for testing
+- **Complete Admin Dashboard** - Full functionality ready to use
+
+## Key Features
+
+### Admin Dashboard
+- Real-time inventory and order tracking
+- Interactive management interface
+- User management capabilities
+
+### Inventory Management
+- Add, edit, and delete books
+- CSV import/export functionality
+- Stock tracking and management
+- Professional book catalog with search
+
+### Order Management
+- View and process customer orders
+- Update order statuses (Pending → Processing → Shipped → Completed)
+- Bulk order operations
+- Email notifications for status changes
+
+### Security Features
+- Two-Factor Authentication (2FA) via email
+- Secure password hashing
+- Session management
+- Admin-only access controls
+
+## Automated Scripts
+
+### For Quick Operations:
+```bash
+# Start the application with database check
+.\start.ps1
+
+# Reset database with fresh sample data
+.\reset_database.ps1
+
+# Check current database status
+python scripts/db_status.py
+
+# View all user accounts
+python scripts/check_users.py
+
+# Reset passwords (if needed)
+python scripts/reset_password.py
 ```
 
-Or using flask CLI from project root:
-```powershell
-$env:FLASK_APP='app.app'
-flask run
+### For Development:
+```bash
+# Create fresh sample data
+python scripts/setup_database.py
+
+# Standardize all admin passwords
+python scripts/standardize_passwords.py
 ```
 
-# Chapter 6: A Plot Twist — Bookstore Management System
-
-A comprehensive Flask-based bookstore management system with advanced security features and admin capabilities.
-
-## Features
-
-- **Two-Factor Authentication (2FA)** — Email-based security codes for admin login
-- **Admin Dashboard** — Interactive cards for inventory, orders, and user management
-- **Inventory Management** — Add, edit, delete books with CSV import/export
-- **Order Management** — View, track, and update order statuses with email notifications
-- **User Management** — Create and manage admin users with notification preferences
-- **Email Notifications** — Automated alerts for new orders and status changes
-- **Professional UI** — Bootstrap 4.5.2 with Font Awesome icons and responsive design
-
-## Quick Start
-
-1. **Clone and Set Up Environment**
-   ```powershell
-   git clone https://github.com/samiikat90/Chapter-6-A-Plot-Twist.git
-   cd Chapter-6-A-Plot-Twist
-   python -m venv venv
-   .\venv\Scripts\Activate.ps1
-   pip install -r requirements.txt
-   ```
-
-2. **Configure Environment Variables**
-   ```powershell
-   copy .env.example .env
-   notepad .env
-   ```
-
-3. **Run the Application**
-   ```powershell
-   .\run.ps1
-   ```
-   Or manually:
-   ```powershell
-   .\venv\Scripts\python.exe .\app\app.py
-   ```
-
-4. **Access the Application**
-   - Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
-   - Login with existing admin accounts (2FA required)
-
-## Admin Accounts (Current)
-
-The system includes 6 admin users with 2FA capabilities:
-- **admin**: Email `admin@plottwist.com` (Primary Administrator)
-- **sfranco**: Email `samiikat90@gmail.com` (Samy Franco)
-- **bmorris**: Email `mbrmorris@gmail.com` (Becky Morris)
-- **fbrown**: Email `felicia.brown.711@gmail.com` (Felicia Brown)
-- **amurphy**: Email `almurphy469@gmail.com` (Anthony Murphy)
-- **admin2**: No email configured (incomplete setup)
-
-Note: Passwords are set individually per account. Use the admin creation script to add more users.
-
-## Project Structure
+## File Structure
 
 ```
-Chapter-6-A-Plot-Twist/
-├── app/                    # Main Flask application
-│   ├── app.py             # Flask app with all routes and models
-│   └── templates/         # HTML templates
-├── scripts/               # Utility scripts
-│   ├── create_admin_users.py  # Create new admin users
-│   ├── create_sample_*.py     # Generate sample data
-│   └── check_db.py           # Database inspection
-├── tests/                 # Test files
-├── instance/              # Database and uploads (auto-created)
-├── uploads/               # CSV files for import/export
-├── .env                   # Environment configuration
+Bookstore_Management_System/
+├── app/
+│   ├── app.py              # Main Flask application
+│   └── templates/          # HTML templates
+├── scripts/                # Automation scripts
+│   ├── setup_database.py   # Create sample data
+│   ├── db_status.py       # Check database
+│   ├── reset_password.py   # Reset user passwords
+│   └── standardize_passwords.py
+├── instance/               # Database storage (auto-created)
+├── uploads/                # CSV files
+├── start.ps1              # Quick start script
+├── reset_database.ps1     # Database reset script
+├── QUICK_START.md         # Detailed setup guide
 └── requirements.txt       # Python dependencies
 ```
 
-## Security Features
+## Troubleshooting
 
-- **Two-Factor Authentication**: Email-based security codes with 10-minute expiration
-- **Session Management**: Secure login sessions with Flask-Login
-- **Password Hashing**: Werkzeug security for password protection
-- **Email Verification**: Required 2FA verification for admin access
+### Common Issues:
 
-## Admin Features
+**"Python not found"**
+- Install Python and ensure it's added to your system PATH
 
-### Dashboard
-- Interactive navigation cards
-- Auto-refresh every 60 seconds
-- Real-time order and inventory counts
-
-### Inventory Management
-- Add new books individually
-- Edit existing book details
-- CSV import with scientific notation support
-- CSV export with timestamps
-- Stock tracking and management
-
-### Order Management
-- View all orders with filtering
-- Update order statuses with bulk operations
-- Email notifications to admin team
-- Order tracking and history
-
-### User Management
-- Create new admin users
-- Configure email notification preferences
-- Manage user permissions
-
-## Email Configuration
-
-The system uses Gmail SMTP for notifications:
-```
-GMAIL_EMAIL=chapter6aplottwist@gmail.com
-GMAIL_APP_PASSWORD=giuw lmir sdmo fgej
-```
-
-## Development
-
-### Adding New Admin Users
+**"Permission denied" (Windows PowerShell)**
 ```powershell
-.\venv\Scripts\python.exe scripts\create_admin_users.py
+# Run as Administrator:
+Set-ExecutionPolicy RemoteSigned
 ```
 
-### Database Management
-```powershell
-.\venv\Scripts\python.exe scripts\check_db.py
+**"Module not found" errors**
+```bash
+pip install flask flask-sqlalchemy flask-login werkzeug
 ```
 
-### Sample Data Generation
-```powershell
-.\venv\Scripts\python.exe scripts\create_sample_orders.py
-.\venv\Scripts\python.exe scripts\create_sample_purchases.py
+**Can't access website**
+- Make sure Flask is running (look for "Running on http://127.0.0.1:5000")
+- Check the correct URL: http://127.0.0.1:5000
+
+**Email/2FA issues**
+- Check your email (including spam folder) for the 6-digit code
+- Codes expire in 10 minutes - request a new one if needed
+
+### Getting Help:
+1. Check terminal output for error messages
+2. Review `QUICK_START.md` for detailed instructions
+3. Use `python scripts/db_status.py` to check system status
+4. Contact team lead if issues persist
+
+## Development Workflow
+
+### Making Changes:
+1. Edit files in VS Code
+2. Test locally with `.\start.ps1`
+3. Commit changes:
+   ```bash
+   git add .
+   git commit -m "Describe your changes"
+   git push origin main
+   ```
+
+### Reset to Clean State:
+```bash
+.\reset_database.ps1
 ```
+
+## Team Notes
+
+- **All passwords are standardized** to `admin123` for easy development access
+- **Sample data regenerates** automatically when database is empty
+- **Two-Factor Authentication** is required for all admin access
+- **Email notifications** are configured and working for order updates
+- **CSV import/export** supports large inventories with proper formatting
 
 ## Technologies Used
 
-- **Backend**: Flask 3.1.2, SQLAlchemy 2.0.44, Flask-Login
-- **Frontend**: Bootstrap 4.5.2, Font Awesome, jQuery
-- **Database**: SQLite with comprehensive models
-- **Email**: Gmail SMTP with MIMEText/MIMEMultipart
-- **Security**: Two-factor authentication, password hashing
-
-## License
-
-This project is part of a workshop demonstration for bookstore management systems.
+- **Backend**: Flask, SQLAlchemy, Flask-Login
+- **Frontend**: Bootstrap 4, Font Awesome, jQuery
+- **Database**: SQLite (development) with full schema
+- **Security**: 2FA, password hashing, session management
+- **Email**: Gmail SMTP for notifications and 2FA codes
 
 ---
 
-For support or questions, check the admin dashboard or contact system administrators.
+## Quick Reference Commands
+
+```bash
+# Start application
+.\start.ps1
+
+# Reset everything
+.\reset_database.ps1
+
+# Check status
+python scripts/db_status.py
+
+# Access application
+http://127.0.0.1:5000
+
+# Login
+Username: admin (or any from table above)
+Password: admin123
+```
+
+For detailed setup instructions, see `QUICK_START.md`.
 
 ---
 
-Quick start (Windows PowerShell)
-1. Create a virtualenv and install dependencies:
-
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-2. Copy `.env.example` to `.env` and edit values (SECRET_KEY, Gmail creds if used):
-
-### Order Confirmation Email Setup
-
-Order confirmation emails are sent using Gmail SMTP. The app is now configured to use:
-
-- Gmail: `chapter6aplottwist@gmail.com`
-- App Password: `giuw lmir sdmo fgej`
-
-These credentials are set in `.env` and `.env.example` as:
-
-```
-GMAIL_EMAIL=chapter6aplottwist@gmail.com
-GMAIL_APP_PASSWORD=giuw lmir sdmo fgej
-```
-
-If you change the email or password, update both `.env` and `.env.example`.
-
-```powershell
-copy .env.example .env
-notepad .env
-```
-
-3. Initialize the database and create a manager account:
-
-```powershell
-.\venv\Scripts\python.exe scripts\create_db.py
-.\venv\Scripts\python.exe scripts\create_manager.py admin admin123
-```
-
-4. (Optional) Add sample data:
-
-```powershell
-.\venv\Scripts\python.exe scripts\create_sample_purchases.py
-```
-
-5. Run the app:
-
-```powershell
-.\venv\Scripts\python.exe app\app.py
-```
-
-Open http://127.0.0.1:5000 and login with the manager account to use the admin dashboard.
-
-Helper scripts
-- `run.ps1` — simple helper to set up venv and run the app on Windows.
-- `.env.example` — example environment variables. Do not commit `.env` with real credentials.
-
-Sharing
-- Push to GitHub and tell peers to clone and follow these steps.
-- Optionally create a ZIP of the repo (exclude `venv` and `instance`).
+**Repository**: https://github.com/samiikat90/Bookstore_Management_System  
+**Last Updated**: October 30, 2025
