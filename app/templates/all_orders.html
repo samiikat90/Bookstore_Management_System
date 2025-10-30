@@ -130,25 +130,45 @@
               body: `status=${encodeURIComponent(status)}`
             })
             .then(response => {
-              // Try to parse JSON, fallback to text
-              return response.json().catch(() => response.text());
+              // Check if response is JSON or HTML
+              const contentType = response.headers.get('content-type');
+              
+              if (response.status === 401) {
+                // Redirect to login if session expired
+                window.location.href = '/login';
+                return;
+              }
+              
+              if (contentType && contentType.includes('application/json')) {
+                return response.json();
+              } else {
+                // If we get HTML instead of JSON, it's likely a redirect to login
+                throw new Error('Session expired. Please refresh the page and log in again.');
+              }
             })
             .then(data => {
-              if (typeof data === 'object' && data.status === 'success') {
+              if (!data) return; // Skip if redirected
+              
+              if (data.status === 'success') {
                 statusMessage.textContent = data.message;
                 statusMessage.className = 'alert alert-success';
-              } else if (typeof data === 'object' && data.error) {
+                statusMessage.style.display = 'block';
+                
+                // Hide message after 3 seconds
+                setTimeout(() => {
+                  statusMessage.style.display = 'none';
+                }, 3000);
+              } else if (data.error) {
                 statusMessage.textContent = data.error;
                 statusMessage.className = 'alert alert-danger';
-              } else {
-                statusMessage.textContent = 'Unknown error occurred.';
-                statusMessage.className = 'alert alert-danger';
+                statusMessage.style.display = 'block';
               }
             })
             .catch(error => {
-              statusMessage.textContent = 'Error updating status.';
-              statusMessage.className = 'alert alert-danger';
               console.error('Error:', error);
+              statusMessage.textContent = error.message || 'Error updating status. Please try refreshing the page.';
+              statusMessage.className = 'alert alert-danger';
+              statusMessage.style.display = 'block';
             });
           });
         });

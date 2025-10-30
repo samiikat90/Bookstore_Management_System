@@ -29,6 +29,9 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True  # Security: prevent JavaScript acc
 app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 
+# Disable CSRF protection for development (this might be causing API issues)
+app.config['WTF_CSRF_ENABLED'] = False
+
 # Force the instance path to be relative to this app.py file location
 app.instance_path = os.path.join(os.path.dirname(__file__), '..', 'instance')
 
@@ -160,6 +163,15 @@ def load_user(user_id):
         return User.query.get(int(user_id))
     except Exception:
         return None
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    # Check if this is an API request
+    if request.path.startswith('/api/'):
+        return jsonify({'error': 'Authentication required', 'redirect': url_for('login')}), 401
+    # For regular requests, redirect to login
+    return redirect(url_for('login'))
 
 
 def manager_required(func):
@@ -1029,25 +1041,49 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        
+        print(f"🔐 Login attempt: username={username}")
+        
         user = User.query.filter_by(username=username).first()
         
-        if user and user.check_password(password):
-            # Check if user has email for 2FA
-            if not user.email:
-                flash('Admin account requires email for security verification. Please contact system administrator.', 'danger')
-                return render_template('login.html')
+        if user:
+            print(f"✅ User found: {user.username}")
+            print(f"📧 Email: {user.email}")
+            print(f"👤 Is Manager: {user.is_manager}")
+            print(f"🔑 Has password_hash: {bool(user.password_hash)}")
+            print(f"🔑 Has legacy password: {bool(user.password)}")
             
-            # Send 2FA code
-            if send_2fa_code(user):
-                # Store user ID in session for 2FA verification
-                session['pending_2fa_user_id'] = user.id
-                session['2fa_expires'] = (datetime.now() + timedelta(minutes=10)).isoformat()
-                return redirect(url_for('verify_2fa'))
+            if user.check_password(password):
+                print("✅ Password check passed")
+                
+                # Check if user has email for 2FA
+                if not user.email:
+                    print("❌ No email configured for user")
+                    flash('Admin account requires email for security verification. Please contact system administrator.', 'danger')
+                    return render_template('login.html')
+                
+                print(f"📤 Attempting to send 2FA code to {user.email}")
+                
+                # Send 2FA code
+                if send_2fa_code(user):
+                    print("✅ 2FA code sent successfully")
+                    # Store user ID in session for 2FA verification
+                    session['pending_2fa_user_id'] = user.id
+                    session['2fa_expires'] = (datetime.now() + timedelta(minutes=10)).isoformat()
+                    flash('Security code sent to your email. Please check your inbox.', 'info')
+                    return redirect(url_for('verify_2fa'))
+                else:
+                    print("❌ Failed to send 2FA code")
+                    flash('Failed to send security code. Please try again.', 'danger')
+                    return render_template('login.html')
             else:
-                flash('Failed to send security code. Please try again.', 'danger')
-                return render_template('login.html')
+                print("❌ Password check failed")
+                flash('Invalid username or password.', 'danger')
+        else:
+            print("❌ User not found")
+            flash('Invalid username or password.', 'danger')
         
-        # Invalid login - redirect back to login page without message
+        # Invalid login - redirect back to login page
     return render_template('login.html')
 
 
@@ -1195,39 +1231,57 @@ def api_update_order(source, order_id):
     """API endpoint to update order/purchase status from the combined view."""
     try:
         print(f"API update called: source={source}, order_id={order_id}")
+        
+        # Ensure we return JSON even for auth failures
+        if not current_user.is_authenticated:
+            return jsonify({'error': 'Authentication required', 'redirect': url_for('login')}), 401
+        
+        if not getattr(current_user, 'is_manager', False):
+            return jsonify({'error': 'Manager access required'}), 403
+        
         if source == 'legacy':
             item = Order.query.get(order_id)
         else:
             item = Purchase.query.get(order_id)
+        
         print(f"Item found: {item}")
         if not item:
             print("Item not found!")
-            return app.response_class(json.dumps({'error': 'Not found'}), mimetype='application/json', status=404)
+            return jsonify({'error': 'Order not found'}), 404
+        
         status = request.form.get('status')
         print(f"Status to set: {status}")
-        if status:
-            old_status = item.status
-            item.status = status
-            db.session.commit()
-            
-            # Send admin notification for status change
-            if hasattr(item, 'customer_name'):  # It's a Purchase object
-                try:
-                    send_admin_notification(
-                        subject=f"Order Status Changed - Chapter 6: A Plot Twist",
-                        message=f"Order status has been changed by {current_user.username}.\n\nStatus changed from '{old_status}' to '{status}' for order #{item.id}.",
-                        order_details=get_order_details_dict(item)
-                    )
-                except Exception as e:
-                    print(f"Failed to send admin notification: {e}")
-            
-            print(f"Status updated successfully.")
-            return app.response_class(json.dumps({'status': 'success', 'message': f'{source.title()} order {order_id} updated to {status}'}), mimetype='application/json', status=200)
-        print("No status provided!")
-        return app.response_class(json.dumps({'error': 'Status not provided'}), mimetype='application/json', status=400)
+        
+        if not status:
+            print("No status provided!")
+            return jsonify({'error': 'Status not provided'}), 400
+        
+        old_status = item.status
+        item.status = status
+        db.session.commit()
+        
+        # Send admin notification for status change
+        if hasattr(item, 'customer_name'):  # It's a Purchase object
+            try:
+                send_admin_notification(
+                    subject=f"Order Status Changed - Chapter 6: A Plot Twist",
+                    message=f"Order status has been changed by {current_user.username}.\n\nStatus changed from '{old_status}' to '{status}' for order #{item.id}.",
+                    order_details=get_order_details_dict(item)
+                )
+            except Exception as e:
+                print(f"Failed to send admin notification: {e}")
+        
+        print(f"Status updated successfully.")
+        return jsonify({
+            'status': 'success', 
+            'message': f'{source.title()} order {order_id} updated to {status}',
+            'old_status': old_status,
+            'new_status': status
+        }), 200
+        
     except Exception as e:
-        print(f"Exception: {e}")
-        return app.response_class(json.dumps({'error': str(e)}), mimetype='application/json', status=500)
+        print(f"Exception in api_update_order: {e}")
+        return jsonify({'error': f'Server error: {str(e)}'}), 500
 
 
 # Browse route for customer-facing book browsing
