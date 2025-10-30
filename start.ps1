@@ -16,7 +16,7 @@ Write-Host "Visit: http://127.0.0.1:5000" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Login credentials:" -ForegroundColor Cyan
 Write-Host "  Username: admin  | Password: admin123" -ForegroundColor White
-Write-Host "  Username: manager1 | Password: manager123" -ForegroundColor White
+Write-Host "  Username: manager1 | Password: admin123" -ForegroundColor White
 Write-Host ""
 Write-Host "Press Ctrl+C to stop the server" -ForegroundColor Red
 Write-Host ""

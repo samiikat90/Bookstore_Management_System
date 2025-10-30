@@ -50,7 +50,7 @@ def main():
     
     # Reset sfranco password to something known
     username = "sfranco"
-    new_password = "password123"
+    new_password = "admin123"
     
     print(f"Resetting password for user: {username}")
     if reset_user_password(username, new_password):
@@ -66,7 +66,7 @@ def main():
     print()
     print("OTHER AVAILABLE ACCOUNTS:")
     print("Username: admin | Password: admin123")
-    print("Username: manager1 | Password: manager123")
+    print("Username: manager1 | Password: admin123")
 
 if __name__ == "__main__":
     main()

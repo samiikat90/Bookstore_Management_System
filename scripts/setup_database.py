@@ -202,21 +202,21 @@ def setup_admin_users():
         },
         {
             'username': 'manager1',
-            'password': 'manager123',
+            'password': 'admin123',
             'email': 'manager1@plottwist.com',
             'full_name': 'Store Manager One',
             'receive_notifications': True
         },
         {
             'username': 'manager2',
-            'password': 'manager123',
+            'password': 'admin123',
             'email': 'manager2@plottwist.com',
             'full_name': 'Store Manager Two',
             'receive_notifications': True
         },
         {
             'username': 'supervisor',
-            'password': 'super123',
+            'password': 'admin123',
             'email': 'supervisor@plottwist.com',
             'full_name': 'Store Supervisor',
             'receive_notifications': False

@@ -32,9 +32,9 @@ After setup, you can log in with any of these accounts:
 | Username | Password | Email |
 |----------|----------|-------|
 | admin | admin123 | admin@plottwist.com |
-| manager1 | manager123 | manager1@plottwist.com |
-| manager2 | manager123 | manager2@plottwist.com |
-| supervisor | super123 | supervisor@plottwist.com |
+| manager1 | admin123 | manager1@plottwist.com |
+| manager2 | admin123 | manager2@plottwist.com |
+| supervisor | admin123 | supervisor@plottwist.com |
 
 ## 📚 What's Included
 
