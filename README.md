@@ -34,28 +34,33 @@ Make sure you have these installed:
 
 4. **Access the Bookstore**
    - Open your browser to: **http://127.0.0.1:5000**
-   - Use any of these login credentials:
+   - **Use your assigned login credentials** (see table below)
+   - Each team member has their own individual account
 
 ### Login Credentials
-All admin accounts use the same password for easy access:
+Each team member has their own admin account, all using the same password for convenience:
 
-| Username | Password | Email |
-|----------|----------|-------|
-| sfranco | admin123 | samiikat90@gmail.com |
-| bmorris | admin123 | mbrmorris@gmail.com |
-| fbrown | admin123 | felicia.brown.711@gmail.com |
-| amurphy | admin123 | almurphy469@gmail.com |
-| admin | admin123 | admin@plottwist.com |
-| manager1 | admin123 | manager1@plottwist.com |
-| supervisor | admin123 | supervisor@plottwist.com |
+| Team Member | Username | Password | Email |
+|-------------|----------|----------|-------|
+| Samantha Franco | sfranco | admin123 | samiikat90@gmail.com |
+| Becky Morris | bmorris | admin123 | mbrmorris@gmail.com |
+| Felicia Brown | fbrown | admin123 | felicia.brown.711@gmail.com |
+| Anthony Murphy | amurphy | admin123 | almurphy469@gmail.com |
 
-**Note**: After entering username/password, you'll need to check your email for a 6-digit security code to complete login (Two-Factor Authentication).
+**Additional System Accounts:**
+| Username | Password | Email | Purpose |
+|----------|----------|-------|---------|
+| admin | admin123 | admin@plottwist.com | System Administrator |
+| manager1 | admin123 | manager1@plottwist.com | Store Manager |
+| supervisor | admin123 | supervisor@plottwist.com | Store Supervisor |
+
+**Note**: After entering your username/password, you'll need to check your email for a 6-digit security code to complete login (Two-Factor Authentication).
 
 ## What's Included Out of the Box
 
 The system comes pre-populated with sample data:
 - **15 Popular Books** - Ready-to-manage inventory
-- **8 Admin Users** - Various roles and permissions  
+- **Team Member Accounts** - Individual logins for each team member
 - **15 Sample Orders** - Different statuses for testing
 - **Complete Admin Dashboard** - Full functionality ready to use
 
@@ -215,8 +220,8 @@ python scripts/db_status.py
 # Access application
 http://127.0.0.1:5000
 
-# Login
-Username: admin (or any from table above)
+# Login with your individual account
+Username: [your assigned username] (sfranco, bmorris, fbrown, or amurphy)
 Password: admin123
 ```
 
