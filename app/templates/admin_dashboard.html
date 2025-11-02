@@ -66,7 +66,7 @@
 
     <!-- Quick Stats Cards -->
     <div class="row mb-4">
-      <div class="col-md-4">
+      <div class="col-md-3">
         <a href="{{ url_for('admin_users') }}" class="text-decoration-none">
           <div class="card bg-primary text-white h-100 dashboard-card">
             <div class="card-body">
@@ -82,7 +82,7 @@
           </div>
         </a>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <a href="{{ url_for('all_orders') }}" class="text-decoration-none">
           <div class="card bg-warning text-white h-100 dashboard-card">
             <div class="card-body">
@@ -92,7 +92,7 @@
           </div>
         </a>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <a href="{{ url_for('catalog_view') }}" class="text-decoration-none">
           <div class="card bg-success text-white h-100 dashboard-card">
             <div class="card-body">
@@ -100,6 +100,30 @@
               <p class="card-text">{{ inventory|length }} books in stock</p>
             </div>
           </div>
+        </a>
+      </div>
+      <div class="col-md-3">
+        <a href="{{ url_for('sales_report') }}" class="text-decoration-none">
+          <div class="card bg-info text-white h-100 dashboard-card">
+            <div class="card-body">
+              <h5 class="card-title"><i class="fas fa-chart-line"></i> Sales Report</h5>
+              <p class="card-text">View customer purchases</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Additional Navigation -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <a href="{{ url_for('browse') }}" class="btn btn-outline-primary btn-block">
+          <i class="fas fa-shopping-cart"></i> Customer Shopping View
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="{{ url_for('view_cart') }}" class="btn btn-outline-secondary btn-block">
+          <i class="fas fa-shopping-basket"></i> View Shopping Cart
         </a>
       </div>
     </div>

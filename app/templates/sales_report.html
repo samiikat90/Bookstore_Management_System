@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Sales Report</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <h1>Sales Report</h1>
+    <form method="POST" class="form-inline mb-3">
+        <input type="date" name="start_date" class="form-control mr-2" required>
+        <input type="date" name="end_date" class="form-control mr-2" required>
+        <button class="btn btn-primary">Filter</button>
+    </form>
+
+    {% if sales %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Book ID</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr>
+                <td>{{ sale.id }}</td>
+                <td>{{ sale.book_id }}</td>
+                <td>{{ sale.quantity }}</td>
+                <td>${{ '%.2f'|format(sale.total_price) }}</td>
+                <td>{{ sale.timestamp.strftime('%Y-%m-%d') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No sales found for selected dates.</p>
+    {% endif %}
+</div>
+</body>
+</html>

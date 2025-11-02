@@ -156,6 +156,15 @@ class Purchase(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     source = db.Column(db.String(20), default='purchase')  # indicate this is from purchases table
 
+# Sale model for customer shopping cart purchases
+class Sale(db.Model):
+    __tablename__ = 'sales'
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.String(50), nullable=False)  # ISBN of the book
+    quantity = db.Column(db.Integer, nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -813,13 +822,13 @@ def delete_book(isbn):
 @login_required
 @manager_required
 def mark_out_of_stock(isbn):
-    book = Book.query.get(isbn)
+    book = Book.query.filter_by(isbn=isbn).first()
     if book:
         book.in_stock = False
         book.quantity = 0
         db.session.commit()
         flash(f"Book '{book.title}' marked out of stock.", 'warning')
-    return redirect(url_for('index'))
+    return redirect(url_for('browse'))
 
 # Download sample CSV template
 @app.route('/download_sample_csv')
@@ -1289,112 +1298,27 @@ def api_update_order(source, order_id):
 def browse():
     """Browse books with search functionality for customers."""
     search_query = request.args.get('q', '').strip()
-    books = Book.query.filter_by(in_stock=True)
     
     if search_query:
-        books = books.filter(
+        books = Book.query.filter(
             or_(
-                Book.title.contains(search_query),
-                Book.author.contains(search_query),
-                Book.isbn.contains(search_query)
+                Book.title.ilike(f'%{search_query}%'),
+                Book.author.ilike(f'%{search_query}%'),
+                Book.isbn.ilike(f'%{search_query}%')
             )
-        )
-    
-    inventory = books.all()
-    return render_template('browse.html', inventory=inventory, search_query=search_query)
-
-
-# Cart routes
-@app.route('/cart')
-def view_cart():
-    """View the shopping cart."""
-    if 'cart' not in session:
-        session['cart'] = []
-    
-    cart = session['cart']
-    total = sum(item['price'] * item['quantity'] for item in cart)
-    return render_template('cart.html', cart=cart, total=total)
-
-
-@app.route('/add_to_cart/<isbn>', methods=['POST'])
-def add_to_cart(isbn):
-    """Add a book to the cart."""
-    if 'cart' not in session:
-        session['cart'] = []
-    
-    quantity = int(request.form.get('quantity', 1))
-    book = Book.query.get(isbn)
-    
-    if not book or not book.in_stock:
-        flash('Book not available.', 'danger')
-        return redirect(url_for('browse'))
-    
-    cart = session['cart']
-    
-    # Check if book is already in cart
-    for item in cart:
-        if item['isbn'] == isbn:
-            item['quantity'] += quantity
-            break
+        ).all()
     else:
-        # Add new item to cart
-        cart.append({
-            'isbn': book.isbn,
-            'title': book.title,
-            'author': book.author,
-            'price': book.price,
-            'quantity': quantity
-        })
+        books = Book.query.all()
     
-    session['cart'] = cart
-    flash(f'Added "{book.title}" to cart.', 'success')
-    return redirect(url_for('browse'))
+    return render_template('index.html', inventory=books, search_query=search_query)
 
 
-@app.route('/update_cart/<isbn>', methods=['POST'])
-def update_cart(isbn):
-    """Update quantity of an item in the cart."""
-    if 'cart' not in session:
-        session['cart'] = []
-    
-    new_quantity = int(request.form.get('quantity', 0))
-    cart = session['cart']
-    
-    for item in cart:
-        if item['isbn'] == isbn:
-            if new_quantity <= 0:
-                cart.remove(item)
-                flash('Item removed from cart.', 'info')
-            else:
-                item['quantity'] = new_quantity
-                flash('Cart updated.', 'info')
-            break
-    
-    session['cart'] = cart
-    return redirect(url_for('view_cart'))
-
-
-@app.route('/remove_from_cart/<isbn>', methods=['POST'])
-def remove_from_cart(isbn):
-    """Remove an item from the cart."""
-    if 'cart' not in session:
-        session['cart'] = []
-    
-    cart = session['cart']
-    cart = [item for item in cart if item['isbn'] != isbn]
-    session['cart'] = cart
-    
-    flash('Item removed from cart.', 'info')
-    return redirect(url_for('view_cart'))
-
-
-@app.route('/reset_cart', methods=['POST'])
-def reset_cart():
-    """Clear all items from the cart."""
-    session['cart'] = []
-    flash('Cart cleared.', 'info')
-    return redirect(url_for('view_cart'))
-
+# =============================================================================
+# CUSTOMER SHOPPING CART ROUTES
+# =============================================================================
+# =============================================================================
+# CUSTOMER SHOPPING CART ROUTES
+# =============================================================================
 
 # Admin User Management Routes
 @app.route('/admin/users')
@@ -1578,6 +1502,178 @@ def delete_admin_user(user_id):
         flash(f'Error deleting user: {e}', 'danger')
     
     return redirect(url_for('admin_users'))
+
+
+# =============================================================================
+# CUSTOMER SHOPPING CART ROUTES
+# =============================================================================
+
+@app.route('/add_to_cart/<isbn>', methods=['POST'])
+def add_to_cart(isbn):
+    """Add a book to the shopping cart."""
+    quantity = int(request.form.get('quantity', 1))
+    book = Book.query.filter_by(isbn=isbn).first()
+    
+    if not book:
+        flash("Book not found.", 'danger')
+        return redirect(url_for('browse'))
+    
+    if book.quantity < quantity:
+        flash(f"Only {book.quantity} copies available.", 'warning')
+        return redirect(url_for('browse'))
+    
+    # Initialize cart if it doesn't exist
+    cart = session.get('cart')
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    # Add to cart
+    cart[isbn] = cart.get(isbn, 0) + quantity
+    session['cart'] = cart
+    session.permanent = True
+    
+    flash(f"{book.title} added to cart (x{quantity}).", 'info')
+    return redirect(url_for('browse'))
+
+
+@app.route('/cart')
+def view_cart():
+    """Display the shopping cart."""
+    cart = session.get('cart', {})
+    cart_items = []
+    total = 0
+    
+    for isbn, qty in cart.items():
+        book = Book.query.filter_by(isbn=isbn).first()
+        if book:
+            cart_items.append((book, qty))
+            total += book.price * qty
+    
+    return render_template('cart.html', cart_items=cart_items, total=total)
+
+
+@app.route('/update_cart/<isbn>', methods=['POST'])
+def update_cart(isbn):
+    """Update quantity of an item in the cart."""
+    new_qty = int(request.form.get('quantity', 1))
+    cart = session.get('cart', {})
+    
+    if isbn in cart:
+        if new_qty > 0:
+            cart[isbn] = new_qty
+            flash(f"Quantity updated for {isbn}.", 'info')
+        else:
+            del cart[isbn]
+            flash(f"{isbn} removed from cart.", 'warning')
+        session['cart'] = cart
+        session.permanent = True
+    
+    return redirect(url_for('view_cart'))
+
+
+@app.route('/remove_from_cart/<isbn>', methods=['POST'])
+def remove_from_cart(isbn):
+    """Remove an item from the cart."""
+    cart = session.get('cart', {})
+    if isbn in cart:
+        del cart[isbn]
+        session['cart'] = cart
+        session.permanent = True
+        flash("Item removed from cart.", 'info')
+    
+    return redirect(url_for('view_cart'))
+
+
+@app.route('/reset_cart')
+def reset_cart():
+    """Clear the entire cart."""
+    session['cart'] = {}
+    session.permanent = True
+    flash("Cart reset.", 'info')
+    return redirect(url_for('view_cart'))
+
+
+@app.route('/checkout', methods=['POST'])
+def checkout():
+    """Complete the purchase and create sales records."""
+    cart = session.get('cart', {})
+    if not cart:
+        flash("Cart is empty!", "warning")
+        return redirect(url_for('view_cart'))
+
+    total = 0
+    sales_created = []
+    
+    try:
+        # Process each item in cart
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                # Check if enough inventory
+                if book.quantity < qty:
+                    flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
+                    return redirect(url_for('view_cart'))
+                
+                # Calculate total price for this item
+                total_price = book.price * qty
+                
+                # Create sale record
+                sale = Sale(book_id=isbn, quantity=qty, total_price=total_price)
+                db.session.add(sale)
+                sales_created.append(sale)
+                
+                # Update book inventory
+                book.quantity -= qty
+                if book.quantity == 0:
+                    book.in_stock = False
+                
+                total += total_price
+
+        # Commit all changes
+        db.session.commit()
+        
+        # Clear cart
+        session['cart'] = {}
+        session.permanent = True
+        
+        flash(f"Checkout complete! Total: ${total:.2f}", "success")
+        return redirect(url_for('receipt', amount=total))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error processing checkout: {e}", "danger")
+        return redirect(url_for('view_cart'))
+
+
+@app.route('/receipt')
+def receipt():
+    """Display purchase receipt."""
+    amount = request.args.get('amount', 0)
+    return render_template('receipt.html', amount=amount)
+
+
+@app.route('/sales-report', methods=['GET', 'POST'])
+@login_required
+@manager_required
+def sales_report():
+    """Display sales report with date filtering."""
+    sales = []
+    
+    if request.method == 'POST':
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        
+        if start_date and end_date:
+            # Convert to datetime objects for filtering
+            start_datetime = datetime.strptime(start_date, '%Y-%m-%d')
+            end_datetime = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)  # Include end day
+            
+            sales = Sale.query.filter(
+                Sale.timestamp >= start_datetime,
+                Sale.timestamp < end_datetime
+            ).order_by(Sale.timestamp.desc()).all()
+    
+    return render_template('sales_report.html', sales=sales)
 
 
 # Run the app
