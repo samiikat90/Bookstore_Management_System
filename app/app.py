@@ -49,6 +49,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# =============================
+# DISCOUNT CODE CONFIGURATION
+# =============================
+# Discount code database (code: [discount rate, minimum order amount])
+DISCOUNT_CODES = {
+    'SAVE10': [0.10, 30.0],   # 10% off orders over $30
+    'BOOK20': [0.20, 50.0],   # 20% off orders over $50
+    'FALL25': [0.25, 100.0],  # 25% off orders over $100
+    'STUDENT15': [0.15, 25.0], # 15% off orders over $25
+    'WINTER30': [0.30, 75.0]   # 30% off orders over $75
+}
+
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.login_view = 'login'
@@ -1538,18 +1550,35 @@ def add_to_cart(isbn):
 
 @app.route('/cart')
 def view_cart():
-    """Display the shopping cart."""
+    """Display the shopping cart with discount calculations."""
     cart = session.get('cart', {})
     cart_items = []
-    total = 0
+    subtotal = 0
     
     for isbn, qty in cart.items():
         book = Book.query.filter_by(isbn=isbn).first()
         if book:
             cart_items.append((book, qty))
-            total += book.price * qty
+            subtotal += book.price * qty
     
-    return render_template('cart.html', cart_items=cart_items, total=total)
+    # Calculate discount
+    discount_code = session.get('discount_code')
+    discount_rate = 0
+    discount_amount = 0
+    
+    if discount_code and discount_code in DISCOUNT_CODES:
+        discount_rate, min_order = DISCOUNT_CODES[discount_code]
+        if subtotal >= min_order:
+            discount_amount = subtotal * discount_rate
+    
+    total = subtotal - discount_amount
+    
+    return render_template('cart.html', 
+                         cart_items=cart_items, 
+                         subtotal=subtotal,
+                         total=total,
+                         discount_code=discount_code,
+                         discount_amount=discount_amount)
 
 
 @app.route('/update_cart/<isbn>', methods=['POST'])
@@ -1605,7 +1634,8 @@ def checkout():
     sales_created = []
     
     try:
-        # Process each item in cart
+        # Calculate subtotal first
+        subtotal = 0
         for isbn, qty in cart.items():
             book = Book.query.filter_by(isbn=isbn).first()
             if book:
@@ -1613,8 +1643,23 @@ def checkout():
                 if book.quantity < qty:
                     flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
                     return redirect(url_for('view_cart'))
-                
-                # Calculate total price for this item
+                subtotal += book.price * qty
+        
+        # Apply discount if applicable
+        discount_code = session.get('discount_code')
+        discount_amount = 0
+        if discount_code and discount_code in DISCOUNT_CODES:
+            discount_rate, min_order = DISCOUNT_CODES[discount_code]
+            if subtotal >= min_order:
+                discount_amount = subtotal * discount_rate
+        
+        total = subtotal - discount_amount
+        
+        # Process each item in cart
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                # Calculate total price for this item (without discount - discount is applied to overall total)
                 total_price = book.price * qty
                 
                 # Create sale record
@@ -1626,17 +1671,23 @@ def checkout():
                 book.quantity -= qty
                 if book.quantity == 0:
                     book.in_stock = False
-                
-                total += total_price
 
         # Commit all changes
         db.session.commit()
+        
+        # Track used discount code to prevent reuse
+        if discount_code:
+            used_codes = session.get('used_discount_codes', [])
+            used_codes.append(discount_code)
+            session['used_discount_codes'] = used_codes
+            # Clear current discount code
+            session.pop('discount_code', None)
         
         # Clear cart
         session['cart'] = {}
         session.permanent = True
         
-        flash(f"Checkout complete! Total: ${total:.2f}", "success")
+        flash(f"Checkout complete! Total: ${total:.2f} (Discount: ${discount_amount:.2f})", "success")
         return redirect(url_for('receipt', amount=total))
         
     except Exception as e:
@@ -1650,6 +1701,57 @@ def receipt():
     """Display purchase receipt."""
     amount = request.args.get('amount', 0)
     return render_template('receipt.html', amount=amount)
+
+
+# =============================================================================
+# DISCOUNT CODE ROUTES
+# =============================================================================
+
+@app.route('/apply_discount', methods=['POST'])
+def apply_discount():
+    """Apply a discount code to the cart."""
+    code = request.form.get('discount_code', '').strip().upper()
+    cart = session.get('cart', {})
+    subtotal = 0
+
+    # Calculate subtotal to check minimum requirement
+    for isbn, qty in cart.items():
+        book = Book.query.filter_by(isbn=isbn).first()
+        if book:
+            subtotal += book.price * qty
+
+    if code not in DISCOUNT_CODES:
+        flash("Invalid discount code. Please try again.", 'danger')
+        return redirect(url_for('view_cart'))
+
+    discount_rate, min_order = DISCOUNT_CODES[code]
+
+    # Check if code already used in this session
+    used_codes = session.get('used_discount_codes', [])
+    if code in used_codes:
+        flash(f"The discount code '{code}' has already been used.", 'warning')
+        return redirect(url_for('view_cart'))
+
+    # Check minimum order requirement
+    if subtotal < min_order:
+        flash(f"Order must be at least ${min_order:.2f} to use code '{code}'.", 'warning')
+        return redirect(url_for('view_cart'))
+
+    # Apply the discount
+    session['discount_code'] = code
+    session.permanent = True
+    flash(f"Discount code '{code}' applied successfully! ({int(discount_rate*100)}% off)", 'success')
+    return redirect(url_for('view_cart'))
+
+
+@app.route('/remove_discount')
+def remove_discount():
+    """Remove the current discount code."""
+    if 'discount_code' in session:
+        removed = session.pop('discount_code')
+        session.permanent = True
+        flash(f"Discount '{removed}' removed.", 'info')
+    return redirect(url_for('view_cart'))
 
 
 @app.route('/sales-report', methods=['GET', 'POST'])
