@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>My Orders - Bookstore</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('browse') }}">
+                <i class="fas fa-book"></i> Bookstore
+            </a>
+            
+            <div class="navbar-nav ml-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="customerDropdown" role="button" data-toggle="dropdown">
+                        <i class="fas fa-user"></i> {{ customer.full_name }}
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ url_for('customer_account') }}">
+                            <i class="fas fa-user-circle"></i> My Account
+                        </a>
+                        <a class="dropdown-item" href="{{ url_for('customer_orders') }}">
+                            <i class="fas fa-shopping-bag"></i> My Orders
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ url_for('customer_logout') }}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+                
+                <a class="nav-link" href="{{ url_for('view_cart') }}">
+                    <i class="fas fa-shopping-cart"></i> Cart 
+                    <span class="badge badge-pill badge-light">{{ session['cart']|length if session.get('cart') else 0 }}</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <!-- Account Sidebar -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5><i class="fas fa-user-circle"></i> Account Menu</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user"></i> Account Information
+                        </a>
+                        <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-shopping-bag"></i> Order History
+                        </a>
+                        <a href="{{ url_for('browse') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book-open"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Order History -->
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h4><i class="fas fa-shopping-bag"></i> Order History</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if purchase_groups %}
+                            {% for date, purchases in purchase_groups.items() %}
+                                <div class="card mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-calendar"></i> 
+                                            {{ date.strftime('%B %d, %Y') }}
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            {% for item in purchases %}
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="border rounded p-3">
+                                                        {% if item.book %}
+                                                            <h6 class="font-weight-bold">{{ item.book.title }}</h6>
+                                                            <p class="text-muted mb-1">by {{ item.book.author }}</p>
+                                                            <p class="mb-1">
+                                                                <strong>ISBN:</strong> {{ item.book.isbn }}<br>
+                                                                <strong>Quantity:</strong> {{ item.purchase.quantity }}<br>
+                                                                <strong>Price:</strong> ${{ "%.2f"|format(item.book.price) }} each
+                                                            </p>
+                                                            <p class="mb-0">
+                                                                <strong>Total:</strong> 
+                                                                <span class="text-success">
+                                                                    ${{ "%.2f"|format(item.book.price * item.purchase.quantity) }}
+                                                                </span>
+                                                            </p>
+                                                        {% else %}
+                                                            <h6 class="font-weight-bold text-muted">Book No Longer Available</h6>
+                                                            <p class="text-muted mb-1">
+                                                                <strong>ISBN:</strong> {{ item.purchase.book_isbn }}<br>
+                                                                <strong>Quantity:</strong> {{ item.purchase.quantity }}
+                                                            </p>
+                                                        {% endif %}
+                                                        
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-clock"></i> 
+                                                            {{ item.purchase.timestamp.strftime('%I:%M %p') }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No Orders Yet</h5>
+                                <p class="text-muted">You haven't made any purchases yet. Start browsing our books!</p>
+                                <a href="{{ url_for('browse') }}" class="btn btn-primary">
+                                    <i class="fas fa-book"></i> Browse Books
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if purchase_groups %}
+                    <!-- Order Summary -->
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h5><i class="fas fa-chart-bar"></i> Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="border-right">
+                                        <h4 class="text-primary">{{ purchase_groups|length }}</h4>
+                                        <p class="text-muted mb-0">Order{{ 's' if purchase_groups|length != 1 else '' }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border-right">
+                                        <h4 class="text-success">
+                                            {% set total_items = namespace(value=0) %}
+                                            {% for date, purchases in purchase_groups.items() %}
+                                                {% for item in purchases %}
+                                                    {% set total_items.value = total_items.value + item.purchase.quantity %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                            {{ total_items.value }}
+                                        </h4>
+                                        <p class="text-muted mb-0">Book{{ 's' if total_items.value != 1 else '' }} Purchased</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4 class="text-info">
+                                        {% set total_spent = namespace(value=0) %}
+                                        {% for date, purchases in purchase_groups.items() %}
+                                            {% for item in purchases %}
+                                                {% if item.book %}
+                                                    {% set total_spent.value = total_spent.value + (item.book.price * item.purchase.quantity) %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        ${{ "%.2f"|format(total_spent.value) }}
+                                    </h4>
+                                    <p class="text-muted mb-0">Total Spent</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

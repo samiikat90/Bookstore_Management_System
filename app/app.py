@@ -144,6 +144,43 @@ class User(db.Model, UserMixin):
         self.two_fa_code = None
         self.two_fa_expires = None
 
+
+# Customer model for customer registration and login
+class Customer(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    full_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=True)
+    address = db.Column(db.Text, nullable=True)
+    date_registered = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # Customer preferences
+    receive_marketing = db.Column(db.Boolean, default=False)
+    
+    def set_password(self, password):
+        """Set password hash for customer."""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Check if provided password matches stored hash."""
+        return check_password_hash(self.password_hash, password)
+    
+    def get_id(self):
+        """Return customer ID for Flask-Login."""
+        return f"customer_{self.id}"
+    
+    @property
+    def is_manager(self):
+        """Customers are never managers."""
+        return False
+    
+    def __repr__(self):
+        return f'<Customer {self.username}>'
+
+
     # Orders / Purchases model
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -185,7 +222,13 @@ class Sale(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     try:
-        return User.query.get(int(user_id))
+        # Handle both admin users and customers
+        if user_id.startswith('customer_'):
+            customer_id = int(user_id.split('_')[1])
+            return Customer.query.get(customer_id)
+        else:
+            # Legacy admin user
+            return User.query.get(int(user_id))
     except Exception:
         return None
 
@@ -1437,6 +1480,217 @@ def api_update_order(source, order_id):
     except Exception as e:
         print(f"Exception in api_update_order: {e}")
         return jsonify({'error': f'Server error: {str(e)}'}), 500
+
+
+# ================================
+# CUSTOMER AUTHENTICATION ROUTES
+# ================================
+
+@app.route('/customer/register', methods=['GET', 'POST'])
+def customer_register():
+    """Customer registration page."""
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        full_name = request.form.get('full_name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        address = request.form.get('address', '').strip()
+        receive_marketing = 'receive_marketing' in request.form
+        
+        # Validation
+        errors = []
+        
+        if not username or len(username) < 3:
+            errors.append('Username must be at least 3 characters long.')
+        
+        if not email or '@' not in email:
+            errors.append('Please enter a valid email address.')
+        
+        if not password or len(password) < 6:
+            errors.append('Password must be at least 6 characters long.')
+        
+        if password != confirm_password:
+            errors.append('Passwords do not match.')
+        
+        if not full_name:
+            errors.append('Full name is required.')
+        
+        # Check if username or email already exists
+        if Customer.query.filter_by(username=username).first():
+            errors.append('Username already exists. Please choose a different one.')
+        
+        if Customer.query.filter_by(email=email).first():
+            errors.append('Email already registered. Please use a different email or login.')
+        
+        if errors:
+            for error in errors:
+                flash(error, 'danger')
+            return render_template('customer_register.html')
+        
+        # Create new customer
+        try:
+            new_customer = Customer(
+                username=username,
+                email=email,
+                full_name=full_name,
+                phone=phone if phone else None,
+                address=address if address else None,
+                receive_marketing=receive_marketing
+            )
+            new_customer.set_password(password)
+            
+            db.session.add(new_customer)
+            db.session.commit()
+            
+            flash('Registration successful! You can now login.', 'success')
+            return redirect(url_for('customer_login'))
+        
+        except Exception as e:
+            db.session.rollback()
+            flash('Registration failed. Please try again.', 'danger')
+            print(f"Registration error: {e}")
+    
+    return render_template('customer_register.html')
+
+
+@app.route('/customer/login', methods=['GET', 'POST'])
+def customer_login():
+    """Customer login page."""
+    if request.method == 'POST':
+        username_or_email = request.form.get('username_or_email', '').strip()
+        password = request.form.get('password', '')
+        remember_me = 'remember_me' in request.form
+        
+        if not username_or_email or not password:
+            flash('Please enter both username/email and password.', 'danger')
+            return render_template('customer_login.html')
+        
+        # Try to find customer by username or email
+        customer = Customer.query.filter(
+            (Customer.username == username_or_email) | 
+            (Customer.email == username_or_email)
+        ).first()
+        
+        if customer and customer.check_password(password) and customer.is_active:
+            login_user(customer, remember=remember_me)
+            flash(f'Welcome back, {customer.full_name}!', 'success')
+            
+            # Redirect to intended page or browse
+            next_page = request.args.get('next')
+            if next_page:
+                return redirect(next_page)
+            return redirect(url_for('browse'))
+        else:
+            flash('Invalid username/email or password.', 'danger')
+    
+    return render_template('customer_login.html')
+
+
+@app.route('/customer/logout')
+def customer_logout():
+    """Customer logout."""
+    if current_user.is_authenticated and hasattr(current_user, 'username'):
+        logout_user()
+        flash('You have been logged out successfully.', 'info')
+    return redirect(url_for('browse'))
+
+
+@app.route('/customer/account')
+def customer_account():
+    """Customer account management page."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to access your account.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    return render_template('customer_account.html', customer=current_user)
+
+
+@app.route('/customer/account/edit', methods=['GET', 'POST'])
+def edit_customer_account():
+    """Edit customer account information."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to access your account.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    if request.method == 'POST':
+        full_name = request.form.get('full_name', '').strip()
+        email = request.form.get('email', '').strip()
+        phone = request.form.get('phone', '').strip()
+        address = request.form.get('address', '').strip()
+        receive_marketing = 'receive_marketing' in request.form
+        
+        # Validation
+        errors = []
+        
+        if not full_name:
+            errors.append('Full name is required.')
+        
+        if not email or '@' not in email:
+            errors.append('Please enter a valid email address.')
+        
+        # Check if email is taken by another customer
+        existing_customer = Customer.query.filter(
+            Customer.email == email,
+            Customer.id != current_user.id
+        ).first()
+        
+        if existing_customer:
+            errors.append('Email is already in use by another account.')
+        
+        if errors:
+            for error in errors:
+                flash(error, 'danger')
+            return render_template('edit_customer_account.html', customer=current_user)
+        
+        # Update customer information
+        try:
+            current_user.full_name = full_name
+            current_user.email = email
+            current_user.phone = phone if phone else None
+            current_user.address = address if address else None
+            current_user.receive_marketing = receive_marketing
+            
+            db.session.commit()
+            flash('Account information updated successfully!', 'success')
+            return redirect(url_for('customer_account'))
+        
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating account information. Please try again.', 'danger')
+            print(f"Account update error: {e}")
+    
+    return render_template('edit_customer_account.html', customer=current_user)
+
+
+@app.route('/customer/orders')
+def customer_orders():
+    """Customer order history."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to view your orders.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    # Get customer's purchase history
+    purchases = Purchase.query.filter_by(customer_email=current_user.email).order_by(Purchase.timestamp.desc()).all()
+    
+    # Group purchases by date for better display
+    purchase_groups = {}
+    for purchase in purchases:
+        date_key = purchase.timestamp.date()
+        if date_key not in purchase_groups:
+            purchase_groups[date_key] = []
+        
+        # Get book information
+        book = Book.query.filter_by(isbn=purchase.book_isbn).first()
+        purchase_groups[date_key].append({
+            'purchase': purchase,
+            'book': book
+        })
+    
+    return render_template('customer_orders.html', 
+                         purchase_groups=purchase_groups,
+                         customer=current_user)
 
 
 # Browse route for customer-facing book browsing
