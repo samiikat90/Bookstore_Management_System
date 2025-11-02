@@ -1,6 +1,6 @@
 # Quick Setup Guide
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Option 1: Quick Start (Recommended)
 ```powershell
@@ -14,7 +14,7 @@ This will check your database and start the application.
 ```
 This will completely reset the database and add fresh sample data.
 
-## 📋 Available Scripts
+## Available Scripts
 
 ### PowerShell Scripts
 - `start.ps1` - Quick start with database status check
@@ -25,7 +25,7 @@ This will completely reset the database and add fresh sample data.
 - `scripts/db_status.py` - Check current database status
 - `scripts/check_users.py` - List all user accounts
 
-## 🔑 Default Login Credentials
+## Default Login Credentials
 
 After setup, you can log in with any of these accounts:
 
@@ -36,7 +36,7 @@ After setup, you can log in with any of these accounts:
 | manager2 | admin123 | manager2@plottwist.com |
 | supervisor | admin123 | supervisor@plottwist.com |
 
-## 📚 What's Included
+## What's Included
 
 ### Sample Books (15 titles)
 - Classic literature (To Kill a Mockingbird, 1984, Pride and Prejudice)
@@ -56,7 +56,7 @@ After setup, you can log in with any of these accounts:
 - CSV import/export functionality
 - Two-factor authentication
 
-## 🔧 Manual Commands
+## Manual Commands
 
 If you prefer to run things manually:
 
@@ -71,7 +71,7 @@ python scripts/setup_database.py
 python app/app.py
 ```
 
-## 🌐 Access Your Bookstore
+## Access Your Bookstore
 
 Once started, visit: **http://127.0.0.1:5000**
 

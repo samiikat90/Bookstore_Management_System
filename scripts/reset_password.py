@@ -34,13 +34,13 @@ def reset_user_password(username, new_password):
         
         try:
             db.session.commit()
-            print(f"✅ Password reset successful for '{username}'!")
+            print(f"Password reset successful for '{username}'!")
             print(f"New password: {new_password}")
             print(f"You can now log in with these credentials.")
             return True
         except Exception as e:
             db.session.rollback()
-            print(f"❌ Error resetting password: {e}")
+            print(f"Error resetting password: {e}")
             return False
 
 def main():

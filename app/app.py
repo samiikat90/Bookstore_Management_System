@@ -1042,45 +1042,45 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        print(f"🔐 Login attempt: username={username}")
+        print(f"Login attempt: username={username}")
         
         user = User.query.filter_by(username=username).first()
         
         if user:
-            print(f"✅ User found: {user.username}")
-            print(f"📧 Email: {user.email}")
-            print(f"👤 Is Manager: {user.is_manager}")
-            print(f"🔑 Has password_hash: {bool(user.password_hash)}")
-            print(f"🔑 Has legacy password: {bool(user.password)}")
+            print(f"User found: {user.username}")
+            print(f"Email: {user.email}")
+            print(f"Is Manager: {user.is_manager}")
+            print(f"Has password_hash: {bool(user.password_hash)}")
+            print(f"Has legacy password: {bool(user.password)}")
             
             if user.check_password(password):
-                print("✅ Password check passed")
+                print("Password check passed")
                 
                 # Check if user has email for 2FA
                 if not user.email:
-                    print("❌ No email configured for user")
+                    print("No email configured for user")
                     flash('Admin account requires email for security verification. Please contact system administrator.', 'danger')
                     return render_template('login.html')
                 
-                print(f"📤 Attempting to send 2FA code to {user.email}")
+                print(f"Attempting to send 2FA code to {user.email}")
                 
                 # Send 2FA code
                 if send_2fa_code(user):
-                    print("✅ 2FA code sent successfully")
+                    print("2FA code sent successfully")
                     # Store user ID in session for 2FA verification
                     session['pending_2fa_user_id'] = user.id
                     session['2fa_expires'] = (datetime.now() + timedelta(minutes=10)).isoformat()
                     flash('Security code sent to your email. Please check your inbox.', 'info')
                     return redirect(url_for('verify_2fa'))
                 else:
-                    print("❌ Failed to send 2FA code")
+                    print("Failed to send 2FA code")
                     flash('Failed to send security code. Please try again.', 'danger')
                     return render_template('login.html')
             else:
-                print("❌ Password check failed")
+                print("Password check failed")
                 flash('Invalid username or password.', 'danger')
         else:
-            print("❌ User not found")
+            print("User not found")
             flash('Invalid username or password.', 'danger')
         
         # Invalid login - redirect back to login page

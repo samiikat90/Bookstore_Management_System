@@ -42,15 +42,15 @@ window.addEventListener('beforeunload', function(event) {
 ## Changes Made
 
 ### Removed Aggressive Listeners
-- ❌ `visibilitychange` event (caused logout on tab switching)
-- ❌ `pagehide` event (caused logout on navigation)
-- ❌ Direct `beforeunload` calls (too broad)
+- `visibilitychange` event (caused logout on tab switching)
+- `pagehide` event (caused logout on navigation)
+- Direct `beforeunload` calls (too broad)
 
 ### Added Smart Detection
-- ✅ Navigation tracking for internal links
-- ✅ Origin-based link detection
-- ✅ Timeout reset for navigation flag
-- ✅ Conditional logout only when not navigating
+- Navigation tracking for internal links
+- Origin-based link detection
+- Timeout reset for navigation flag
+- Conditional logout only when not navigating
 
 ## Updated Templates
 - `admin_dashboard.html` - Fixed overly sensitive logout
@@ -59,18 +59,18 @@ window.addEventListener('beforeunload', function(event) {
 
 ## User Experience Now
 
-### ✅ Normal Navigation (No Logout)
-- Clicking "Back to Dashboard" ✅
-- Navigating between admin pages ✅
-- Using menu links ✅
-- Form submissions ✅
-- Page refreshes ✅
+### Normal Navigation (No Logout)
+- Clicking "Back to Dashboard"
+- Navigating between admin pages
+- Using menu links
+- Form submissions
+- Page refreshes
 
-### ❌ Still Triggers Logout
-- Closing browser window ❌
-- Closing browser tab ❌
-- Navigating to external websites ❌
-- Typing new URL in address bar ❌
+### Still Triggers Logout
+- Closing browser window
+- Closing browser tab
+- Navigating to external websites
+- Typing new URL in address bar
 
 ## Testing Results
 - **Internal Navigation**: No more unwanted logouts

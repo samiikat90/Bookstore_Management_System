@@ -30,11 +30,11 @@ The delete function now supports **quantity-based deletion** instead of only com
 
 ### Safety Features
 
-✅ **Input Validation**: Prevents invalid quantities (negative, zero, or exceeding available)  
-✅ **Pending Order Protection**: Blocks complete deletion if pending orders exist  
-✅ **Double Confirmation**: Two-step process prevents accidental deletion  
-✅ **Clear Messaging**: Different messages for partial vs complete deletion  
-✅ **Manager Authentication**: Requires admin login with 2FA  
+**Input Validation**: Prevents invalid quantities (negative, zero, or exceeding available)  
+**Pending Order Protection**: Blocks complete deletion if pending orders exist  
+**Double Confirmation**: Two-step process prevents accidental deletion  
+**Clear Messaging**: Different messages for partial vs complete deletion  
+**Manager Authentication**: Requires admin login with 2FA  
 
 ### Example Use Cases
 

@@ -68,11 +68,11 @@ window.addEventListener('pagehide', performLogout);
 
 ## Security Benefits
 
-✅ **Prevents Session Hijacking**: Sessions automatically expire when browser closes  
-✅ **Shared Computer Security**: Users can't forget to logout on shared computers  
-✅ **Automatic Cleanup**: Server-side sessions are properly cleared  
-✅ **2FA Reset**: Two-factor authentication status is reset on logout  
-✅ **No Persistent Cookies**: No "remember me" functionality for admin accounts  
+**Prevents Session Hijacking**: Sessions automatically expire when browser closes  
+**Shared Computer Security**: Users can't forget to logout on shared computers  
+**Automatic Cleanup**: Server-side sessions are properly cleared  
+**2FA Reset**: Two-factor authentication status is reset on logout  
+**No Persistent Cookies**: No "remember me" functionality for admin accounts  
 
 ## User Experience
 
@@ -83,10 +83,10 @@ window.addEventListener('pagehide', performLogout);
 4. **Next Login**: Must go through full 2FA process again
 
 ### Browser Compatibility:
-- ✅ **Chrome/Edge**: Full support for all features
-- ✅ **Firefox**: Full support for all features  
-- ✅ **Safari**: Full support for all features
-- ✅ **Mobile Browsers**: Basic support (may vary by device)
+- **Chrome/Edge**: Full support for all features
+- **Firefox**: Full support for all features  
+- **Safari**: Full support for all features
+- **Mobile Browsers**: Basic support (may vary by device)
 
 ## Testing Scenarios
 
