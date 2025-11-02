@@ -1,51 +1,95 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Login</title>
-  </head>
-  <body class="bg-light">
-    <div class="container mt-5">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="card">
-            <div class="card-header">Manager Login</div>
-            <div class="card-body">
-              <!-- Flash messages -->
-              {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                  {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                      {{ message }}
-                      <button type="button" class="close" data-dismiss="alert">
-                        <span>&times;</span>
-                      </button>
-                    </div>
-                  {% endfor %}
-                {% endif %}
-              {% endwith %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enchanted-theme.css') }}">
+    <title>Admin Portal - Chapter 6: A Plot Twist</title>
+</head>
+<body>
+    <!-- Floating Books Animation -->
+    <div class="floating-books">
+        <div class="floating-book">📖</div>
+        <div class="floating-book">📚</div>
+        <div class="floating-book">📜</div>
+        <div class="floating-book">📖</div>
+        <div class="floating-book">📚</div>
+        <div class="floating-book">📜</div>
+        <div class="floating-book">📖</div>
+        <div class="floating-book">📚</div>
+    </div>
 
-              <form method="post" action="{{ url_for('login') }}">
-                <div class="form-group">
-                  <label for="username">Username</label>
-                  <input type="text" name="username" class="form-control" required>
+    <div class="container">
+        <div class="row justify-content-center" style="min-height: 100vh; align-items: center;">
+            <div class="col-md-6 col-lg-5">
+                <div class="enchanted-card">
+                    <div class="enchanted-header">
+                        <h2 class="brand-title mb-2">Chapter 6: A Plot Twist</h2>
+                        <p class="brand-subtitle mb-3">Where Every Story Finds Its Magic</p>
+                        <h4 class="mb-0"><i class="fas fa-crown"></i> Admin Portal</h4>
+                        <small class="text-light">Keepers of the Literary Realm</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert enchanted-alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert">
+                                            <span>&times;</span>
+                                        </button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <form method="post" action="{{ url_for('login') }}">
+                            <div class="enchanted-form-group">
+                                <label for="username" class="enchanted-label">
+                                    <i class="fas fa-user-shield"></i> Admin Username
+                                </label>
+                                <input type="text" name="username" class="form-control enchanted-input" 
+                                       placeholder="Enter your admin username" required>
+                            </div>
+                            <div class="enchanted-form-group">
+                                <label for="password" class="enchanted-label">
+                                    <i class="fas fa-key"></i> Secret Passphrase
+                                </label>
+                                <input type="password" name="password" class="form-control enchanted-input" 
+                                       placeholder="Enter your secret passphrase" required>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn magical-btn btn-block">
+                                    <i class="fas fa-sign-in-alt"></i> Enter the Admin Realm
+                                </button>
+                            </div>
+                        </form>
+
+                        <hr class="magical-divider">
+
+                        <div class="text-center">
+                            <p class="enchanted-small mb-3">
+                                <i class="fas fa-info-circle"></i> Only authorized guardians may enter
+                            </p>
+                            <a href="{{ url_for('customer_login') }}" class="enchanted-link">
+                                <i class="fas fa-book-reader"></i> Customer Portal
+                            </a>
+                            <span class="mx-2">|</span>
+                            <a href="{{ url_for('browse') }}" class="enchanted-link">
+                                <i class="fas fa-home"></i> Return to Bookstore
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label for="password">Password</label>
-                  <input type="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-              </form>
             </div>
-          </div>
         </div>
-      </div>
     </div>
     
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>
