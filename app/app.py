@@ -29,6 +29,10 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True  # Security: prevent JavaScript acc
 app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
 
+# Auto-logout configuration for admin inactivity
+ADMIN_SESSION_TIMEOUT = timedelta(minutes=10)  # 10 minutes of inactivity
+SESSION_WARNING_TIME = timedelta(minutes=8)    # Show warning at 8 minutes
+
 # Disable CSRF protection for development (this might be causing API issues)
 app.config['WTF_CSRF_ENABLED'] = False
 
@@ -203,6 +207,50 @@ def manager_required(func):
         if not getattr(current_user, 'is_manager', False):
             flash('Manager access required', 'danger')
             return redirect(url_for('login'))
+        
+        # Check for session timeout
+        if check_session_timeout():
+            logout_user()
+            session.pop('last_activity', None)
+            flash('Your session has expired due to inactivity. Please login again.', 'warning')
+            return redirect(url_for('login'))
+        
+        # Update last activity for session timeout tracking
+        session['last_activity'] = datetime.utcnow().isoformat()
+        
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def check_session_timeout():
+    """Check if admin session has timed out due to inactivity."""
+    if current_user.is_authenticated and current_user.is_manager:
+        last_activity_str = session.get('last_activity')
+        if last_activity_str:
+            try:
+                last_activity = datetime.fromisoformat(last_activity_str)
+                if datetime.utcnow() - last_activity > ADMIN_SESSION_TIMEOUT:
+                    return True
+            except (ValueError, TypeError):
+                # If we can't parse the timestamp, consider it timed out
+                return True
+    return False
+
+
+def timeout_required(func):
+    """Custom decorator that checks for session timeout on admin routes."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if check_session_timeout():
+            logout_user()
+            session.pop('last_activity', None)
+            flash('Your session has expired due to inactivity. Please login again.', 'warning')
+            return redirect(url_for('login'))
+        
+        # Update last activity
+        if current_user.is_authenticated and current_user.is_manager:
+            session['last_activity'] = datetime.utcnow().isoformat()
+        
         return func(*args, **kwargs)
     return wrapper
 
@@ -1143,12 +1191,98 @@ def verify_2fa():
     return render_template('verify_2fa.html')
 
 
+# ================================
+# SESSION TIMEOUT ROUTES
+# ================================
+
+@app.route('/api/session_status')
+@login_required
+def session_status():
+    """API endpoint to check session status and time remaining."""
+    if not current_user.is_manager:
+        return jsonify({'error': 'Not authorized'}), 403
+    
+    last_activity_str = session.get('last_activity')
+    if not last_activity_str:
+        # No activity tracked yet, start tracking
+        session['last_activity'] = datetime.utcnow().isoformat()
+        return jsonify({
+            'active': True,
+            'minutes_remaining': ADMIN_SESSION_TIMEOUT.total_seconds() / 60,
+            'warning_threshold': SESSION_WARNING_TIME.total_seconds() / 60
+        })
+    
+    try:
+        last_activity = datetime.fromisoformat(last_activity_str)
+        time_since_activity = datetime.utcnow() - last_activity
+        time_remaining = ADMIN_SESSION_TIMEOUT - time_since_activity
+        
+        if time_remaining.total_seconds() <= 0:
+            return jsonify({
+                'active': False,
+                'expired': True,
+                'message': 'Session has expired'
+            })
+        
+        return jsonify({
+            'active': True,
+            'minutes_remaining': time_remaining.total_seconds() / 60,
+            'warning_threshold': SESSION_WARNING_TIME.total_seconds() / 60,
+            'show_warning': time_remaining <= (ADMIN_SESSION_TIMEOUT - SESSION_WARNING_TIME)
+        })
+    
+    except (ValueError, TypeError):
+        # Invalid timestamp, reset
+        session['last_activity'] = datetime.utcnow().isoformat()
+        return jsonify({
+            'active': True,
+            'minutes_remaining': ADMIN_SESSION_TIMEOUT.total_seconds() / 60,
+            'warning_threshold': SESSION_WARNING_TIME.total_seconds() / 60
+        })
+
+
+@app.route('/api/extend_session', methods=['POST'])
+@login_required
+def extend_session():
+    """API endpoint to extend the current session."""
+    if not current_user.is_manager:
+        return jsonify({'error': 'Not authorized'}), 403
+    
+    # Reset last activity to current time
+    session['last_activity'] = datetime.utcnow().isoformat()
+    
+    return jsonify({
+        'success': True,
+        'message': 'Session extended successfully',
+        'minutes_remaining': ADMIN_SESSION_TIMEOUT.total_seconds() / 60
+    })
+
+
+@app.route('/api/check_timeout')
+@login_required  
+def check_timeout():
+    """API endpoint to check if session should be terminated."""
+    if not current_user.is_manager:
+        return jsonify({'error': 'Not authorized'}), 403
+        
+    if check_session_timeout():
+        logout_user()
+        session.pop('last_activity', None)
+        return jsonify({
+            'expired': True,
+            'message': 'Session expired due to inactivity'
+        })
+    
+    return jsonify({'expired': False})
+
+
 @app.route('/logout')
 @login_required
 def logout():
     # Clear any pending 2FA session data
     session.pop('pending_2fa_user_id', None)
     session.pop('2fa_expires', None)
+    session.pop('last_activity', None)  # Clear session timeout tracking
     
     # Clear 2FA verification status for the user
     if current_user.is_authenticated:
