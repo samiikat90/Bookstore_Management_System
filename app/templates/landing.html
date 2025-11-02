@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Chapter 6: A Plot Twist - Your Literary Adventure Awaits</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enchanted-theme.css') }}">
+</head>
+<body>
+    <!-- Floating Books Animation -->
+    <div class="floating-books">
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+        <div class="floating-book"></div>
+    </div>
+
+    <div class="container landing-container">
+        <div class="landing-card">
+            <div class="landing-header">
+                <h1 class="brand-title mb-3">Chapter 6: A Plot Twist</h1>
+                <p class="brand-subtitle h5 mb-0">Where Every Story Finds Its Magic</p>
+            </div>
+            <div class="landing-body">
+                <p class="landing-subtitle">
+                    Welcome to our enchanted literary realm. Choose your path to begin your adventure:
+                </p>
+                
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <a href="{{ url_for('customer_register') }}" class="landing-btn">
+                            <i class="fas fa-scroll"></i>
+                            REGISTER
+                        </a>
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <a href="{{ url_for('customer_login') }}" class="landing-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            CUSTOMER LOGIN
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <a href="{{ url_for('view_cart') }}" class="landing-btn">
+                            <i class="fas fa-shopping-cart"></i>
+                            GUEST CHECKOUT
+                        </a>
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <a href="{{ url_for('login') }}" class="landing-btn">
+                            <i class="fas fa-shield-alt"></i>
+                            ADMIN LOGIN
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <a href="{{ url_for('browse') }}" class="landing-btn">
+                            <i class="fas fa-book-open"></i>
+                            BROWSE OUR CATALOG
+                        </a>
+                    </div>
+                </div>
+
+                <hr class="magical-divider">
+
+                <div class="text-center">
+                    <p class="enchanted-small mb-3">
+                        <i class="fas fa-info-circle"></i>
+                        Step into a world where literature comes alive and every book holds a secret waiting to be discovered.
+                    </p>
+                    <p class="enchanted-small">
+                        Whether you're seeking your next great read, managing your collection, or exploring new literary horizons, your journey begins here.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

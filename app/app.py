@@ -714,15 +714,13 @@ def cart_remove():
         flash('Item removed from cart.', 'info')
     return redirect(url_for('create_purchase'))
 
-# Homepage route
+# Homepage route - Public landing page
 @app.route('/')
-@login_required
-@manager_required
 def index():
-    # redirect managers to unified admin dashboard
-    return redirect(url_for('admin_dashboard'))
+    """Public landing page with main navigation options"""
+    return render_template('landing.html')
 
-
+# Admin dashboard route
 @app.route('/admin')
 @login_required
 @manager_required
