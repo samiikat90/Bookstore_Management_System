@@ -80,6 +80,7 @@ class Book(db.Model):
     in_stock = db.Column(db.Boolean, default=True)
     cover_type = db.Column(db.String(50))
     description = db.Column(db.Text)
+    genre = db.Column(db.String(100), nullable=True)  # New field for notifications
 
 
 # Simple User model for manager authentication
@@ -217,6 +218,59 @@ class Sale(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+# Notification Preference Models
+class BookNotification(db.Model):
+    """Tracks customer notifications for specific book titles."""
+    __tablename__ = 'book_notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    book_title = db.Column(db.String(200), nullable=False)
+    author = db.Column(db.String(100), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship
+    customer = db.relationship('Customer', backref='book_notifications')
+    
+    def __repr__(self):
+        return f'<BookNotification {self.customer_id}: {self.book_title}>'
+
+
+class GenreNotification(db.Model):
+    """Tracks customer notifications for specific genres."""
+    __tablename__ = 'genre_notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    genre = db.Column(db.String(100), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship
+    customer = db.relationship('Customer', backref='genre_notifications')
+    
+    def __repr__(self):
+        return f'<GenreNotification {self.customer_id}: {self.genre}>'
+
+
+class NotificationLog(db.Model):
+    """Logs notifications sent to customers."""
+    __tablename__ = 'notification_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    notification_type = db.Column(db.String(50), nullable=False)  # 'book' or 'genre'
+    book_title = db.Column(db.String(200), nullable=True)
+    genre = db.Column(db.String(100), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    sent_date = db.Column(db.DateTime, default=datetime.utcnow)
+    email_sent = db.Column(db.Boolean, default=False)
+    
+    # Relationship
+    customer = db.relationship('Customer', backref='notification_logs')
+    
+    def __repr__(self):
+        return f'<NotificationLog {self.customer_id}: {self.notification_type}>'
 
 
 @login_manager.user_loader
@@ -481,8 +535,47 @@ def catalog_view():
         filtered = [item for item in filtered if search.lower() in item['Name'].lower()]
     if category:
         filtered = [item for item in filtered if item['Category'] and item['Category'].lower() == category.lower()]
+    
+    # Convert the dictionary format to objects that the template expects
+    books = []
+    for item in filtered:
+        # Create a simple object with the properties the template expects
+        book_obj = type('Book', (), {})()
+        book_obj.title = item['Name']
+        book_obj.author = item.get('Author', 'Unknown')
+        book_obj.category = item.get('Category', 'Uncategorized')
+        book_obj.price = item['Price']
+        book_obj.stock = item.get('Quantity', 0) if item.get('Quantity') is not None else 1
+        book_obj.quantity = book_obj.stock  # For compatibility
+        book_obj.isbn = item.get('ISBN', f"ISBN-{hash(f'{item['Name']}-{item.get('Author', '')}')}")  # Use actual ISBN or generate one
+        book_obj.id = hash(f"{item['Name']}-{item.get('Author', '')}")  # Generate a simple ID
+        books.append(book_obj)
+    
     categories = sorted(set(item['Category'] for item in merged if item['Category']))
-    return render_template('catalog.html', catalog=filtered, search=search, category=category, categories=categories)
+    return render_template('catalog.html', books=books, search=search, category=category, categories=categories, sort=request.args.get('sort', 'title'))
+
+
+@app.route('/inventory')
+@login_required
+@manager_required
+def inventory():
+    """Inventory management page with CSV upload/export functionality."""
+    search = (request.args.get('search') or '').strip()
+    category = (request.args.get('category') or '').strip()
+    
+    # Get all books from database
+    books_query = Book.query
+    
+    if search:
+        books_query = books_query.filter(Book.title.contains(search))
+    
+    if category:
+        books_query = books_query.filter(Book.cover_type == category)
+    
+    books = books_query.all()
+    categories = sorted(set(book.cover_type for book in Book.query.all() if book.cover_type))
+    
+    return render_template('inventory.html', books=books, search=search, category=category, categories=categories)
 
 
 @app.route('/orders')
@@ -835,12 +928,12 @@ def add_book():
         db.session.add(new_book)
         db.session.commit()
         flash(f"Book '{title}' added successfully!", 'success')
-        return redirect(url_for('catalog'))
+        return redirect(url_for('inventory'))
     except Exception as e:
         flash(f"Error adding book: {e}", 'danger')
         return redirect(url_for('add_book'))
 
-    return redirect(url_for('catalog'))
+    return redirect(url_for('inventory'))
 
 # Edit book route
 @app.route('/edit_book/<isbn>', methods=['GET', 'POST'])
@@ -861,7 +954,7 @@ def edit_book(isbn):
             
             db.session.commit()
             flash(f"Book '{book.title}' updated successfully!", 'success')
-            return redirect(url_for('catalog'))
+            return redirect(url_for('inventory'))
         except Exception as e:
             flash(f"Error updating book: {e}", 'danger')
     
@@ -887,17 +980,17 @@ def delete_book(isbn):
         # Validate quantity
         if quantity_to_delete <= 0:
             flash(f"Invalid quantity. Please enter a positive number.", 'danger')
-            return redirect(url_for('catalog'))
+            return redirect(url_for('inventory'))
         
         if quantity_to_delete > current_quantity:
             flash(f"Cannot delete {quantity_to_delete} copies - only {current_quantity} available.", 'danger')
-            return redirect(url_for('catalog'))
+            return redirect(url_for('inventory'))
         
         # Check if there are any pending orders for this book
         pending_orders = Purchase.query.filter_by(book_isbn=isbn, status='Pending').count()
         if pending_orders > 0 and quantity_to_delete >= current_quantity:
             flash(f"Cannot delete all copies of '{book_title}' - there are {pending_orders} pending orders for this book. Please fulfill or cancel the orders first.", 'warning')
-            return redirect(url_for('catalog'))
+            return redirect(url_for('inventory'))
         
         # Determine action based on quantity
         if quantity_to_delete >= current_quantity:
@@ -916,7 +1009,7 @@ def delete_book(isbn):
         flash(f"Error processing deletion: {e}", 'danger')
         db.session.rollback()
     
-    return redirect(url_for('catalog'))
+    return redirect(url_for('inventory'))
 
 # Mark book out of stock
 @app.route('/mark_out_of_stock/<isbn>', methods=['POST'])
@@ -1097,7 +1190,7 @@ def upload_csv():
     else:
         flash("Invalid file type. Please upload a CSV file.", 'danger')
 
-    return redirect(url_for('catalog'))
+    return redirect(url_for('inventory'))
 
 
 @app.route('/export_inventory')
@@ -1142,7 +1235,7 @@ def export_inventory():
         
     except Exception as e:
         flash(f"Error exporting inventory: {e}", 'danger')
-        return redirect(url_for('catalog'))
+        return redirect(url_for('inventory'))
 
 
 # Authentication routes
@@ -1225,7 +1318,7 @@ def verify_2fa():
             session.pop('2fa_expires', None)
             
             # Redirect based on user role
-            if user.role == 'admin':
+            if user.is_manager:
                 next_page = request.args.get('next') or url_for('admin_dashboard')
             else:
                 next_page = request.args.get('next') or url_for('index')
@@ -1490,7 +1583,7 @@ def api_update_order(source, order_id):
 
 @app.route('/customer/register', methods=['GET', 'POST'])
 def customer_register():
-    """Customer registration page."""
+    """Customer registration page with notification preferences."""
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         email = request.form.get('email', '').strip()
@@ -1500,6 +1593,10 @@ def customer_register():
         phone = request.form.get('phone', '').strip()
         address = request.form.get('address', '').strip()
         receive_marketing = 'receive_marketing' in request.form
+        
+        # Notification preferences
+        book_interests = request.form.get('book_interests', '').strip()
+        genre_interests = request.form.getlist('genres')
         
         # Validation
         errors = []
@@ -1546,7 +1643,27 @@ def customer_register():
             db.session.add(new_customer)
             db.session.commit()
             
-            flash('Registration successful! You can now login.', 'success')
+            # Add book notification preferences
+            if book_interests:
+                book_titles = [title.strip() for title in book_interests.split('\n') if title.strip()]
+                for book_title in book_titles:
+                    book_notification = BookNotification(
+                        customer_id=new_customer.id,
+                        book_title=book_title
+                    )
+                    db.session.add(book_notification)
+            
+            # Add genre notification preferences
+            for genre in genre_interests:
+                genre_notification = GenreNotification(
+                    customer_id=new_customer.id,
+                    genre=genre
+                )
+                db.session.add(genre_notification)
+            
+            db.session.commit()
+            
+            flash('Registration successful! You can now login. We\'ll notify you about your book and genre interests.', 'success')
             return redirect(url_for('customer_login'))
         
         except Exception as e:
@@ -1693,6 +1810,141 @@ def customer_orders():
     return render_template('customer_orders.html', 
                          purchase_groups=purchase_groups,
                          customer=current_user)
+
+
+@app.route('/customer/notifications', methods=['GET', 'POST'])
+def customer_notifications():
+    """Customer notification management page."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to manage your notifications.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    if request.method == 'POST':
+        new_book_title = request.form.get('new_book_title', '').strip()
+        new_genre = request.form.get('new_genre', '').strip()
+        
+        success_messages = []
+        
+        # Add book notification
+        if new_book_title:
+            # Check if already exists
+            existing = BookNotification.query.filter_by(
+                customer_id=current_user.id,
+                book_title=new_book_title
+            ).first()
+            
+            if not existing:
+                book_notification = BookNotification(
+                    customer_id=current_user.id,
+                    book_title=new_book_title
+                )
+                db.session.add(book_notification)
+                success_messages.append(f'Added book notification for "{new_book_title}"')
+            else:
+                flash(f'You already have a notification set up for "{new_book_title}".', 'warning')
+        
+        # Add genre notification
+        if new_genre:
+            # Check if already exists
+            existing = GenreNotification.query.filter_by(
+                customer_id=current_user.id,
+                genre=new_genre
+            ).first()
+            
+            if not existing:
+                genre_notification = GenreNotification(
+                    customer_id=current_user.id,
+                    genre=new_genre
+                )
+                db.session.add(genre_notification)
+                success_messages.append(f'Added genre notification for "{new_genre}"')
+            else:
+                flash(f'You already have a notification set up for "{new_genre}" genre.', 'warning')
+        
+        # Commit changes
+        if success_messages:
+            try:
+                db.session.commit()
+                for message in success_messages:
+                    flash(message, 'success')
+            except Exception as e:
+                db.session.rollback()
+                flash('Error adding notifications. Please try again.', 'danger')
+                print(f"Notification add error: {e}")
+        
+        return redirect(url_for('customer_notifications'))
+    
+    # Get customer's current notifications
+    book_notifications = BookNotification.query.filter_by(
+        customer_id=current_user.id
+    ).order_by(BookNotification.created_date.desc()).all()
+    
+    genre_notifications = GenreNotification.query.filter_by(
+        customer_id=current_user.id
+    ).order_by(GenreNotification.created_date.desc()).all()
+    
+    # Get notification history
+    notification_logs = NotificationLog.query.filter_by(
+        customer_id=current_user.id
+    ).order_by(NotificationLog.sent_date.desc()).limit(20).all()
+    
+    return render_template('customer_notifications.html',
+                         customer=current_user,
+                         book_notifications=book_notifications,
+                         genre_notifications=genre_notifications,
+                         notification_logs=notification_logs)
+
+
+@app.route('/customer/notifications/remove', methods=['POST'])
+def remove_notification():
+    """Remove a book or genre notification."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to manage your notifications.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    notification_type = request.form.get('notification_type')
+    notification_id = request.form.get('notification_id')
+    
+    if not notification_type or not notification_id:
+        flash('Invalid notification removal request.', 'danger')
+        return redirect(url_for('customer_notifications'))
+    
+    try:
+        if notification_type == 'book':
+            notification = BookNotification.query.filter_by(
+                id=notification_id,
+                customer_id=current_user.id
+            ).first()
+            
+            if notification:
+                db.session.delete(notification)
+                db.session.commit()
+                flash(f'Removed book notification for "{notification.book_title}".', 'info')
+            else:
+                flash('Notification not found.', 'danger')
+                
+        elif notification_type == 'genre':
+            notification = GenreNotification.query.filter_by(
+                id=notification_id,
+                customer_id=current_user.id
+            ).first()
+            
+            if notification:
+                db.session.delete(notification)
+                db.session.commit()
+                flash(f'Removed genre notification for "{notification.genre}".', 'info')
+            else:
+                flash('Notification not found.', 'danger')
+        
+        else:
+            flash('Invalid notification type.', 'danger')
+    
+    except Exception as e:
+        db.session.rollback()
+        flash('Error removing notification. Please try again.', 'danger')
+        print(f"Notification removal error: {e}")
+    
+    return redirect(url_for('customer_notifications'))
 
 
 # Browse route for customer-facing book browsing
@@ -2160,10 +2412,26 @@ def sales_report():
             start_datetime = datetime.strptime(start_date, '%Y-%m-%d')
             end_datetime = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)  # Include end day
             
-            sales = Sale.query.filter(
-                Sale.timestamp >= start_datetime,
-                Sale.timestamp < end_datetime
-            ).order_by(Sale.timestamp.desc()).all()
+            # Get purchases from the Purchase table and create sale-like objects
+            purchases = Purchase.query.filter(
+                Purchase.timestamp >= start_datetime,
+                Purchase.timestamp < end_datetime
+            ).order_by(Purchase.timestamp.desc()).all()
+            
+            # Convert purchases to sale-like objects with calculated totals
+            sales = []
+            for purchase in purchases:
+                # Find the book to get the price
+                book = Book.query.filter_by(isbn=purchase.book_isbn).first()
+                if book:
+                    # Create a sale-like object
+                    sale_obj = type('Sale', (), {})()
+                    sale_obj.id = purchase.id
+                    sale_obj.book_id = purchase.book_isbn
+                    sale_obj.quantity = purchase.quantity
+                    sale_obj.total_price = book.price * purchase.quantity
+                    sale_obj.timestamp = purchase.timestamp
+                    sales.append(sale_obj)
     
     return render_template('sales_report.html', sales=sales)
 

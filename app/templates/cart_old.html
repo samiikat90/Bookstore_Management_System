@@ -258,7 +258,7 @@
 
                     <p>Browse our collection to add some books!</p>
 
-                    <a href="{{ url_for('catalog') }}" class="btn btn-primary">Browse Catalog</a>        
+                    <a href="{{ url_for('catalog_view') }}" class="btn btn-primary">Browse Catalog</a>        
 
                 </div>
 
@@ -268,7 +268,7 @@
 
             <div class="text-center mt-4">            {% if messages %}
 
-                <a href="{{ url_for('catalog') }}" class="btn btn-outline-secondary">Continue Shopping</a>
+                <a href="{{ url_for('catalog_view') }}" class="btn btn-outline-secondary">Continue Shopping</a>
 
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary ml-2">Home</a>                {% for category, message in messages %}                    <!-- Logged in customer -->
 

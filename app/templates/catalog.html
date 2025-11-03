@@ -3,12 +3,12 @@
 {% block title %}Book Catalog{% endblock %}
 
 {% block content %}
-<div class="main-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="page-title mb-0">Book Catalog</h1>
-        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+<div class="main-container" style="padding: 2.5rem;">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="page-title mb-0" style="font-size: 2.8rem;">Book Catalog</h1>
+        {% if current_user.is_authenticated and current_user.is_manager %}
         <div>
-            <a href="{{ url_for('add_book') }}" class="btn btn-hero mr-2">
+            <a href="{{ url_for('add_book') }}" class="btn btn-hero mr-3">
                 <i class="fas fa-plus"></i> Add New Book
             </a>
             <a href="{{ url_for('admin_dashboard') }}" class="btn-outline-hero">
@@ -19,33 +19,33 @@
     </div>
     
     <!-- Search and Filter Section -->
-    <div class="card-hero mb-4">
-        <div class="card-body">
+    <div class="card-hero mb-5">
+        <div class="card-body" style="padding: 2rem;">
             <form class="form-inline" method="get" action="{{ url_for('catalog_view') }}">
-                <div class="form-group mr-3 mb-2">
-                    <input type="text" class="form-control" name="search" placeholder="Search by title or author" value="{{ search }}" style="width: 250px;">
+                <div class="form-group mr-4 mb-3">
+                    <input type="text" class="form-control" name="search" placeholder="Search by title or author" value="{{ search }}" style="width: 280px; height: 45px; font-size: 1rem;">
                 </div>
-                <div class="form-group mr-3 mb-2">
-                    <select class="form-control" name="category">
+                <div class="form-group mr-4 mb-3">
+                    <select class="form-control" name="category" style="height: 45px; font-size: 1rem;">
                         <option value="">All Categories</option>
                         {% for cat in categories %}
                             <option value="{{ cat }}" {% if cat==category %}selected{% endif %}>{{ cat }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-group mr-3 mb-2">
-                    <select class="form-control" name="sort">
+                <div class="form-group mr-4 mb-3">
+                    <select class="form-control" name="sort" style="height: 45px; font-size: 1rem;">
                         <option value="title" {% if sort=='title' %}selected{% endif %}>Sort by Title</option>
                         <option value="author" {% if sort=='author' %}selected{% endif %}>Sort by Author</option>
                         <option value="price" {% if sort=='price' %}selected{% endif %}>Sort by Price</option>
                         <option value="stock" {% if sort=='stock' %}selected{% endif %}>Sort by Stock</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-hero mb-2">
+                <button type="submit" class="btn btn-hero mb-3" style="height: 45px; padding: 0.5rem 1.5rem; font-size: 1rem;">
                     <i class="fas fa-search"></i> Search
                 </button>
                 {% if search or category %}
-                <a href="{{ url_for('catalog_view') }}" class="btn btn-outline-hero mb-2 ml-2">
+                <a href="{{ url_for('catalog_view') }}" class="btn btn-outline-hero mb-3 ml-3" style="height: 45px; padding: 0.5rem 1.5rem; font-size: 1rem;">
                     <i class="fas fa-times"></i> Clear
                 </a>
                 {% endif %}
@@ -75,7 +75,7 @@
                         
                         <div class="mt-auto">
                             {% if book.stock > 0 %}
-                                <form method="POST" action="{{ url_for('add_to_cart', book_id=book.id) }}" class="mb-2">
+                                <form method="POST" action="{{ url_for('add_to_cart', isbn=book.isbn) }}" class="mb-2">
                                     <div class="input-group">
                                         <input type="number" name="quantity" value="1" min="1" max="{{ book.stock }}" class="form-control" style="max-width: 80px;">
                                         <div class="input-group-append">
@@ -87,12 +87,12 @@
                                 </form>
                             {% endif %}
                             
-                            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                            {% if current_user.is_authenticated and current_user.is_manager %}
                                 <div class="btn-group btn-group-sm w-100">
-                                    <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-hero">
+                                    <a href="{{ url_for('edit_book', isbn=book.isbn) }}" class="btn btn-outline-hero">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this book?')">
+                                    <form method="POST" action="{{ url_for('delete_book', isbn=book.isbn) }}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this book?')">>
                                         <button type="submit" class="btn btn-outline-danger">
                                             <i class="fas fa-trash"></i> Delete
                                         </button>
@@ -112,7 +112,7 @@
             <ul class="pagination justify-content-center">
                 {% if pagination.has_prev %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('catalog_view', page=pagination.prev_num, search=search, category=category, sort=sort) }}">Previous</a>
+                        <a class="page-link" href="{{ url_for('catalog', page=pagination.prev_num, search=search, category=category, sort=sort) }}">Previous</a>
                     </li>
                 {% endif %}
                 
@@ -120,7 +120,7 @@
                     {% if page_num %}
                         {% if page_num != pagination.page %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('catalog_view', page=page_num, search=search, category=category, sort=sort) }}">{{ page_num }}</a>
+                                <a class="page-link" href="{{ url_for('catalog', page=page_num, search=search, category=category, sort=sort) }}">{{ page_num }}</a>
                             </li>
                         {% else %}
                             <li class="page-item active">
@@ -136,7 +136,7 @@
                 
                 {% if pagination.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('catalog_view', page=pagination.next_num, search=search, category=category, sort=sort) }}">Next</a>
+                        <a class="page-link" href="{{ url_for('catalog', page=pagination.next_num, search=search, category=category, sort=sort) }}">Next</a>
                     </li>
                 {% endif %}
             </ul>
@@ -144,16 +144,18 @@
         {% endif %}
     {% else %}
         <div class="text-center py-5">
-            <h3 class="text-muted">No books found</h3>
-            {% if search or category %}
-                <p>Try adjusting your search criteria</p>
-                <a href="{{ url_for('catalog_view') }}" class="btn btn-hero">View All Books</a>
-            {% else %}
-                <p>The catalog is currently empty</p>
-                {% if current_user.is_authenticated and current_user.role == 'admin' %}
-                    <a href="{{ url_for('add_book') }}" class="btn btn-hero">Add First Book</a>
+            <div class="mb-4">
+                <h3 class="text-muted mb-3" style="font-size: 1.8rem; font-weight: 400;">No books found</h3>
+                {% if search or category %}
+                    <p class="mb-4" style="font-size: 1.1rem; line-height: 1.6;">Try adjusting your search criteria</p>
+                    <a href="{{ url_for('catalog_view') }}" class="btn btn-hero">View All Books</a>
+                {% else %}
+                    <p class="mb-4" style="font-size: 1.1rem; line-height: 1.6;">The catalog is currently empty</p>
+                    {% if current_user.is_authenticated and current_user.is_manager %}
+                        <a href="{{ url_for('add_book') }}" class="btn btn-hero">Add First Book</a>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+            </div>
         </div>
     {% endif %}
 </div>
