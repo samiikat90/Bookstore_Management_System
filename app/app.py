@@ -835,12 +835,12 @@ def add_book():
         db.session.add(new_book)
         db.session.commit()
         flash(f"Book '{title}' added successfully!", 'success')
-        return redirect(url_for('catalog_view'))
+        return redirect(url_for('catalog'))
     except Exception as e:
         flash(f"Error adding book: {e}", 'danger')
         return redirect(url_for('add_book'))
 
-    return redirect(url_for('catalog_view'))
+    return redirect(url_for('catalog'))
 
 # Edit book route
 @app.route('/edit_book/<isbn>', methods=['GET', 'POST'])
@@ -861,7 +861,7 @@ def edit_book(isbn):
             
             db.session.commit()
             flash(f"Book '{book.title}' updated successfully!", 'success')
-            return redirect(url_for('catalog_view'))
+            return redirect(url_for('catalog'))
         except Exception as e:
             flash(f"Error updating book: {e}", 'danger')
     
@@ -887,17 +887,17 @@ def delete_book(isbn):
         # Validate quantity
         if quantity_to_delete <= 0:
             flash(f"Invalid quantity. Please enter a positive number.", 'danger')
-            return redirect(url_for('catalog_view'))
+            return redirect(url_for('catalog'))
         
         if quantity_to_delete > current_quantity:
             flash(f"Cannot delete {quantity_to_delete} copies - only {current_quantity} available.", 'danger')
-            return redirect(url_for('catalog_view'))
+            return redirect(url_for('catalog'))
         
         # Check if there are any pending orders for this book
         pending_orders = Purchase.query.filter_by(book_isbn=isbn, status='Pending').count()
         if pending_orders > 0 and quantity_to_delete >= current_quantity:
             flash(f"Cannot delete all copies of '{book_title}' - there are {pending_orders} pending orders for this book. Please fulfill or cancel the orders first.", 'warning')
-            return redirect(url_for('catalog_view'))
+            return redirect(url_for('catalog'))
         
         # Determine action based on quantity
         if quantity_to_delete >= current_quantity:
@@ -916,7 +916,7 @@ def delete_book(isbn):
         flash(f"Error processing deletion: {e}", 'danger')
         db.session.rollback()
     
-    return redirect(url_for('catalog_view'))
+    return redirect(url_for('catalog'))
 
 # Mark book out of stock
 @app.route('/mark_out_of_stock/<isbn>', methods=['POST'])
@@ -1097,7 +1097,7 @@ def upload_csv():
     else:
         flash("Invalid file type. Please upload a CSV file.", 'danger')
 
-    return redirect(url_for('catalog_view'))
+    return redirect(url_for('catalog'))
 
 
 @app.route('/export_inventory')
@@ -1142,7 +1142,7 @@ def export_inventory():
         
     except Exception as e:
         flash(f"Error exporting inventory: {e}", 'danger')
-        return redirect(url_for('catalog_view'))
+        return redirect(url_for('catalog'))
 
 
 # Authentication routes
@@ -1224,7 +1224,11 @@ def verify_2fa():
             session.pop('pending_2fa_user_id', None)
             session.pop('2fa_expires', None)
             
-            next_page = request.args.get('next') or url_for('index')
+            # Redirect based on user role
+            if user.role == 'admin':
+                next_page = request.args.get('next') or url_for('admin_dashboard')
+            else:
+                next_page = request.args.get('next') or url_for('index')
             return redirect(next_page)
         else:
             flash('Invalid security code. Please try again.', 'danger')
