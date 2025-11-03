@@ -154,7 +154,15 @@ class Customer(db.Model, UserMixin):
     password_hash = db.Column(db.String(128), nullable=False)
     full_name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=True)
-    address = db.Column(db.Text, nullable=True)
+    
+    # Address fields
+    address = db.Column(db.Text, nullable=True)  # Keep for backward compatibility
+    address_line1 = db.Column(db.String(255), nullable=True)
+    address_line2 = db.Column(db.String(255), nullable=True)
+    city = db.Column(db.String(100), nullable=True)
+    state = db.Column(db.String(50), nullable=True)
+    zip_code = db.Column(db.String(20), nullable=True)
+    
     date_registered = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     
@@ -1591,7 +1599,26 @@ def customer_register():
         confirm_password = request.form.get('confirm_password', '')
         full_name = request.form.get('full_name', '').strip()
         phone = request.form.get('phone', '').strip()
-        address = request.form.get('address', '').strip()
+        
+        # Separate address fields
+        address_line1 = request.form.get('addressLine1', '').strip()
+        address_line2 = request.form.get('addressLine2', '').strip()
+        city = request.form.get('city', '').strip()
+        state = request.form.get('state', '').strip()
+        zip_code = request.form.get('zip', '').strip()
+        
+        # Combine address fields into single address string for storage
+        address_parts = [address_line1]
+        if address_line2:
+            address_parts.append(address_line2)
+        if city:
+            address_parts.append(city)
+        if state:
+            address_parts.append(state)
+        if zip_code:
+            address_parts.append(zip_code)
+        address = ', '.join(address_parts) if address_parts else None
+        
         receive_marketing = 'receive_marketing' in request.form
         
         # Notification preferences
@@ -1636,6 +1663,11 @@ def customer_register():
                 full_name=full_name,
                 phone=phone if phone else None,
                 address=address if address else None,
+                address_line1=address_line1 if address_line1 else None,
+                address_line2=address_line2 if address_line2 else None,
+                city=city if city else None,
+                state=state if state else None,
+                zip_code=zip_code if zip_code else None,
                 receive_marketing=receive_marketing
             )
             new_customer.set_password(password)
@@ -1737,7 +1769,26 @@ def edit_customer_account():
         full_name = request.form.get('full_name', '').strip()
         email = request.form.get('email', '').strip()
         phone = request.form.get('phone', '').strip()
-        address = request.form.get('address', '').strip()
+        
+        # Separate address fields
+        address_line1 = request.form.get('address_line1', '').strip()
+        address_line2 = request.form.get('address_line2', '').strip()
+        city = request.form.get('city', '').strip()
+        state = request.form.get('state', '').strip()
+        zip_code = request.form.get('zip_code', '').strip()
+        
+        # Combine address fields for backward compatibility
+        address_parts = [address_line1]
+        if address_line2:
+            address_parts.append(address_line2)
+        if city:
+            address_parts.append(city)
+        if state:
+            address_parts.append(state)
+        if zip_code:
+            address_parts.append(zip_code)
+        address = ', '.join(address_parts) if address_parts else None
+        
         receive_marketing = 'receive_marketing' in request.form
         
         # Validation
@@ -1769,6 +1820,11 @@ def edit_customer_account():
             current_user.email = email
             current_user.phone = phone if phone else None
             current_user.address = address if address else None
+            current_user.address_line1 = address_line1 if address_line1 else None
+            current_user.address_line2 = address_line2 if address_line2 else None
+            current_user.city = city if city else None
+            current_user.state = state if state else None
+            current_user.zip_code = zip_code if zip_code else None
             current_user.receive_marketing = receive_marketing
             
             db.session.commit()
