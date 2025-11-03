@@ -1,0 +1,809 @@
+<!DOCTYPE html><!DOCTYPE html><!DOCTYPE html><!DOCTYPE html><!doctype html><!doctype html><!doctype html>
+
+<html lang="en">
+
+<head><html lang="en">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><head><html lang="en">
+
+    <title>Shopping Cart - Bookstore</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">    <meta charset="UTF-8">
+
+    <link href="{{ url_for('static', filename='css/enchanted-theme.css') }}" rel="stylesheet">
+
+    <style>    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><head><html lang="en">
+
+        body {
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);    <title>Shopping Cart - Chapter6: A PlotTwist</title>
+
+            min-height: 100vh;
+
+            font-family: 'Crimson Text', serif;    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">    <meta charset="UTF-8">
+
+        }
+
+        .cart-container {    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+            background: rgba(255, 255, 255, 0.95);
+
+            border-radius: 15px;</head>    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><head><html>
+
+            backdrop-filter: blur(10px);
+
+            margin: 2rem auto;<body>
+
+            padding: 2rem;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);    <nav class="navbar navbar-light bg-light">    <title>Shopping Cart - Chapter 6: A Plot Twist</title>
+
+        }
+
+        .cart-title {        <div class="container">
+
+            font-family: 'Playfair Display', serif;
+
+            color: #2c3e50;            <a class="navbar-brand h3" href="{{ url_for('index') }}">Chapter6: A PlotTwist</a>    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">    <meta charset="UTF-8">
+
+            margin-bottom: 2rem;
+
+        }        </div>
+
+        .cart-table {
+
+            background: white;    </nav>    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        }    <div class="container mt-4">    <style>    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><head><html><html>
+
+        .btn-primary {
+
+            background: linear-gradient(45deg, #667eea, #764ba2);        <h2>Shopping Cart</h2>
+
+            border: none;
+
+            border-radius: 25px;                body {
+
+            padding: 0.75rem 2rem;
+
+            font-weight: 600;        {% if cart_items %}
+
+            transition: all 0.3s ease;
+
+        }            <table class="table">            background-color: #f8f9fa;    <title>Shopping Cart - Bookstore</title>
+
+        .btn-primary:hover {
+
+            transform: translateY(-2px);                <thead>
+
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+        }                    <tr>            font-family: Arial, sans-serif;
+
+        .btn-danger {
+
+            border-radius: 20px;                        <th>Book</th>
+
+            padding: 0.5rem 1rem;
+
+        }                        <th>Author</th>        }    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">    <meta charset="utf-8">
+
+        .total-section {
+
+            background: rgba(102, 126, 234, 0.1);                        <th>Price</th>
+
+            border-radius: 10px;
+
+            padding: 1.5rem;                        <th>Quantity</th>        .navbar-brand {
+
+            margin-top: 2rem;
+
+        }                        <th>Total</th>
+
+    </style>
+
+</head>                        <th>Actions</th>            font-weight: bold;    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<body>
+
+    <div class="container">                    </tr>
+
+        <div class="cart-container">
+
+            <h1 class="cart-title text-center">Your Shopping Cart</h1>                </thead>            font-size: 1.5rem;
+
+            
+
+            {% if cart_items %}                <tbody>
+
+                <div class="table-responsive">
+
+                    <table class="table cart-table">                    {% for book, qty in cart_items %}        }</head>    <title>Your Cart</title><head><head>
+
+                        <thead class="thead-dark">
+
+                            <tr>                        <tr>
+
+                                <th>Book</th>
+
+                                <th>Author</th>                            <td>{{ book.title }}</td>    </style>
+
+                                <th>Price</th>
+
+                                <th>Quantity</th>                            <td>{{ book.author }}</td>
+
+                                <th>Subtotal</th>
+
+                                <th>Actions</th>                            <td>${{ "%.2f"|format(book.price) }}</td></head><body class="bg-light">
+
+                            </tr>
+
+                        </thead>                            <td>{{ qty }}</td>
+
+                        <tbody>
+
+                            {% for item in cart_items %}                            <td>${{ "%.2f"|format(book.price * qty) }}</td><body>
+
+                            <tr>
+
+                                <td><strong>{{ item.book.title }}</strong></td>                            <td>
+
+                                <td>{{ item.book.author }}</td>
+
+                                <td>${{ "%.2f"|format(item.book.price) }}</td>                                <form method="POST" action="{{ url_for('remove_from_cart', isbn=book.isbn) }}" class="d-inline">    <!-- Simple Navigation -->    <!-- Navigation Bar -->    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+                                <td>
+
+                                    <form method="POST" action="{{ url_for('update_cart_item', book_id=item.book.id) }}" class="d-inline">                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.book.stock }}" class="form-control" style="width: 80px; display: inline-block;">
+
+                                        <button type="submit" class="btn btn-sm btn-outline-primary ml-2">Update</button>                                </form>    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+                                    </form>
+
+                                </td>                            </td>
+
+                                <td><strong>${{ "%.2f"|format(item.book.price * item.quantity) }}</strong></td>
+
+                                <td>                        </tr>        <div class="container">    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+                                    <form method="POST" action="{{ url_for('remove_from_cart', book_id=item.book.id) }}" class="d-inline">
+
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this book from cart?')">Remove</button>                    {% endfor %}
+
+                                    </form>
+
+                                </td>                </tbody>            <a class="navbar-brand" href="{{ url_for('index') }}">
+
+                            </tr>
+
+                            {% endfor %}            </table>
+
+                        </tbody>
+
+                    </table>                            Chapter6: A PlotTwist        <div class="container"></head>    <meta charset="utf-8">    <meta charset="utf-8">
+
+                </div>
+
+                            <div class="mt-4">
+
+                <div class="total-section">
+
+                    <div class="row">                <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>            </a>
+
+                        <div class="col-md-6">
+
+                            <h4>Cart Summary</h4>                <a href="{{ url_for('create_purchase') }}" class="btn btn-success">Checkout</a>
+
+                            <p>Total Items: {{ cart_items|length }}</p>
+
+                            <p>Total Quantity: {{ total_quantity }}</p>                <a href="{{ url_for('browse') }}" class="btn btn-secondary">Continue Shopping</a>            <div class="navbar-nav ml-auto">            <a class="navbar-brand" href="{{ url_for('browse') }}">
+
+                        </div>
+
+                        <div class="col-md-6 text-right">            </div>
+
+                            <h3 class="text-primary">Total: ${{ "%.2f"|format(total_price) }}</h3>
+
+                                    {% else %}                <a class="nav-link" href="{{ url_for('browse') }}">Browse Books</a>
+
+                            {% if current_user.is_authenticated %}
+
+                                <form method="POST" action="{{ url_for('checkout') }}" class="mt-3">            <p>Your cart is empty.</p>
+
+                                    <button type="submit" class="btn btn-primary btn-lg">Proceed to Checkout</button>
+
+                                </form>            <a href="{{ url_for('browse') }}" class="btn btn-primary">Browse Books</a>                <a class="nav-link" href="{{ url_for('view_cart') }}">Cart</a>                <i class="fas fa-book"></i> Bookstore<body class="bg-light">
+
+                            {% else %}
+
+                                <div class="mt-3">        {% endif %}
+
+                                    <p class="text-muted">Please log in to checkout or continue as guest:</p>
+
+                                    <a href="{{ url_for('customer_login') }}" class="btn btn-primary mr-2">Login</a>    </div>            </div>
+
+                                    <form method="POST" action="{{ url_for('guest_checkout') }}" class="d-inline">
+
+                                        <button type="submit" class="btn btn-outline-primary">Guest Checkout</button></body>
+
+                                    </form>
+
+                                </div></html>        </div>            </a>
+
+                            {% endif %}
+
+                        </div>    </nav>
+
+                    </div>
+
+                </div>            <div class="container mt-4">    <title>Your Cart</title>    <title>Your Cart</title>
+
+                
+
+            {% else %}    <div class="container mt-4">
+
+                <div class="text-center py-5">
+
+                    <h3 class="text-muted">Your cart is empty</h3>        <h2>Shopping Cart</h2>            <div class="navbar-nav ml-auto">
+
+                    <p>Browse our collection to add some books!</p>
+
+                    <a href="{{ url_for('catalog') }}" class="btn btn-primary">Browse Catalog</a>        
+
+                </div>
+
+            {% endif %}        {% with messages = get_flashed_messages(with_categories=true) %}                {% if current_user.is_authenticated and current_user.email is defined %}    <h1>Your Cart</h1>
+
+            
+
+            <div class="text-center mt-4">            {% if messages %}
+
+                <a href="{{ url_for('catalog') }}" class="btn btn-outline-secondary">Continue Shopping</a>
+
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary ml-2">Home</a>                {% for category, message in messages %}                    <!-- Logged in customer -->
+
+            </div>
+
+        </div>                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+
+    </div>
+
+                        {{ message }}                    <div class="nav-item dropdown">    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+</body>
+
+</html>                    </div>                        <a class="nav-link dropdown-toggle" href="#" id="customerDropdown" role="button" data-toggle="dropdown">
+
+                {% endfor %}
+
+            {% endif %}                            <i class="fas fa-user"></i> {{ current_user.full_name }}    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% endwith %}
+
+                        </a>
+
+        {% if cart_items %}
+
+            <div class="table-responsive">                        <div class="dropdown-menu">      {% if messages %}</head></head>
+
+                <table class="table table-striped">
+
+                    <thead>                            <a class="dropdown-item" href="{{ url_for('customer_account') }}">
+
+                        <tr>
+
+                            <th>Book</th>                                <i class="fas fa-user-circle"></i> My Account        {% for category, message in messages %}
+
+                            <th>Author</th>
+
+                            <th>Price</th>                            </a>
+
+                            <th>Quantity</th>
+
+                            <th>Total</th>                            <a class="dropdown-item" href="{{ url_for('customer_orders') }}">          <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert"><body class="bg-light"><body class="bg-light">
+
+                            <th>Actions</th>
+
+                        </tr>                                <i class="fas fa-shopping-bag"></i> My Orders
+
+                    </thead>
+
+                    <tbody>                            </a>            {{ message }}
+
+                        {% for book, qty in cart_items %}
+
+                            <tr>                            <div class="dropdown-divider"></div>
+
+                                <td>{{ book.title }}</td>
+
+                                <td>{{ book.author }}</td>                            <a class="dropdown-item" href="{{ url_for('customer_logout') }}">            <button type="button" class="close" data-dismiss="alert">&times;</button><div class="container mt-4"><div class="container mt-4">
+
+                                <td>${{ "%.2f"|format(book.price) }}</td>
+
+                                <td>                                <i class="fas fa-sign-out-alt"></i> Logout
+
+                                    <form method="POST" action="{{ url_for('update_cart', isbn=book.isbn) }}" class="d-inline">
+
+                                        <input type="number" name="quantity" value="{{ qty }}" min="1" max="99" class="form-control d-inline" style="width: 80px;" required>                            </a>          </div>
+
+                                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+
+                                    </form>                        </div>
+
+                                </td>
+
+                                <td>${{ "%.2f"|format(book.price * qty) }}</td>                    </div>        {% endfor %}    <h1>Your Cart</h1>    <h1>Your Cart</h1>
+
+                                <td>
+
+                                    <form method="POST" action="{{ url_for('remove_from_cart', isbn=book.isbn) }}" class="d-inline">                {% else %}
+
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this book from cart?')">Remove</button>
+
+                                    </form>                    <!-- Guest user -->      {% endif %}
+
+                                </td>
+
+                            </tr>                    <a class="nav-link" href="{{ url_for('customer_login') }}">
+
+                        {% endfor %}
+
+                    </tbody>                        <i class="fas fa-sign-in-alt"></i> Login    {% endwith %}
+
+                </table>
+
+            </div>                    </a>
+
+
+
+            <div class="row mt-4">                    <a class="nav-link" href="{{ url_for('customer_register') }}">
+
+                <div class="col-md-6">
+
+                    <h4>Order Summary</h4>                        <i class="fas fa-user-plus"></i> Register
+
+                    <p>Subtotal: ${{ "%.2f"|format(subtotal) }}</p>
+
+                    {% if discount > 0 %}                    </a>    {% if cart_items %}    {% with messages = get_flashed_messages(with_categories=true) %}    {% if cart_items %}
+
+                        <p class="text-success">Discount: -${{ "%.2f"|format(discount) }}</p>
+
+                    {% endif %}                {% endif %}
+
+                    <h5><strong>Total: ${{ "%.2f"|format(total) }}</strong></h5>
+
+                </div>                    <table class="table table-bordered">
+
+                <div class="col-md-6">
+
+                    <div class="text-right">                <a class="nav-link active" href="{{ url_for('view_cart') }}">
+
+                        <a href="{{ url_for('browse') }}" class="btn btn-secondary">Continue Shopping</a>
+
+                        <a href="{{ url_for('create_purchase') }}" class="btn btn-success">Checkout</a>                    <i class="fas fa-shopping-cart"></i> Cart         <thead>      {% if messages %}    <table class="table table-bordered">
+
+                        <a href="{{ url_for('reset_cart') }}" class="btn btn-warning" onclick="return confirm('Clear all items from cart?')">Clear Cart</a>
+
+                    </div>                    <span class="badge badge-pill badge-light">{{ session['cart']|length if session.get('cart') else 0 }}</span>
+
+                </div>
+
+            </div>                </a>            <tr>
+
+        {% else %}
+
+            <div class="text-center py-5">            </div>
+
+                <h4>Your cart is empty</h4>
+
+                <p>Start browsing our collection to add books to your cart.</p>        </div>                <th>Title</th>        {% for category, message in messages %}        <thead>
+
+                <a href="{{ url_for('browse') }}" class="btn btn-primary">Browse Books</a>
+
+            </div>    </nav>
+
+        {% endif %}
+
+    </div>                <th>Author</th>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>    <div class="container mt-4">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>        <div class="d-flex justify-content-between align-items-center mb-4">                <th>ISBN</th>          <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">            <tr>
+
+</html>
+            <h1><i class="fas fa-shopping-cart"></i> Shopping Cart</h1>
+
+            <a href="{{ url_for('browse') }}" class="btn btn-outline-primary">                <th>Price</th>
+
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+
+            </a>                <th>Quantity</th>            {{ message }}                <th>Title</th>
+
+        </div>
+
+                <th>Subtotal</th>
+
+        <!-- Flash messages -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}            </tr>            <button type="button" class="close" data-dismiss="alert">&times;</button>                <th>Author</th>
+
+            {% if messages %}
+
+                {% for category, message in messages %}        </thead>
+
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+
+                        {{ message }}        <tbody>          </div>                <th>ISBN</th>
+
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+
+                    </div>            {% for book, qty in cart_items %}
+
+                {% endfor %}
+
+            {% endif %}            <tr>        {% endfor %}                <th>Price</th>
+
+        {% endwith %}
+
+                <td>{{ book.title }}</td>
+
+        {% if cart_items %}
+
+            <!-- Cart Items Table -->                <td>{{ book.author }}</td>      {% endif %}                <th>Quantity</th>
+
+            <div class="card mb-4">
+
+                <div class="card-header">                <td>{{ book.isbn }}</td>
+
+                    <h5><i class="fas fa-list"></i> Cart Items</h5>
+
+                </div>                <td>${{ '%.2f'|format(book.price) }}</td>    {% endwith %}                <th>Subtotal</th>
+
+                <div class="card-body p-0">
+
+                    <div class="table-responsive">                <td>{{ qty }}</td>
+
+                        <table class="table table-bordered mb-0">
+
+                            <thead class="thead-light">                <td>${{ '%.2f'|format(book.price * qty) }}</td>            </tr>
+
+                                <tr>
+
+                                    <th>Title</th>            </tr>
+
+                                    <th>Author</th>
+
+                                    <th>ISBN</th>            {% endfor %}    {% if cart_items %}        </thead>
+
+                                    <th>Price</th>
+
+                                    <th>Quantity</th>        </tbody>
+
+                                    <th>Subtotal</th>
+
+                                    <th>Actions</th>        <tfoot>    <table class="table table-bordered">        <tbody>
+
+                                </tr>
+
+                            </thead>            <tr>
+
+                            <tbody>
+
+                                {% for book, qty in cart_items %}                <th colspan="5" class="text-right">Subtotal</th>        <thead>            {% for book, qty in cart_items %}
+
+                                <tr>
+
+                                    <td><strong>{{ book.title }}</strong></td>                <th>${{ '%.2f'|format(subtotal) }}</th>
+
+                                    <td>{{ book.author }}</td>
+
+                                    <td>{{ book.isbn }}</td>            </tr>            <tr>            <tr>
+
+                                    <td>${{ '%.2f'|format(book.price) }}</td>
+
+                                    <td>            {% if discount_amount > 0 %}
+
+                                        <form method="POST" action="{{ url_for('update_cart', isbn=book.isbn) }}" class="d-inline">
+
+                                            <input type="number" name="quantity" value="{{ qty }}" min="1" max="{{ book.quantity }}" class="form-control" style="width: 70px; display: inline-block;">            <tr class="table-success">                <th>Title</th>                <td>{{ book.title }}</td>
+
+                                            <button type="submit" class="btn btn-sm btn-outline-primary ml-1">
+
+                                                <i class="fas fa-sync"></i>                <th colspan="5" class="text-right">Discount ({{ discount_code }})</th>
+
+                                            </button>
+
+                                        </form>                <th>-${{ '%.2f'|format(discount_amount) }}</th>                <th>Author</th>                <td>{{ book.author }}</td>
+
+                                    </td>
+
+                                    <td><strong>${{ '%.2f'|format(book.price * qty) }}</strong></td>            </tr>
+
+                                    <td>
+
+                                        <form method="POST" action="{{ url_for('remove_from_cart', isbn=book.isbn) }}" class="d-inline">            {% endif %}                <th>ISBN</th>                <td>{{ book.isbn }}</td>
+
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+
+                                                <i class="fas fa-trash"></i>            <tr class="table-info">
+
+                                            </button>
+
+                                        </form>                <th colspan="5" class="text-right"><strong>Total</strong></th>                <th>Price</th>                <td>${{ '%.2f'|format(book.price) }}</td>
+
+                                    </td>
+
+                                </tr>                <th><strong>${{ '%.2f'|format(total) }}</strong></th>
+
+                                {% endfor %}
+
+                            </tbody>            </tr>                <th>Quantity</th>                <td>{{ qty }}</td>
+
+                        </table>
+
+                    </div>        </tfoot>
+
+                </div>
+
+            </div>    </table>                <th>Subtotal</th>                <td>${{ '%.2f'|format(book.price * qty) }}</td>
+
+
+
+            <!-- Cart Summary -->
+
+            <div class="row">
+
+                <div class="col-md-6">    <!-- Discount Code Section -->            </tr>            </tr>
+
+                    <!-- Discount Code Section -->
+
+                    <div class="card mb-3">    <div class="card mb-3">
+
+                        <div class="card-header">
+
+                            <h5><i class="fas fa-tags"></i> Discount Code</h5>        <div class="card-header">        </thead>            {% endfor %}
+
+                        </div>
+
+                        <div class="card-body">            <h5>Discount Code</h5>
+
+                            {% if discount_code %}
+
+                                <div class="alert alert-success">        </div>        <tbody>        </tbody>
+
+                                    <strong>Active Discount:</strong> {{ discount_code }}
+
+                                    <a href="{{ url_for('remove_discount') }}" class="btn btn-sm btn-outline-danger ml-2">        <div class="card-body">
+
+                                        <i class="fas fa-times"></i> Remove
+
+                                    </a>            {% if discount_code %}            {% for book, qty in cart_items %}        <tfoot>
+
+                                </div>
+
+                            {% else %}                <div class="alert alert-success">
+
+                                <form method="POST" action="{{ url_for('apply_discount') }}">
+
+                                    <div class="form-group">                    <strong>Active Discount:</strong> {{ discount_code }}             <tr>            <tr>
+
+                                        <input type="text" name="discount_code" class="form-control" placeholder="Enter discount code">
+
+                                    </div>                    <a href="{{ url_for('remove_discount') }}" class="btn btn-sm btn-outline-danger ml-2">Remove</a>
+
+                                    <button type="submit" class="btn btn-outline-primary btn-block">
+
+                                        <i class="fas fa-tag"></i> Apply Discount                </div>                <td>{{ book.title }}</td>                <th colspan="5" class="text-right">Total</th>
+
+                                    </button>
+
+                                </form>            {% else %}
+
+                                
+
+                                <hr>                <form action="{{ url_for('apply_discount') }}" method="post" class="form-inline">                <td>{{ book.author }}</td>                <th>${{ '%.2f'|format(total) }}</th>
+
+                                <small class="text-muted">
+
+                                    <strong>Available codes:</strong><br>                    <input type="text" name="discount_code" class="form-control mr-2" placeholder="Enter discount code" required>
+
+                                    SAVE10, BOOK20, FALL25, STUDENT15, WINTER30
+
+                                </small>                    <button type="submit" class="btn btn-success">Apply Discount</button>                <td>{{ book.isbn }}</td>            </tr>
+
+                            {% endif %}
+
+                        </div>                </form>
+
+                    </div>
+
+                </div>                <small class="form-text text-muted mt-2">                <td>${{ '%.2f'|format(book.price) }}</td>        </tfoot>
+
+
+
+                <div class="col-md-6">                    Available codes: SAVE10 (10% off $30+), BOOK20 (20% off $50+), FALL25 (25% off $100+)
+
+                    <!-- Order Summary -->
+
+                    <div class="card">                </small>                <td>{{ qty }}</td>    </table>
+
+                        <div class="card-header">
+
+                            <h5><i class="fas fa-calculator"></i> Order Summary</h5>            {% endif %}
+
+                        </div>
+
+                        <div class="card-body">        </div>                <td>${{ '%.2f'|format(book.price * qty) }}</td>
+
+                            <table class="table table-borderless">
+
+                                <tr>    </div>
+
+                                    <td>Subtotal:</td>
+
+                                    <td class="text-right">${{ '%.2f'|format(subtotal) }}</td>            </tr>    <!-- Checkout form -->
+
+                                </tr>
+
+                                {% if discount_amount > 0 %}    <!-- Checkout form -->
+
+                                <tr class="text-success">
+
+                                    <td>Discount ({{ discount_code }}):</td>    <form action="{{ url_for('checkout') }}" method="post">            {% endfor %}    <form action="{{ url_for('checkout') }}" method="post">
+
+                                    <td class="text-right">-${{ '%.2f'|format(discount_amount) }}</td>
+
+                                </tr>        <button type="submit" class="btn btn-primary btn-lg">Complete Purchase</button>
+
+                                {% endif %}
+
+                                <tr class="border-top">    </form>        </tbody>        <button type="submit" class="btn btn-primary">Complete Purchase</button>
+
+                                    <td><strong>Total:</strong></td>
+
+                                    <td class="text-right"><strong>${{ '%.2f'|format(total) }}</strong></td>
+
+                                </tr>
+
+                            </table>    <!-- Continue shopping link -->        <tfoot>    </form>
+
+                            
+
+                            <form method="POST" action="{{ url_for('checkout') }}">    <a href="{{ url_for('browse') }}" class="btn btn-secondary">Continue Shopping</a>
+
+                                <button type="submit" class="btn btn-success btn-block btn-lg">
+
+                                    <i class="fas fa-credit-card"></i> Proceed to Checkout            <tr>
+
+                                </button>
+
+                            </form>    {% else %}
+
+                        </div>
+
+                    </div>    <div class="alert alert-info">                <th colspan="5" class="text-right">Subtotal</th>    <!-- Continue shopping link -->
+
+                </div>
+
+            </div>        <h4>Your cart is empty.</h4>
+
+
+
+            <!-- Cart Actions -->        <p>Browse our collection to add books to your cart.</p>                <th>${{ '%.2f'|format(subtotal) }}</th>    <a href="{{ url_for('browse') }}" class="btn btn-secondary">Continue Shopping</a>
+
+            <div class="text-center mt-4">
+
+                <a href="{{ url_for('reset_cart') }}" class="btn btn-outline-danger">        <a href="{{ url_for('browse') }}" class="btn btn-primary">Start Shopping</a>
+
+                    <i class="fas fa-trash-alt"></i> Clear Cart
+
+                </a>    </div>            </tr>
+
+            </div>
+
+    {% endif %}
+
+        {% else %}
+
+            <!-- Empty Cart --></div>            {% if discount_amount > 0 %}    {% else %}
+
+            <div class="text-center py-5">
+
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+
+                <h3 class="text-muted">Your cart is empty</h3>
+
+                <p class="text-muted">Start browsing our books to add items to your cart.</p><script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>            <tr class="table-success">    <p>Your cart is empty.</p>
+
+                <a href="{{ url_for('browse') }}" class="btn btn-primary btn-lg">
+
+                    <i class="fas fa-book"></i> Browse Books<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+                </a>
+
+            </div></body>                <th colspan="5" class="text-right">Discount ({{ discount_code }})</th>    {% endif %}
+
+        {% endif %}
+
+    </div></html>
+
+                <th>-${{ '%.2f'|format(discount_amount) }}</th></div>
+
+    <!-- Bootstrap JS -->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>            </tr></body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>            {% endif %}</html>
+
+</html>
+            <tr class="table-info">
+                <th colspan="5" class="text-right"><strong>Total</strong></th>
+                <th><strong>${{ '%.2f'|format(total) }}</strong></th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Discount Code Section -->
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>Discount Code</h5>
+        </div>
+        <div class="card-body">
+            {% if discount_code %}
+                <div class="alert alert-success">
+                    <strong>Active Discount:</strong> {{ discount_code }} 
+                    <a href="{{ url_for('remove_discount') }}" class="btn btn-sm btn-outline-danger ml-2">Remove</a>
+                </div>
+            {% else %}
+                <form action="{{ url_for('apply_discount') }}" method="post" class="form-inline">
+                    <input type="text" name="discount_code" class="form-control mr-2" placeholder="Enter discount code" required>
+                    <button type="submit" class="btn btn-success">Apply Discount</button>
+                </form>
+                <small class="form-text text-muted mt-2">
+                    Available codes: SAVE10 (10% off $30+), BOOK20 (20% off $50+), FALL25 (25% off $100+)
+                </small>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Checkout form -->
+    <form action="{{ url_for('checkout') }}" method="post">
+        <button type="submit" class="btn btn-primary btn-lg">Complete Purchase</button>
+    </form>
+
+    <!-- Continue shopping link -->
+    <a href="{{ url_for('browse') }}" class="btn btn-secondary">Continue Shopping</a>
+
+    {% else %}
+    <div class="alert alert-info">
+        <h4>Your cart is empty.</h4>
+        <p>Browse our collection to add books to your cart.</p>
+        <a href="{{ url_for('browse') }}" class="btn btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
