@@ -1597,7 +1597,14 @@ def customer_register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
+        
+        # Handle both forms: register.html (first_name + last_name) and customer_register.html (full_name)
         full_name = request.form.get('full_name', '').strip()
+        if not full_name:
+            first_name = request.form.get('first_name', '').strip()
+            last_name = request.form.get('last_name', '').strip()
+            full_name = f"{first_name} {last_name}".strip()
+        
         phone = request.form.get('phone', '').strip()
         
         # Separate address fields
@@ -1728,11 +1735,11 @@ def customer_login():
             login_user(customer, remember=remember_me)
             flash(f'Welcome back, {customer.full_name}!', 'success')
             
-            # Redirect to intended page or browse
+            # Redirect to intended page or customer dashboard
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
-            return redirect(url_for('browse'))
+            return redirect(url_for('customer_dashboard'))
         else:
             flash('Invalid username/email or password.', 'danger')
     
@@ -1746,6 +1753,16 @@ def customer_logout():
         logout_user()
         flash('You have been logged out successfully.', 'info')
     return redirect(url_for('browse'))
+
+
+@app.route('/customer/dashboard')
+def customer_dashboard():
+    """Customer dashboard - main landing page after login."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to access your account.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    return render_template('customer_dashboard.html', customer=current_user)
 
 
 @app.route('/customer/account')

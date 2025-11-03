@@ -227,6 +227,7 @@
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('inventory') }}"><i class="fas fa-warehouse"></i> Inventory</a></li>
                         {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{{ url_for('customer_dashboard') }}"><i class="fas fa-home"></i> Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('customer_account') }}"><i class="fas fa-user"></i> Account</a></li>
                         {% endif %}
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('catalog_view') }}"><i class="fas fa-book"></i> Browse</a></li>
