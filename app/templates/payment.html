@@ -54,7 +54,7 @@
                                         <label for="card_number">Card Number</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="card_number" name="card_number" 
-                                                   placeholder="1234 5678 9012 3456" maxlength="19">
+                                                   placeholder="1234 5678 9012 3456" maxlength="19" value="4111111111111111">
                                             <div class="input-group-append">
                                                 <span class="input-group-text" id="card-type-icon">
                                                     <i class="fas fa-credit-card"></i>
@@ -67,7 +67,7 @@
                                     <div class="form-group">
                                         <label for="cvv">CVV</label>
                                         <input type="text" class="form-control" id="cvv" name="cvv" 
-                                               placeholder="123" maxlength="4">
+                                               placeholder="123" maxlength="4" value="123">
                                     </div>
                                 </div>
                             </div>
@@ -77,14 +77,14 @@
                                     <div class="form-group">
                                         <label for="cardholder_name">Cardholder Name</label>
                                         <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" 
-                                               placeholder="John Doe" value="{{ current_user.full_name if current_user.is_authenticated }}">
+                                               placeholder="John Doe" value="{{ current_user.full_name if current_user.is_authenticated else 'Test User' }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="expiry">Expiry Date</label>
                                         <input type="text" class="form-control" id="expiry" name="expiry" 
-                                               placeholder="MM/YY" maxlength="5">
+                                               placeholder="MM/YY" maxlength="5" value="12/25">
                                     </div>
                                 </div>
                             </div>

@@ -2718,7 +2718,7 @@ def checkout_page():
     
     total = subtotal - discount_amount
     
-    return render_template('checkout.html', 
+    return render_template('payment.html', 
                          cart_items=cart_items,
                          subtotal=subtotal,
                          discount_amount=discount_amount,
@@ -2952,7 +2952,12 @@ def test_route():
 @app.route('/simple_checkout_test')
 def simple_checkout_test():
     """Simple checkout test page."""
-    return render_template('simple_checkout_test.html')
+    return render_template('test_checkout.html')
+
+@app.route('/debug_checkout')
+def debug_checkout():
+    """Debug checkout page."""
+    return render_template('debug_checkout.html')
     try:
         # Calculate subtotal first
         subtotal = 0

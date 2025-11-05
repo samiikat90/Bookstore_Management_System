@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Checkout</title>
+</head>
+<body>
+    <h1>Debug Checkout Page</h1>
+    <p>If you can see this, the route is working.</p>
+    
+    <h2>Simple Form Test</h2>
+    <form method="POST" action="{{ url_for('process_checkout') }}">
+        <input type="hidden" name="payment_method" value="credit_card">
+        <input type="hidden" name="card_number" value="4111111111111111">
+        <input type="hidden" name="cvv" value="123">
+        <input type="hidden" name="expiry" value="12/25">
+        <input type="hidden" name="cardholder_name" value="Test User">
+        
+        <button type="submit" onclick="alert('Submitting hidden form...'); return true;">
+            Submit Hidden Form
+        </button>
+    </form>
+    
+    <script>
+        alert('JavaScript is working on this page!');
+        console.log('Debug checkout page loaded');
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Checkout</title>
+</head>
+<body>
+    <h1>Test Checkout Form</h1>
+    <form method="POST" action="{{ url_for('process_checkout') }}">
+        <p>Payment Method:</p>
+        <input type="radio" name="payment_method" value="credit_card" checked> Credit Card<br>
+        <input type="radio" name="payment_method" value="paypal"> PayPal<br>
+        <input type="radio" name="payment_method" value="bank_transfer"> Bank Transfer<br><br>
+        
+        <p>Credit Card Details:</p>
+        Card Number: <input type="text" name="card_number" value="4111111111111111"><br>
+        Expiry: <input type="text" name="expiry" value="12/25"><br>
+        CVV: <input type="text" name="cvv" value="123"><br>
+        Card Holder: <input type="text" name="card_holder" value="Test User"><br><br>
+        
+        <p>PayPal:</p>
+        Email: <input type="email" name="paypal_email" value="test@example.com"><br><br>
+        
+        <p>Bank Transfer:</p>
+        Routing: <input type="text" name="routing_number" value="123456789"><br>
+        Account: <input type="text" name="account_number" value="1234567890"><br><br>
+        
+        <button type="submit">Submit Order</button>
+    </form>
+    
+    <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        alert('Form is submitting...');
+    });
+    </script>
+</body>
+</html>
