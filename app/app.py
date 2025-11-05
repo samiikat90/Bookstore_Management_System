@@ -2925,40 +2925,6 @@ def process_checkout():
         db.session.rollback()
         flash(f"Error processing checkout: {e}", "danger")
         return redirect(url_for('checkout'))
-                    book.in_stock = False
-
-        # Commit all changes
-        db.session.commit()
-        
-        # Link payment to purchase (update after commit to get IDs)
-        if sales_created:
-            payment_record.purchase_id = purchase.id
-            db.session.commit()
-        
-        # Track used discount code to prevent reuse
-        if discount_code:
-            used_codes = session.get('used_discount_codes', [])
-            used_codes.append(discount_code)
-            session['used_discount_codes'] = used_codes
-            # Clear current discount code
-            session.pop('discount_code', None)
-        
-        # Clear cart
-        session['cart'] = {}
-        session.permanent = True
-        
-        flash(f"Payment successful! Total: ${total:.2f} | Transaction ID: {payment_record.transaction_id}", "success")
-        return redirect(url_for('receipt', amount=total, transaction_id=payment_record.transaction_id))
-        
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error processing payment: {e}", "danger")
-        return redirect(url_for('checkout_page'))
-        
-    except Exception as e:
-        db.session.rollback()
-        flash(f"Error processing checkout: {e}", "danger")
-        return redirect(url_for('view_cart'))
 
 
 @app.route('/receipt')
