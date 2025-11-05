@@ -274,6 +274,40 @@ class Purchase(db.Model):
     status = db.Column(db.String(50), default='Pending')
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     source = db.Column(db.String(20), default='purchase')  # indicate this is from purchases table
+    
+    # Status options
+    STATUS_OPTIONS = [
+        ('Pending', 'Pending'),
+        ('Confirmed', 'Confirmed'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled')
+    ]
+    
+    def get_status_badge_class(self):
+        """Return Bootstrap badge class for status display."""
+        status_classes = {
+            'Pending': 'badge-warning',
+            'Confirmed': 'badge-info',
+            'Processing': 'badge-primary',
+            'Shipped': 'badge-success',
+            'Delivered': 'badge-success',
+            'Cancelled': 'badge-danger'
+        }
+        return status_classes.get(self.status, 'badge-secondary')
+    
+    def get_status_icon(self):
+        """Return FontAwesome icon for status display."""
+        status_icons = {
+            'Pending': 'fas fa-clock',
+            'Confirmed': 'fas fa-check-circle',
+            'Processing': 'fas fa-cog',
+            'Shipped': 'fas fa-truck',
+            'Delivered': 'fas fa-home',
+            'Cancelled': 'fas fa-times-circle'
+        }
+        return status_icons.get(self.status, 'fas fa-question-circle')
 
 # Sale model for customer shopping cart purchases
 class Sale(db.Model):
@@ -2136,6 +2170,32 @@ def customer_orders():
                          customer=current_user)
 
 
+@app.route('/customer/orders/<int:purchase_id>')
+def customer_order_detail(purchase_id):
+    """View details of a specific customer order."""
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to view order details.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    # Get the purchase and verify it belongs to the current customer
+    purchase = Purchase.query.filter_by(
+        id=purchase_id, 
+        customer_email=current_user.email
+    ).first()
+    
+    if not purchase:
+        flash('Order not found or access denied.', 'danger')
+        return redirect(url_for('customer_orders'))
+    
+    # Get book information
+    book = Book.query.filter_by(isbn=purchase.book_isbn).first()
+    
+    return render_template('customer_order_detail.html', 
+                         purchase=purchase,
+                         book=book,
+                         customer=current_user)
+
+
 @app.route('/customer/notifications', methods=['GET', 'POST'])
 def customer_notifications():
     """Customer notification management page."""
@@ -2632,6 +2692,19 @@ def checkout():
                 sale = Sale(book_id=isbn, quantity=qty, total_price=total_price)
                 db.session.add(sale)
                 sales_created.append(sale)
+                
+                # Create purchase record for logged-in customers
+                if current_user.is_authenticated and hasattr(current_user, 'email'):
+                    purchase = Purchase(
+                        customer_name=current_user.full_name,
+                        customer_email=current_user.email,
+                        customer_phone=current_user.phone,
+                        customer_address=current_user.address_line1 or current_user.address,
+                        book_isbn=isbn,
+                        quantity=qty,
+                        status='Confirmed'  # Set initial status
+                    )
+                    db.session.add(purchase)
                 
                 # Update book inventory
                 book.quantity -= qty
