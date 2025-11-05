@@ -20,20 +20,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in cart_items %}
+                    {% for book, quantity in cart_items %}
                     <tr>
-                        <td><strong>{{ item.book.title }}</strong></td>
-                        <td>{{ item.book.author }}</td>
-                        <td>${{ "%.2f"|format(item.book.price) }}</td>
+                        <td><strong>{{ book.title }}</strong></td>
+                        <td>{{ book.author }}</td>
+                        <td>${{ "%.2f"|format(book.price) }}</td>
                         <td>
-                            <form method="POST" action="{{ url_for('update_cart_item', book_id=item.book.id) }}" class="d-inline">
-                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.book.stock }}" class="form-control" style="width: 80px; display: inline-block;">
+                            <form method="POST" action="{{ url_for('update_cart', isbn=book.isbn) }}" class="d-inline">
+                                <input type="number" name="quantity" value="{{ quantity }}" min="1" max="{{ book.quantity }}" class="form-control" style="width: 80px; display: inline-block;">
                                 <button type="submit" class="btn btn-sm btn-outline-hero ml-2">Update</button>
                             </form>
                         </td>
-                        <td><strong>${{ "%.2f"|format(item.book.price * item.quantity) }}</strong></td>
+                        <td><strong>${{ "%.2f"|format(book.price * quantity) }}</strong></td>
                         <td>
-                            <form method="POST" action="{{ url_for('remove_from_cart', book_id=item.book.id) }}" class="d-inline">
+                            <form method="POST" action="{{ url_for('remove_from_cart', isbn=book.isbn) }}" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this book from cart?')">Remove</button>
                             </form>
                         </td>
@@ -49,10 +49,13 @@
                     <div class="col-md-6">
                         <h4>Cart Summary</h4>
                         <p>Total Items: {{ cart_items|length }}</p>
-                        <p>Total Quantity: {{ total_quantity }}</p>
+                        <p>Subtotal: ${{ "%.2f"|format(subtotal) }}</p>
+                        {% if discount_amount > 0 %}
+                        <p class="text-success">Discount ({{ discount_code }}): -${{ "%.2f"|format(discount_amount) }}</p>
+                        {% endif %}
                     </div>
                     <div class="col-md-6 text-right">
-                        <h3 class="text-primary">Total: ${{ "%.2f"|format(total_price) }}</h3>
+                        <h3 class="text-primary">Total: ${{ "%.2f"|format(total) }}</h3>
                         
                         {% if current_user.is_authenticated %}
                             <form method="POST" action="{{ url_for('checkout') }}" class="mt-3">
@@ -60,11 +63,8 @@
                             </form>
                         {% else %}
                             <div class="mt-3">
-                                <p class="text-muted mb-3">Please log in to checkout or continue as guest:</p>
-                                <a href="{{ url_for('customer_login') }}" class="btn btn-hero mr-2">Login</a>
-                                <form method="POST" action="{{ url_for('guest_checkout') }}" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-hero">Guest Checkout</button>
-                                </form>
+                                <p class="text-muted mb-3">Please log in to checkout:</p>
+                                <a href="{{ url_for('customer_login') }}" class="btn btn-hero">Login to Checkout</a>
                             </div>
                         {% endif %}
                     </div>
