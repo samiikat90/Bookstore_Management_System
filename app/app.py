@@ -875,7 +875,7 @@ def orders_bulk_update():
                 order_list = []
                 for update_info in updated_orders:
                     order_details = get_order_details_dict(update_info['order'])
-                    order_list.append(f"Order #{update_info['order'].id}: {update_info['old_status']} → {update_info['new_status']}")
+                    order_list.append(f"Order #{update_info['order'].id}: {update_info['old_status']} -> {update_info['new_status']}")
                 
                 send_admin_notification(
                     subject=f"Bulk Order Status Update - Chapter 6: A Plot Twist",

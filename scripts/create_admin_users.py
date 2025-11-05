@@ -140,16 +140,16 @@ def main():
     
     if created_count > 0:
         print(f"\nWhat you can do now:")
-        print(f"  • Visit http://127.0.0.1:5000 to access the bookstore")
-        print(f"  • Log in with any of the admin accounts you created")
-        print(f"  • Receive email notifications for new orders and status changes")
-        print(f"  • Manage inventory, orders, and other admin users")
-        print(f"  • Access admin user management at http://127.0.0.1:5000/admin/users")
+        print(f"  - Visit http://127.0.0.1:5000 to access the bookstore")
+        print(f"  - Log in with any of the admin accounts you created")
+        print(f"  - Receive email notifications for new orders and status changes")
+        print(f"  - Manage inventory, orders, and other admin users")
+        print(f"  - Access admin user management at http://127.0.0.1:5000/admin/users")
         
         print(f"\nTips:")
-        print(f"  • Test the notification system by placing a sample order")
-        print(f"  • Use the web interface to manage notification preferences")
-        print(f"  • Create additional admin users through the web interface")
+        print(f"  - Test the notification system by placing a sample order")
+        print(f"  - Use the web interface to manage notification preferences")
+        print(f"  - Create additional admin users through the web interface")
     else:
         print(f"\nNo new users were created. You can run this script again anytime.")
     

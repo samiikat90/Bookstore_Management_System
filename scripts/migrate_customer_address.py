@@ -26,7 +26,7 @@ def migrate_customer_address_fields():
             columns_to_add = [col for col in new_columns if col not in columns]
             
             if not columns_to_add:
-                print("✓ All address columns already exist in the database.")
+                print("All address columns already exist in the database.")
                 return
             
             print(f"Adding new address columns: {columns_to_add}")
@@ -45,10 +45,10 @@ def migrate_customer_address_fields():
                     sql = "ALTER TABLE customer ADD COLUMN zip_code VARCHAR(20)"
                 
                 db.session.execute(text(sql))
-                print(f"✓ Added column: {column}")
+                print(f"Added column: {column}")
             
             db.session.commit()
-            print("✓ Database migration completed successfully!")
+            print("Database migration completed successfully!")
             
             # Show current customer table structure
             result = db.session.execute(text("PRAGMA table_info(customer)"))
@@ -58,7 +58,7 @@ def migrate_customer_address_fields():
                 
         except Exception as e:
             db.session.rollback()
-            print(f"✗ Migration failed: {e}")
+            print(f"Migration failed: {e}")
             raise
 
 if __name__ == "__main__":
