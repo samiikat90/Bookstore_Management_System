@@ -19,6 +19,8 @@ import csv
 import random
 import string
 import smtplib
+from payment_utils import validate_payment_method, process_payment, handle_payment_error, detect_card_type
+from payment_utils import PaymentError, CardDeclinedError, InvalidPaymentMethodError, InsufficientFundsError, NetworkTimeoutError
 
 # Initialize Flask app
 app = Flask(__name__, instance_relative_config=True)
@@ -317,6 +319,37 @@ class Sale(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     total_price = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+# Payment Method Model
+class PaymentMethod(db.Model):
+    """Stores payment method information for transactions."""
+    __tablename__ = 'payment_methods'
+    id = db.Column(db.Integer, primary_key=True)
+    purchase_id = db.Column(db.Integer, db.ForeignKey('purchases.id'), nullable=True)
+    method_type = db.Column(db.String(20), nullable=False)  # credit_card, paypal, bank_transfer
+    
+    # Credit Card fields
+    card_last_four = db.Column(db.String(4), nullable=True)
+    card_type = db.Column(db.String(20), nullable=True)  # Visa, Mastercard, etc.
+    cardholder_name = db.Column(db.String(100), nullable=True)
+    
+    # PayPal fields
+    paypal_email = db.Column(db.String(120), nullable=True)
+    
+    # Bank Transfer fields
+    bank_name = db.Column(db.String(100), nullable=True)
+    account_last_four = db.Column(db.String(4), nullable=True)
+    
+    # General fields
+    amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(3), default='USD')
+    transaction_id = db.Column(db.String(100), nullable=True)
+    status = db.Column(db.String(20), default='pending')  # pending, completed, failed
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<PaymentMethod {self.method_type}: ${self.amount}>'
 
 
 # Notification Preference Models
@@ -2648,17 +2681,143 @@ def reset_cart():
     return redirect(url_for('view_cart'))
 
 
-@app.route('/checkout', methods=['POST'])
+@app.route('/checkout', methods=['GET'])
+def checkout_page():
+    """Display checkout page with payment method selection."""
+    cart = session.get('cart', {})
+    if not cart:
+        flash("Cart is empty!", "warning")
+        return redirect(url_for('view_cart'))
+    
+    # Check if user is logged in
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to complete checkout.', 'warning')
+        return redirect(url_for('customer_login'))
+    
+    # Calculate cart totals
+    cart_items = []
+    subtotal = 0
+    
+    for isbn, qty in cart.items():
+        book = Book.query.filter_by(isbn=isbn).first()
+        if book:
+            # Check inventory
+            if book.quantity < qty:
+                flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
+                return redirect(url_for('view_cart'))
+            cart_items.append((book, qty))
+            subtotal += book.price * qty
+    
+    # Calculate discount
+    discount_code = session.get('discount_code')
+    discount_amount = 0
+    if discount_code and discount_code in DISCOUNT_CODES:
+        discount_rate, min_order = DISCOUNT_CODES[discount_code]
+        if subtotal >= min_order:
+            discount_amount = subtotal * discount_rate
+    
+    total = subtotal - discount_amount
+    
+    return render_template('checkout.html', 
+                         cart_items=cart_items,
+                         subtotal=subtotal,
+                         discount_amount=discount_amount,
+                         total=total,
+                         customer=current_user)
+
+
+@app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    """Complete the purchase and create sales records."""
+    """Display payment form for checkout."""
     cart = session.get('cart', {})
     if not cart:
         flash("Cart is empty!", "warning")
         return redirect(url_for('view_cart'))
 
-    total = 0
-    sales_created = []
+    # Check if user is logged in
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to complete checkout.', 'warning')
+        return redirect(url_for('customer_login'))
+
+    # Calculate cart totals
+    subtotal = 0
+    cart_items = []
     
+    for isbn, qty in cart.items():
+        book = Book.query.filter_by(isbn=isbn).first()
+        if book:
+            # Check if enough inventory
+            if book.quantity < qty:
+                flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
+                return redirect(url_for('view_cart'))
+            subtotal += book.price * qty
+            cart_items.append((book, qty))
+
+    # Apply discount if applicable
+    discount_code = session.get('discount_code')
+    discount_amount = 0
+    if discount_code and discount_code in DISCOUNT_CODES:
+        discount_rate, min_order = DISCOUNT_CODES[discount_code]
+        if subtotal >= min_order:
+            discount_amount = subtotal * discount_rate
+
+    total = subtotal - discount_amount
+
+    return render_template('payment.html', 
+                         cart_items=cart_items,
+                         subtotal=subtotal,
+                         discount_amount=discount_amount,
+                         total=total)
+
+
+@app.route('/process_checkout', methods=['POST'])
+def process_checkout():
+    """Complete the purchase and create sales records with payment validation."""
+    cart = session.get('cart', {})
+    if not cart:
+        flash("Cart is empty!", "warning")
+        return redirect(url_for('view_cart'))
+
+    # Check if user is logged in
+    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
+        flash('Please login to complete checkout.', 'warning')
+        return redirect(url_for('customer_login'))
+
+    # Get payment method information from form
+    payment_method = request.form.get('payment_method')
+    
+    # Validate payment method and collect details
+    payment_details = {}
+    try:
+        if payment_method == 'credit_card':
+            payment_details = {
+                'number': request.form.get('card_number', '').replace(' ', ''),
+                'expiry': request.form.get('expiry', ''),
+                'cvv': request.form.get('cvv', ''),
+                'name': request.form.get('cardholder_name', '')
+            }
+        elif payment_method == 'paypal':
+            payment_details = {
+                'email': request.form.get('paypal_email', '')
+            }
+        elif payment_method == 'bank_transfer':
+            payment_details = {
+                'routing_number': request.form.get('routing_number', ''),
+                'account_number': request.form.get('account_number', ''),
+                'bank_name': request.form.get('bank_name', '')
+            }
+        else:
+            flash("Invalid payment method selected.", "danger")
+            return redirect(url_for('checkout'))
+
+        # Validate payment method
+        is_valid, validation_message = validate_payment_method(payment_method, payment_details)
+        if not is_valid:
+            flash(f"Payment validation failed: {validation_message}", "danger")
+            return redirect(url_for('checkout'))
+            
+    except Exception as e:
+        flash(f"Payment validation error: {str(e)}", "danger")
     try:
         # Calculate subtotal first
         subtotal = 0
@@ -2668,7 +2827,7 @@ def checkout():
                 # Check if enough inventory
                 if book.quantity < qty:
                     flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
-                    return redirect(url_for('view_cart'))
+                    return redirect(url_for('checkout'))
                 subtotal += book.price * qty
         
         # Apply discount if applicable
@@ -2681,6 +2840,38 @@ def checkout():
         
         total = subtotal - discount_amount
         
+        # Process payment simulation
+        try:
+            payment_result = process_payment(total, payment_method, payment_details)
+            flash(f"Payment successful! {payment_result}", "success")
+        except PaymentError as e:
+            error_type, user_message, suggested_action = handle_payment_error(e)
+            flash(f"{user_message} {suggested_action}", error_type)
+            return redirect(url_for('checkout'))
+        
+        # Create payment method record
+        payment_record = PaymentMethod(
+            method_type=payment_method,
+            amount=total,
+            status='completed'
+        )
+        
+        # Store payment-specific information (secure way)
+        if payment_method == 'credit_card':
+            payment_record.card_last_four = payment_details['number'][-4:]
+            payment_record.card_type = detect_card_type(payment_details['number'])
+            payment_record.cardholder_name = payment_details['name']
+        elif payment_method == 'paypal':
+            payment_record.paypal_email = payment_details['email']
+        elif payment_method == 'bank_transfer':
+            payment_record.bank_name = payment_details['bank_name']
+            payment_record.account_last_four = payment_details['account_number'][-4:]
+        
+        # Generate transaction ID
+        payment_record.transaction_id = 'TXN' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        
+        db.session.add(payment_record)
+        
         # Process each item in cart
         for isbn, qty in cart.items():
             book = Book.query.filter_by(isbn=isbn).first()
@@ -2691,20 +2882,22 @@ def checkout():
                 # Create sale record
                 sale = Sale(book_id=isbn, quantity=qty, total_price=total_price)
                 db.session.add(sale)
-                sales_created.append(sale)
                 
                 # Create purchase record for logged-in customers
-                if current_user.is_authenticated and hasattr(current_user, 'email'):
-                    purchase = Purchase(
-                        customer_name=current_user.full_name,
-                        customer_email=current_user.email,
-                        customer_phone=current_user.phone,
-                        customer_address=current_user.address_line1 or current_user.address,
-                        book_isbn=isbn,
-                        quantity=qty,
-                        status='Confirmed'  # Set initial status
-                    )
-                    db.session.add(purchase)
+                purchase = Purchase(
+                    customer_name=current_user.full_name,
+                    customer_email=current_user.email,
+                    customer_phone=current_user.phone,
+                    customer_address=current_user.address_line1 or current_user.address,
+                    book_isbn=isbn,
+                    quantity=qty,
+                    status='Confirmed'  # Set initial status
+                )
+                # Link payment to purchase
+                purchase_id = db.session.flush()  # Get purchase ID
+                payment_record.purchase_id = purchase.id if hasattr(purchase, 'id') else None
+                
+                db.session.add(purchase)
                 
                 # Update book inventory
                 book.quantity -= qty
@@ -2726,8 +2919,41 @@ def checkout():
         session['cart'] = {}
         session.permanent = True
         
-        flash(f"Checkout complete! Total: ${total:.2f} (Discount: ${discount_amount:.2f})", "success")
-        return redirect(url_for('receipt', amount=total))
+        return redirect(url_for('receipt', amount=total, transaction_id=payment_record.transaction_id))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error processing checkout: {e}", "danger")
+        return redirect(url_for('checkout'))
+                    book.in_stock = False
+
+        # Commit all changes
+        db.session.commit()
+        
+        # Link payment to purchase (update after commit to get IDs)
+        if sales_created:
+            payment_record.purchase_id = purchase.id
+            db.session.commit()
+        
+        # Track used discount code to prevent reuse
+        if discount_code:
+            used_codes = session.get('used_discount_codes', [])
+            used_codes.append(discount_code)
+            session['used_discount_codes'] = used_codes
+            # Clear current discount code
+            session.pop('discount_code', None)
+        
+        # Clear cart
+        session['cart'] = {}
+        session.permanent = True
+        
+        flash(f"Payment successful! Total: ${total:.2f} | Transaction ID: {payment_record.transaction_id}", "success")
+        return redirect(url_for('receipt', amount=total, transaction_id=payment_record.transaction_id))
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error processing payment: {e}", "danger")
+        return redirect(url_for('checkout_page'))
         
     except Exception as e:
         db.session.rollback()
@@ -2739,7 +2965,8 @@ def checkout():
 def receipt():
     """Display purchase receipt."""
     amount = request.args.get('amount', 0)
-    return render_template('receipt.html', amount=amount)
+    transaction_id = request.args.get('transaction_id', 'N/A')
+    return render_template('receipt.html', amount=amount, transaction_id=transaction_id)
 
 
 # =============================================================================
