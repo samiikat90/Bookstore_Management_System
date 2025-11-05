@@ -2104,7 +2104,7 @@ def edit_customer_account():
             flash('Error updating account information. Please try again.', 'danger')
             print(f"Account update error: {e}")
     
-    return render_template('edit_customer_account.html', customer=current_user)
+    return render_template('edit_customer_account.html', customer=current_user, now=datetime.now)
 
 
 @app.route('/customer/orders')
