@@ -524,6 +524,56 @@ Chapter 6: A Plot Twist Security System"""
         return False
 
 
+def send_password_reset_email(email, reset_token, is_customer=False):
+    """Send password reset email with reset link."""
+    try:
+        # Determine the correct reset URL based on user type
+        if is_customer:
+            reset_url = f"http://127.0.0.1:5000/customer/reset-password/{reset_token}"
+            portal_name = "Customer Portal"
+        else:
+            reset_url = f"http://127.0.0.1:5000/reset-password/{reset_token}"
+            portal_name = "Admin Portal"
+        
+        subject = f"Password Reset Request - {portal_name}"
+        
+        body = f"""Hello,
+
+You have requested to reset your password for the Chapter 6: A Plot Twist {portal_name}.
+
+To reset your password, please click the link below:
+
+{reset_url}
+
+This link will expire in 1 hour for security reasons.
+
+If you did not request this password reset, please ignore this email. Your password will remain unchanged.
+
+Best regards,
+Chapter 6: A Plot Twist Security Team"""
+
+        # Send email
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = os.environ.get('GMAIL_EMAIL', 'chapter6aplottwist@gmail.com')
+        msg['To'] = email
+        
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp.starttls()
+        smtp.login(os.environ.get('GMAIL_EMAIL', 'chapter6aplottwist@gmail.com'), 
+                  os.environ.get('GMAIL_APP_PASSWORD', 'giuw lmir sdmo fgej'))
+        smtp.sendmail(os.environ.get('GMAIL_EMAIL', 'chapter6aplottwist@gmail.com'), 
+                     [email], msg.as_string())
+        smtp.quit()
+        
+        print(f"Password reset email sent to {email}")
+        return True
+        
+    except Exception as e:
+        print(f"Failed to send password reset email to {email}: {e}")
+        return False
+
+
 def get_order_details_dict(purchase):
     """Convert a Purchase object to a dictionary for notifications."""
     return {
@@ -1542,10 +1592,13 @@ def forgot_password():
             reset_token = user.generate_reset_token()
             db.session.commit()
             
-            # Send reset email (for now, we'll just flash the token)
-            # In production, you'd send an actual email here
-            flash(f'Password reset instructions have been sent to your email. '
-                  f'Reset link: /reset-password/{reset_token}', 'info')
+            # Send reset email
+            email_sent = send_password_reset_email(user.email, reset_token, is_customer=False)
+            
+            if email_sent:
+                flash('Password reset instructions have been sent to your email address.', 'info')
+            else:
+                flash('There was an issue sending the reset email. Please try again later.', 'danger')
         else:
             # For security, don't reveal if email exists or not
             flash('If the email address exists in our system, you will receive reset instructions.', 'info')
@@ -1611,10 +1664,13 @@ def customer_forgot_password():
             reset_token = customer.generate_reset_token()
             db.session.commit()
             
-            # Send reset email (for now, we'll just flash the token)
-            # In production, you'd send an actual email here
-            flash(f'Password reset instructions have been sent to your email. '
-                  f'Reset link: /customer/reset-password/{reset_token}', 'info')
+            # Send reset email
+            email_sent = send_password_reset_email(customer.email, reset_token, is_customer=True)
+            
+            if email_sent:
+                flash('Password reset instructions have been sent to your email address.', 'info')
+            else:
+                flash('There was an issue sending the reset email. Please try again later.', 'danger')
         else:
             # For security, don't reveal if email exists or not
             flash('If the email address exists in our system, you will receive reset instructions.', 'info')
