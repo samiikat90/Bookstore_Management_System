@@ -13,9 +13,10 @@
     </div>
     
     <form method="POST" class="form-inline mb-3">
-        <input type="date" name="start_date" class="form-control mr-2" required>
-        <input type="date" name="end_date" class="form-control mr-2" required>
-        <button class="btn btn-primary">Filter</button>
+        <input type="date" name="start_date" class="form-control mr-2" required id="start_date">
+        <input type="date" name="end_date" class="form-control mr-2" required id="end_date">
+        <button class="btn btn-primary mr-2">Filter</button>
+        <a href="{{ url_for('export_sales_csv') }}" class="btn btn-success" id="export-btn">Export to CSV</a>
     </form>
 
     {% if sales %}
@@ -45,5 +46,31 @@
     <p>No sales found for selected dates.</p>
     {% endif %}
 </div>
+
+<script>
+// Update export URL with date range when dates are selected
+document.addEventListener('DOMContentLoaded', function() {
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const exportBtn = document.getElementById('export-btn');
+    
+    function updateExportUrl() {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        
+        if (startDate && endDate) {
+            const exportUrl = "{{ url_for('export_sales_csv') }}" + 
+                             "?start_date=" + startDate + "&end_date=" + endDate;
+            exportBtn.href = exportUrl;
+        } else {
+            exportBtn.href = "{{ url_for('export_sales_csv') }}";
+        }
+    }
+    
+    startDateInput.addEventListener('change', updateExportUrl);
+    endDateInput.addEventListener('change', updateExportUrl);
+});
+</script>
+
 </body>
 </html>

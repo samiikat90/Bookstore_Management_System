@@ -3,7 +3,7 @@
 ## This file contains the Flask app, database models (Book, User, Purchase),
 ## authentication (Flask-Login) and manager-only routes for inventory and
 ## purchase review. Comments explain the purpose of each section.
-from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, make_response, session
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify, make_response, session, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 from functools import wraps
 from sqlalchemy import text, union_all, or_
+from io import StringIO
 import os, json
 import csv
 import random
@@ -2507,6 +2508,72 @@ def sales_report():
                     sales.append(sale_obj)
     
     return render_template('sales_report.html', sales=sales)
+
+
+@app.route('/sales/export.csv')
+@login_required
+@manager_required
+def export_sales_csv():
+    """Export sales data to CSV file."""
+    try:
+        # Get date range from query parameters (optional)
+        start_date = request.args.get('start_date')
+        end_date = request.args.get('end_date')
+        
+        # Build query for purchases (which represent our sales)
+        query = Purchase.query
+        
+        if start_date and end_date:
+            start_datetime = datetime.strptime(start_date, '%Y-%m-%d')
+            end_datetime = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)
+            query = query.filter(
+                Purchase.timestamp >= start_datetime,
+                Purchase.timestamp < end_datetime
+            )
+        
+        purchases = query.order_by(Purchase.timestamp.desc()).all()
+        
+        # Create CSV content
+        csv_content = StringIO()
+        writer = csv.writer(csv_content)
+        
+        # Write CSV header
+        writer.writerow(['Sale ID', 'Book ISBN', 'Book Title', 'Author', 'Quantity', 'Unit Price', 'Total Price', 'Sale Date'])
+        
+        # Write sales data
+        for purchase in purchases:
+            book = Book.query.filter_by(isbn=purchase.book_isbn).first()
+            if book:
+                unit_price = book.price
+                total_price = unit_price * purchase.quantity
+                writer.writerow([
+                    purchase.id,
+                    purchase.book_isbn,
+                    book.title,
+                    book.author,
+                    purchase.quantity,
+                    f'{unit_price:.2f}',
+                    f'{total_price:.2f}',
+                    purchase.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                ])
+        
+        # Create response
+        csv_content.seek(0)
+        
+        # Generate filename with current timestamp
+        filename = f"sales_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        
+        response = Response(
+            csv_content.getvalue(),
+            mimetype='text/csv',
+            headers={'Content-Disposition': f'attachment; filename={filename}'}
+        )
+        
+        return response
+        
+    except Exception as e:
+        flash(f'Error exporting sales data: {str(e)}', 'danger')
+        return redirect(url_for('sales_report'))
 
 
 # Run the app
