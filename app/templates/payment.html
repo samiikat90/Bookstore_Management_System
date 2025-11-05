@@ -20,7 +20,7 @@
                         <i class="fas fa-shield-alt"></i> Payment Information
                     </h4>
                     
-                    <form method="POST" action="{{ url_for('process_checkout') }}" id="payment-form">
+                    <form method="POST" action="{{ url_for('process_checkout') }}" id="payment-form" onsubmit="console.log('Form submitting...'); return true;">
                         <!-- Payment Method Selection -->
                         <div class="form-group">
                             <label for="payment_method"><strong>Payment Method</strong></label>

@@ -2773,6 +2773,11 @@ def checkout():
 @app.route('/process_checkout', methods=['POST'])
 def process_checkout():
     """Complete the purchase and create sales records with payment validation."""
+    print("=== PROCESS_CHECKOUT DEBUG ===")
+    print(f"Form data: {dict(request.form)}")
+    print(f"Cart: {session.get('cart', {})}")
+    print(f"User authenticated: {current_user.is_authenticated}")
+    
     cart = session.get('cart', {})
     if not cart:
         flash("Cart is empty!", "warning")
@@ -2785,6 +2790,7 @@ def process_checkout():
 
     # Get payment method information from form
     payment_method = request.form.get('payment_method')
+    print(f"Payment method: {payment_method}")
     
     # Validate payment method and collect details
     payment_details = {}
@@ -2796,6 +2802,7 @@ def process_checkout():
                 'cvv': request.form.get('cvv', ''),
                 'name': request.form.get('cardholder_name', '')
             }
+            print(f"Credit card details: {payment_details}")
         elif payment_method == 'paypal':
             payment_details = {
                 'email': request.form.get('paypal_email', '')
@@ -2807,17 +2814,145 @@ def process_checkout():
                 'bank_name': request.form.get('bank_name', '')
             }
         else:
+            print(f"Invalid payment method: {payment_method}")
             flash("Invalid payment method selected.", "danger")
             return redirect(url_for('checkout'))
 
         # Validate payment method
+        print(f"Validating payment method: {payment_method} with details: {payment_details}")
         is_valid, validation_message = validate_payment_method(payment_method, payment_details)
+        print(f"Validation result: {is_valid}, message: {validation_message}")
         if not is_valid:
             flash(f"Payment validation failed: {validation_message}", "danger")
             return redirect(url_for('checkout'))
             
     except Exception as e:
+        print(f"Exception in payment validation: {str(e)}")
         flash(f"Payment validation error: {str(e)}", "danger")
+        return redirect(url_for('checkout'))
+
+    # Continue with the full checkout process
+    try:
+        # Calculate subtotal first
+        subtotal = 0
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                # Check if enough inventory
+                if book.quantity < qty:
+                    flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
+                    return redirect(url_for('checkout'))
+                subtotal += book.price * qty
+        
+        # Apply discount if applicable
+        discount_code = session.get('discount_code')
+        discount_amount = 0
+        if discount_code and discount_code in DISCOUNT_CODES:
+            discount_rate, min_order = DISCOUNT_CODES[discount_code]
+            if subtotal >= min_order:
+                discount_amount = subtotal * discount_rate
+        
+        total = subtotal - discount_amount
+        
+        # Process payment simulation
+        try:
+            payment_result = process_payment(total, payment_method, payment_details)
+            print(f"Payment simulation result: {payment_result}")
+        except PaymentError as e:
+            error_type, user_message, suggested_action = handle_payment_error(e)
+            flash(f"{user_message} {suggested_action}", error_type)
+            return redirect(url_for('checkout'))
+        
+        # Create payment method record
+        payment_record = PaymentMethod(
+            method_type=payment_method,
+            amount=total,
+            status='completed'
+        )
+        
+        # Store payment-specific information (secure way)
+        if payment_method == 'credit_card':
+            payment_record.card_last_four = payment_details['number'][-4:]
+            payment_record.card_type = detect_card_type(payment_details['number'])
+            payment_record.cardholder_name = payment_details['name']
+        elif payment_method == 'paypal':
+            payment_record.paypal_email = payment_details['email']
+        elif payment_method == 'bank_transfer':
+            payment_record.bank_name = payment_details['bank_name']
+            payment_record.account_last_four = payment_details['account_number'][-4:]
+        
+        # Generate transaction ID
+        payment_record.transaction_id = 'TXN' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        
+        db.session.add(payment_record)
+        
+        # Process each item in cart
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                # Calculate total price for this item (without discount - discount is applied to overall total)
+                total_price = book.price * qty
+                
+                # Create sale record
+                sale = Sale(book_id=isbn, quantity=qty, total_price=total_price)
+                db.session.add(sale)
+                
+                # Create purchase record for logged-in customers
+                purchase = Purchase(
+                    customer_name=current_user.full_name,
+                    customer_email=current_user.email,
+                    customer_phone=current_user.phone,
+                    customer_address=current_user.address_line1 or current_user.address,
+                    book_isbn=isbn,
+                    quantity=qty,
+                    status='Confirmed'  # Set initial status
+                )
+                db.session.add(purchase)
+                
+                # Update book inventory
+                book.quantity -= qty
+                if book.quantity == 0:
+                    book.in_stock = False
+
+        # Commit all changes
+        db.session.commit()
+        
+        # Track used discount code to prevent reuse
+        if discount_code:
+            used_codes = session.get('used_discount_codes', [])
+            used_codes.append(discount_code)
+            session['used_discount_codes'] = used_codes
+            # Clear current discount code
+            session.pop('discount_code', None)
+        
+        # Clear cart
+        session['cart'] = {}
+        session.permanent = True
+        
+        flash(f"Payment successful! {payment_result}", "success")
+        return redirect(url_for('receipt', amount=total, transaction_id=payment_record.transaction_id))
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Exception in checkout processing: {str(e)}")
+        flash(f"Error processing checkout: {e}", "danger")
+    return redirect(url_for('checkout'))
+
+
+@app.route('/test_route', methods=['GET', 'POST'])
+def test_route():
+    """Test route to verify Flask is working."""
+    print("=== TEST ROUTE CALLED ===")
+    if request.method == 'POST':
+        print(f"POST data: {dict(request.form)}")
+        return "POST received!"
+    return "Test route works!"
+
+
+@app.route('/simple_checkout_test')
+def simple_checkout_test():
+    """Simple checkout test page."""
+    return render_template('simple_checkout_test.html')
     try:
         # Calculate subtotal first
         subtotal = 0
