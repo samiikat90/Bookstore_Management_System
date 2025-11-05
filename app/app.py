@@ -101,6 +101,10 @@ class User(db.Model, UserMixin):
     two_fa_expires = db.Column(db.DateTime, nullable=True)  # When the code expires
     two_fa_verified = db.Column(db.Boolean, default=False)  # Whether 2FA was completed for current session
 
+    # Password Reset fields
+    reset_token = db.Column(db.String(100), nullable=True)  # Password reset token
+    reset_token_expires = db.Column(db.DateTime, nullable=True)  # When the reset token expires
+
     def set_password(self, password):
         hashed = generate_password_hash(password)
         self.password_hash = hashed
@@ -146,6 +150,30 @@ class User(db.Model, UserMixin):
         self.two_fa_code = None
         self.two_fa_expires = None
 
+    def generate_reset_token(self):
+        """Generate a password reset token that expires in 1 hour."""
+        self.reset_token = ''.join(random.choices(string.ascii_letters + string.digits, k=64))
+        self.reset_token_expires = datetime.now() + timedelta(hours=1)
+        return self.reset_token
+
+    def verify_reset_token(self, token):
+        """Verify if the provided token is valid and not expired."""
+        if not self.reset_token or not self.reset_token_expires:
+            return False
+        
+        # Check if token has expired
+        if datetime.now() > self.reset_token_expires:
+            self.clear_reset_token()
+            return False
+        
+        # Check if token matches
+        return self.reset_token == token
+
+    def clear_reset_token(self):
+        """Clear the reset token and expiration."""
+        self.reset_token = None
+        self.reset_token_expires = None
+
 
 # Customer model for customer registration and login
 class Customer(db.Model, UserMixin):
@@ -170,6 +198,10 @@ class Customer(db.Model, UserMixin):
     # Customer preferences
     receive_marketing = db.Column(db.Boolean, default=False)
     
+    # Password Reset fields
+    reset_token = db.Column(db.String(100), nullable=True)  # Password reset token
+    reset_token_expires = db.Column(db.DateTime, nullable=True)  # When the reset token expires
+    
     def set_password(self, password):
         """Set password hash for customer."""
         self.password_hash = generate_password_hash(password)
@@ -186,6 +218,30 @@ class Customer(db.Model, UserMixin):
     def is_manager(self):
         """Customers are never managers."""
         return False
+
+    def generate_reset_token(self):
+        """Generate a password reset token that expires in 1 hour."""
+        self.reset_token = ''.join(random.choices(string.ascii_letters + string.digits, k=64))
+        self.reset_token_expires = datetime.now() + timedelta(hours=1)
+        return self.reset_token
+
+    def verify_reset_token(self, token):
+        """Verify if the provided token is valid and not expired."""
+        if not self.reset_token or not self.reset_token_expires:
+            return False
+        
+        # Check if token has expired
+        if datetime.now() > self.reset_token_expires:
+            self.clear_reset_token()
+            return False
+        
+        # Check if token matches
+        return self.reset_token == token
+
+    def clear_reset_token(self):
+        """Clear the reset token and expiration."""
+        self.reset_token = None
+        self.reset_token_expires = None
     
     def __repr__(self):
         return f'<Customer {self.username}>'
@@ -1465,6 +1521,144 @@ def logout_ajax():
         return jsonify({'status': 'success', 'message': 'Logged out successfully'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
+
+
+# Admin Forgot Password Routes
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    """Admin forgot password - request reset token."""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        
+        if not email:
+            flash('Please enter your email address.', 'danger')
+            return render_template('forgot_password.html')
+        
+        # Find user by email
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            # Generate reset token
+            reset_token = user.generate_reset_token()
+            db.session.commit()
+            
+            # Send reset email (for now, we'll just flash the token)
+            # In production, you'd send an actual email here
+            flash(f'Password reset instructions have been sent to your email. '
+                  f'Reset link: /reset-password/{reset_token}', 'info')
+        else:
+            # For security, don't reveal if email exists or not
+            flash('If the email address exists in our system, you will receive reset instructions.', 'info')
+        
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html')
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """Admin reset password with token."""
+    # Find user with valid token
+    user = User.query.filter_by(reset_token=token).first()
+    
+    if not user or not user.verify_reset_token(token):
+        flash('Invalid or expired reset token.', 'danger')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        new_password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if not new_password or not confirm_password:
+            flash('Please enter both password fields.', 'danger')
+            return render_template('reset_password.html', token=token)
+        
+        if new_password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return render_template('reset_password.html', token=token)
+        
+        if len(new_password) < 6:
+            flash('Password must be at least 6 characters long.', 'danger')
+            return render_template('reset_password.html', token=token)
+        
+        # Update password and clear reset token
+        user.set_password(new_password)
+        user.clear_reset_token()
+        db.session.commit()
+        
+        flash('Your password has been reset successfully. You can now log in.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html', token=token)
+
+
+# Customer Forgot Password Routes
+@app.route('/customer/forgot-password', methods=['GET', 'POST'])
+def customer_forgot_password():
+    """Customer forgot password - request reset token."""
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        
+        if not email:
+            flash('Please enter your email address.', 'danger')
+            return render_template('customer_forgot_password.html')
+        
+        # Find customer by email
+        customer = Customer.query.filter_by(email=email).first()
+        
+        if customer:
+            # Generate reset token
+            reset_token = customer.generate_reset_token()
+            db.session.commit()
+            
+            # Send reset email (for now, we'll just flash the token)
+            # In production, you'd send an actual email here
+            flash(f'Password reset instructions have been sent to your email. '
+                  f'Reset link: /customer/reset-password/{reset_token}', 'info')
+        else:
+            # For security, don't reveal if email exists or not
+            flash('If the email address exists in our system, you will receive reset instructions.', 'info')
+        
+        return redirect(url_for('customer_login'))
+    
+    return render_template('customer_forgot_password.html')
+
+
+@app.route('/customer/reset-password/<token>', methods=['GET', 'POST'])
+def customer_reset_password(token):
+    """Customer reset password with token."""
+    # Find customer with valid token
+    customer = Customer.query.filter_by(reset_token=token).first()
+    
+    if not customer or not customer.verify_reset_token(token):
+        flash('Invalid or expired reset token.', 'danger')
+        return redirect(url_for('customer_login'))
+    
+    if request.method == 'POST':
+        new_password = request.form.get('password', '')
+        confirm_password = request.form.get('confirm_password', '')
+        
+        if not new_password or not confirm_password:
+            flash('Please enter both password fields.', 'danger')
+            return render_template('customer_reset_password.html', token=token)
+        
+        if new_password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return render_template('customer_reset_password.html', token=token)
+        
+        if len(new_password) < 6:
+            flash('Password must be at least 6 characters long.', 'danger')
+            return render_template('customer_reset_password.html', token=token)
+        
+        # Update password and clear reset token
+        customer.set_password(new_password)
+        customer.clear_reset_token()
+        db.session.commit()
+        
+        flash('Your password has been reset successfully. You can now log in.', 'success')
+        return redirect(url_for('customer_login'))
+    
+    return render_template('customer_reset_password.html', token=token)
 
 
 @app.route('/all_orders')
