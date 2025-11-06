@@ -21,6 +21,7 @@ import string
 import smtplib
 from payment_utils import validate_payment_method, process_payment, handle_payment_error, detect_card_type
 from payment_utils import PaymentError, CardDeclinedError, InvalidPaymentMethodError, InsufficientFundsError, NetworkTimeoutError
+from encryption_utils import DataEncryption
 
 # Initialize Flask app
 app = Flask(__name__, instance_relative_config=True)
@@ -67,6 +68,9 @@ DISCOUNT_CODES = {
     'STUDENT15': [0.15, 25.0], # 15% off orders over $25
     'WINTER30': [0.30, 75.0]   # 30% off orders over $75
 }
+
+# Initialize encryption for sensitive data
+encryption = DataEncryption()
 
 # Flask-Login setup
 login_manager = LoginManager()
@@ -181,18 +185,18 @@ class User(db.Model, UserMixin):
 class Customer(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email_encrypted = db.Column(db.Text, nullable=False)  # Encrypted email storage
     password_hash = db.Column(db.String(128), nullable=False)
     full_name = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(20), nullable=True)
+    phone_encrypted = db.Column(db.Text, nullable=True)  # Encrypted phone storage
     
-    # Address fields
-    address = db.Column(db.Text, nullable=True)  # Keep for backward compatibility
-    address_line1 = db.Column(db.String(255), nullable=True)
-    address_line2 = db.Column(db.String(255), nullable=True)
-    city = db.Column(db.String(100), nullable=True)
-    state = db.Column(db.String(50), nullable=True)
-    zip_code = db.Column(db.String(20), nullable=True)
+    # Address fields - encrypted
+    address_encrypted = db.Column(db.Text, nullable=True)  # Keep for backward compatibility
+    address_line1_encrypted = db.Column(db.Text, nullable=True)
+    address_line2_encrypted = db.Column(db.Text, nullable=True)
+    city = db.Column(db.String(100), nullable=True)  # City can remain unencrypted
+    state = db.Column(db.String(50), nullable=True)  # State can remain unencrypted
+    zip_code = db.Column(db.String(20), nullable=True)  # Zip can remain unencrypted
     
     date_registered = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
@@ -203,6 +207,82 @@ class Customer(db.Model, UserMixin):
     # Password Reset fields
     reset_token = db.Column(db.String(100), nullable=True)  # Password reset token
     reset_token_expires = db.Column(db.DateTime, nullable=True)  # When the reset token expires
+    
+    # Properties for transparent encryption/decryption
+    @property
+    def email(self):
+        """Decrypt and return email address."""
+        if self.email_encrypted:
+            return encryption.decrypt(self.email_encrypted)
+        return None
+    
+    @email.setter
+    def email(self, value):
+        """Encrypt and store email address."""
+        if value:
+            self.email_encrypted = encryption.encrypt(value)
+        else:
+            self.email_encrypted = None
+    
+    @property
+    def phone(self):
+        """Decrypt and return phone number."""
+        if self.phone_encrypted:
+            return encryption.decrypt(self.phone_encrypted)
+        return None
+    
+    @phone.setter
+    def phone(self, value):
+        """Encrypt and store phone number."""
+        if value:
+            self.phone_encrypted = encryption.encrypt(value)
+        else:
+            self.phone_encrypted = None
+    
+    @property
+    def address(self):
+        """Decrypt and return address."""
+        if self.address_encrypted:
+            return encryption.decrypt(self.address_encrypted)
+        return None
+    
+    @address.setter
+    def address(self, value):
+        """Encrypt and store address."""
+        if value:
+            self.address_encrypted = encryption.encrypt(value)
+        else:
+            self.address_encrypted = None
+    
+    @property
+    def address_line1(self):
+        """Decrypt and return address line 1."""
+        if self.address_line1_encrypted:
+            return encryption.decrypt(self.address_line1_encrypted)
+        return None
+    
+    @address_line1.setter
+    def address_line1(self, value):
+        """Encrypt and store address line 1."""
+        if value:
+            self.address_line1_encrypted = encryption.encrypt(value)
+        else:
+            self.address_line1_encrypted = None
+    
+    @property
+    def address_line2(self):
+        """Decrypt and return address line 2."""
+        if self.address_line2_encrypted:
+            return encryption.decrypt(self.address_line2_encrypted)
+        return None
+    
+    @address_line2.setter
+    def address_line2(self, value):
+        """Encrypt and store address line 2."""
+        if value:
+            self.address_line2_encrypted = encryption.encrypt(value)
+        else:
+            self.address_line2_encrypted = None
     
     def set_password(self, password):
         """Set password hash for customer."""
@@ -268,14 +348,60 @@ class Purchase(db.Model):
     __tablename__ = 'purchases'
     id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String(120), nullable=False)
-    customer_email = db.Column(db.String(120))
-    customer_phone = db.Column(db.String(50))
-    customer_address = db.Column(db.Text)
+    customer_email_encrypted = db.Column(db.Text)  # Encrypted email storage
+    customer_phone_encrypted = db.Column(db.Text)  # Encrypted phone storage
+    customer_address_encrypted = db.Column(db.Text)  # Encrypted address storage
     book_isbn = db.Column(db.String(50))
     quantity = db.Column(db.Integer, default=1)
     status = db.Column(db.String(50), default='Pending')
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     source = db.Column(db.String(20), default='purchase')  # indicate this is from purchases table
+    
+    # Properties for transparent encryption/decryption
+    @property
+    def customer_email(self):
+        """Decrypt and return customer email."""
+        if self.customer_email_encrypted:
+            return encryption.decrypt(self.customer_email_encrypted)
+        return None
+    
+    @customer_email.setter
+    def customer_email(self, value):
+        """Encrypt and store customer email."""
+        if value:
+            self.customer_email_encrypted = encryption.encrypt(value)
+        else:
+            self.customer_email_encrypted = None
+    
+    @property
+    def customer_phone(self):
+        """Decrypt and return customer phone."""
+        if self.customer_phone_encrypted:
+            return encryption.decrypt(self.customer_phone_encrypted)
+        return None
+    
+    @customer_phone.setter
+    def customer_phone(self, value):
+        """Encrypt and store customer phone."""
+        if value:
+            self.customer_phone_encrypted = encryption.encrypt(value)
+        else:
+            self.customer_phone_encrypted = None
+    
+    @property
+    def customer_address(self):
+        """Decrypt and return customer address."""
+        if self.customer_address_encrypted:
+            return encryption.decrypt(self.customer_address_encrypted)
+        return None
+    
+    @customer_address.setter
+    def customer_address(self, value):
+        """Encrypt and store customer address."""
+        if value:
+            self.customer_address_encrypted = encryption.encrypt(value)
+        else:
+            self.customer_address_encrypted = None
     
     # Status options
     STATUS_OPTIONS = [
@@ -334,8 +460,8 @@ class PaymentMethod(db.Model):
     card_type = db.Column(db.String(20), nullable=True)  # Visa, Mastercard, etc.
     cardholder_name = db.Column(db.String(100), nullable=True)
     
-    # PayPal fields
-    paypal_email = db.Column(db.String(120), nullable=True)
+    # PayPal fields - encrypted
+    paypal_email_encrypted = db.Column(db.Text, nullable=True)
     
     # Bank Transfer fields
     bank_name = db.Column(db.String(100), nullable=True)
@@ -347,6 +473,22 @@ class PaymentMethod(db.Model):
     transaction_id = db.Column(db.String(100), nullable=True)
     status = db.Column(db.String(20), default='pending')  # pending, completed, failed
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Property for transparent encryption/decryption of PayPal email
+    @property
+    def paypal_email(self):
+        """Decrypt and return PayPal email."""
+        if self.paypal_email_encrypted:
+            return encryption.decrypt(self.paypal_email_encrypted)
+        return None
+    
+    @paypal_email.setter
+    def paypal_email(self, value):
+        """Encrypt and store PayPal email."""
+        if value:
+            self.paypal_email_encrypted = encryption.encrypt(value)
+        else:
+            self.paypal_email_encrypted = None
     
     def __repr__(self):
         return f'<PaymentMethod {self.method_type}: ${self.amount}>'
