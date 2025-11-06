@@ -72,7 +72,12 @@
                                     </div>
                                 </form>
                                 <small class="form-text text-muted mt-1">
-                                    Available codes: SAVE10 (10% off $30+), BOOK20 (20% off $50+), STUDENT15 (15% off $25+), FALL25 (25% off $100+), WINTER30 (30% off $75+)
+                                    Have a discount code? Enter it above. 
+                                    {% if current_user.is_authenticated %}
+                                        <a href="{{ url_for('customer_notifications') }}" class="text-primary">Sign up for notifications</a> to receive exclusive discount codes and special offers!
+                                    {% else %}
+                                        <a href="{{ url_for('customer_login') }}" class="text-primary">Login</a> or <a href="{{ url_for('customer_register') }}" class="text-primary">create an account</a> to receive exclusive discount codes and special offers!
+                                    {% endif %}
                                 </small>
                             {% endif %}
                         </div>

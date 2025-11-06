@@ -1,0 +1,29 @@
+<!-- Discount Code Promotion Section -->
+<div class="card border-primary mt-4">
+    <div class="card-body text-center">
+        <h5 class="card-title text-primary">
+            <i class="fas fa-tags"></i> Exclusive Discount Codes Available!
+        </h5>
+        <p class="card-text">
+            Don't miss out on special savings! We regularly offer discount codes to our valued customers.
+        </p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('customer_notifications') }}" class="btn btn-outline-primary">
+                <i class="fas fa-bell"></i> Set Up Discount Notifications
+            </a>
+            <small class="d-block mt-2 text-muted">
+                Get notified when new discount codes become available
+            </small>
+        {% else %}
+            <a href="{{ url_for('customer_register') }}" class="btn btn-primary mr-2">
+                <i class="fas fa-user-plus"></i> Create Account
+            </a>
+            <a href="{{ url_for('customer_login') }}" class="btn btn-outline-primary">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <small class="d-block mt-2 text-muted">
+                Join our community to receive exclusive discount codes and special offers
+            </small>
+        {% endif %}
+    </div>
+</div>
