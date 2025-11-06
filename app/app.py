@@ -69,6 +69,33 @@ DISCOUNT_CODES = {
     'WINTER30': [0.30, 75.0]   # 30% off orders over $75
 }
 
+# =============================
+# BOOK GENRE CONFIGURATION
+# =============================
+# Predefined book genres available in the catalog
+BOOK_GENRES = [
+    'Fiction',
+    'Mystery',
+    'Romance', 
+    'Science Fiction',
+    'Fantasy',
+    'Biography',
+    'History',
+    'Self-Help',
+    'Horror',
+    'Thriller',
+    'Adventure',
+    'Children',
+    'Young Adult',
+    'Poetry',
+    'Drama',
+    'Philosophy',
+    'Psychology',
+    'Business',
+    'Health & Wellness',
+    'Travel'
+]
+
 # Initialize encryption for sensitive data
 encryption = DataEncryption()
 
@@ -897,64 +924,63 @@ def load_catalog(file_path):
 
 @app.route('/catalog')
 def catalog_view():
-    """Web view for catalog.csv with search and category filter."""
-    catalog_file = os.path.join(app.root_path, '..', 'uploads', 'BookListing.csv')
-    catalog = load_catalog(catalog_file)
-    # Load inventory from Book model
-    inventory_books = Book.query.all()
-    inventory = []
-    for book in inventory_books:
-        inventory.append({
-            'Name': book.title,
-            'Category': getattr(book, 'cover_type', 'Inventory'),
-            'Price': float(book.price),
-            'Source': 'Inventory',
-            'Author': book.author,
-            'Quantity': book.quantity,
-            'ISBN': book.isbn
-        })
-    # Add Source field to catalog items
-    for item in catalog:
-        item['Source'] = 'Catalog'
-        item['Author'] = item.get('Author', '')
-        item['Quantity'] = None
-        item['ISBN'] = None
-    # Remove items with 'Unknown' title from catalog
-    catalog = [item for item in catalog if item['Name'] != 'Unknown']
-    # Merge and deduplicate by Name+Category+Price
-    all_items = catalog + inventory
-    seen = set()
-    merged = []
-    for item in all_items:
-        key = (item['Name'], item['Category'], item['Price'])
-        if key not in seen:
-            merged.append(item)
-            seen.add(key)
+    """Enhanced catalog view with proper genre filtering and search."""
+    # Get search and filter parameters
     search = (request.args.get('search') or '').strip()
-    category = (request.args.get('category') or '').strip()
-    filtered = merged
+    genre = (request.args.get('genre') or '').strip()
+    sort = request.args.get('sort', 'title')
+    
+    # Load books from database inventory
+    books_query = Book.query.filter(Book.quantity > 0)  # Only show books in stock
+    
+    # Apply search filter
     if search:
-        filtered = [item for item in filtered if search.lower() in item['Name'].lower()]
-    if category:
-        filtered = [item for item in filtered if item['Category'] and item['Category'].lower() == category.lower()]
+        books_query = books_query.filter(
+            db.or_(
+                Book.title.contains(search),
+                Book.author.contains(search),
+                Book.description.contains(search)
+            )
+        )
     
-    # Convert the dictionary format to objects that the template expects
-    books = []
-    for item in filtered:
-        # Create a simple object with the properties the template expects
-        book_obj = type('Book', (), {})()
-        book_obj.title = item['Name']
-        book_obj.author = item.get('Author', 'Unknown')
-        book_obj.category = item.get('Category', 'Uncategorized')
-        book_obj.price = item['Price']
-        book_obj.stock = item.get('Quantity', 0) if item.get('Quantity') is not None else 1
-        book_obj.quantity = book_obj.stock  # For compatibility
-        book_obj.isbn = item.get('ISBN', f"ISBN-{hash(f'{item['Name']}-{item.get('Author', '')}')}")  # Use actual ISBN or generate one
-        book_obj.id = hash(f"{item['Name']}-{item.get('Author', '')}")  # Generate a simple ID
-        books.append(book_obj)
+    # Apply genre filter
+    if genre:
+        books_query = books_query.filter(Book.genre == genre)
     
-    categories = sorted(set(item['Category'] for item in merged if item['Category']))
-    return render_template('catalog.html', books=books, search=search, category=category, categories=categories, sort=request.args.get('sort', 'title'))
+    # Apply sorting
+    if sort == 'title':
+        books_query = books_query.order_by(Book.title.asc())
+    elif sort == 'author':
+        books_query = books_query.order_by(Book.author.asc())
+    elif sort == 'price':
+        books_query = books_query.order_by(Book.price.asc())
+    elif sort == 'genre':
+        books_query = books_query.order_by(Book.genre.asc())
+    else:
+        books_query = books_query.order_by(Book.title.asc())
+    
+    books = books_query.all()
+    
+    # Get available genres from books in stock and predefined genres
+    available_genres = set()
+    for book in Book.query.filter(Book.quantity > 0).all():
+        if book.genre:
+            available_genres.add(book.genre)
+    
+    # Add predefined genres that might not be in current inventory
+    for predefined_genre in BOOK_GENRES:
+        available_genres.add(predefined_genre)
+    
+    available_genres = sorted(list(available_genres))
+    
+    return render_template('catalog.html', 
+                         books=books, 
+                         search=search, 
+                         genre=genre,
+                         sort=sort,
+                         genres=available_genres,
+                         total_books=len(books),
+                         predefined_genres=BOOK_GENRES)
 
 
 @app.route('/inventory')
