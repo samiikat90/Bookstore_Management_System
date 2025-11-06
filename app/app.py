@@ -3226,7 +3226,7 @@ def apply_discount():
             subtotal += book.price * qty
 
     if code not in DISCOUNT_CODES:
-        flash("Invalid discount code. Please try again.", 'danger')
+        flash("Invalid discount code. Please check the spelling and try again.", 'danger')
         return redirect(url_for('view_cart'))
 
     discount_rate, min_order = DISCOUNT_CODES[code]
@@ -3234,18 +3234,20 @@ def apply_discount():
     # Check if code already used in this session
     used_codes = session.get('used_discount_codes', [])
     if code in used_codes:
-        flash(f"The discount code '{code}' has already been used.", 'warning')
+        flash(f"The discount code '{code}' has already been used in this session.", 'warning')
         return redirect(url_for('view_cart'))
 
-    # Check minimum order requirement
+    # Check minimum order requirement with detailed message
     if subtotal < min_order:
-        flash(f"Order must be at least ${min_order:.2f} to use code '{code}'.", 'warning')
+        remaining_amount = min_order - subtotal
+        flash(f"The discount code '{code}' requires a minimum order of ${min_order:.2f}. Your current subtotal is ${subtotal:.2f}. Please add ${remaining_amount:.2f} more to your cart to use this code.", 'warning')
         return redirect(url_for('view_cart'))
 
     # Apply the discount
     session['discount_code'] = code
     session.permanent = True
-    flash(f"Discount code '{code}' applied successfully! ({int(discount_rate*100)}% off)", 'success')
+    discount_amount = subtotal * discount_rate
+    flash(f"Success! Discount code '{code}' applied - {int(discount_rate*100)}% off (You saved ${discount_amount:.2f}!)", 'success')
     return redirect(url_for('view_cart'))
 
 
