@@ -116,7 +116,7 @@
 
 ## Completed Backlog Items
 
-### **Sprint 6 (Most Recent) - Completed ✅**
+### **Sprint 6 (Most Recent) - Completed**
 
 | Story ID | Title | Story Points | Completion Date | Notes |
 |----------|--------|--------------|-----------------|-------|

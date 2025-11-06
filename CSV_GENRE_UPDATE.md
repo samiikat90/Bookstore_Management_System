@@ -40,10 +40,10 @@ isbn, title, author, price, quantity, genre, cover_type, description
 - `test_csv_processing.py` - Processing logic test
 
 ## Testing Results
-✅ CSV format validation passed
-✅ Genre validation working correctly
-✅ All 10 sample books processed successfully
-✅ No errors in processing logic
+- CSV format validation passed
+- Genre validation working correctly
+- All 10 sample books processed successfully
+- No errors in processing logic
 
 ## Usage Instructions
 
