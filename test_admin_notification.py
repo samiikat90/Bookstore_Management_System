@@ -55,19 +55,19 @@ def test_admin_notification_data():
     for field in required_fields:
         if field in admin_order_details:
             value = admin_order_details[field]
-            print(f"✓ {field}: {value}")
+            print(f"PASS {field}: {value}")
             if value == 'N/A' and field in ['book_isbn', 'quantity', 'status']:
                 print(f"  WARNING: {field} should not be N/A")
                 all_present = False
         else:
-            print(f"✗ {field}: MISSING")
+            print(f"FAIL {field}: MISSING")
             all_present = False
     
     print("\n" + "=" * 50)
     if all_present and admin_order_details['book_isbn'] != 'N/A':
-        print("✓ SUCCESS: All required fields are present with valid data!")
+        print("SUCCESS: All required fields are present with valid data!")
     else:
-        print("✗ FAILURE: Some fields are missing or have N/A values")
+        print("FAILURE: Some fields are missing or have N/A values")
     
     print(f"\nSample notification message would contain:")
     print(f"Order ID: {admin_order_details.get('id', 'N/A')}")

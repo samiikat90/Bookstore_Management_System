@@ -70,10 +70,10 @@ def test_genre_system():
         print("=" * 50)
         print("CATALOG TESTING COMPLETE")
         print("=" * 50)
-        print("✓ Genre system is properly configured")
-        print("✓ Books have genres assigned")
-        print("✓ Catalog filtering should work correctly")
-        print("✓ Ready for enhanced catalog browsing!")
+        print("PASS: Genre system is properly configured")
+        print("PASS: Books have genres assigned")
+        print("PASS: Catalog filtering should work correctly")
+        print("PASS: Ready for enhanced catalog browsing!")
 
 if __name__ == "__main__":
     test_genre_system()

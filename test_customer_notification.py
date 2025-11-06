@@ -67,9 +67,9 @@ def test_customer_notification_with_discount():
     
     if (abs(subtotal - expected_subtotal) < 0.01 and 
         abs(final_total - expected_total) < 0.01):
-        print("\n✓ SUCCESS: Email would show correct discount information!")
+        print("\nSUCCESS: Email would show correct discount information!")
     else:
-        print("\n✗ FAILURE: Calculation mismatch detected")
+        print("\nFAILURE: Calculation mismatch detected")
 
 def test_customer_notification_without_discount():
     """Test customer notification email formatting without discount."""
@@ -100,7 +100,7 @@ def test_customer_notification_without_discount():
     print("ITEMS ORDERED:")
     print(order_summary)
     print(total_text)
-    print("\n✓ SUCCESS: Email would show simple total without discount section!")
+    print("\nSUCCESS: Email would show simple total without discount section!")
 
 if __name__ == "__main__":
     test_customer_notification_with_discount()

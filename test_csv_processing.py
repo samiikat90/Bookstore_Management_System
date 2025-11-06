@@ -83,12 +83,12 @@ def test_csv_processing():
                     continue
                 
                 processed_count += 1
-                print(f"✓ {processed_count}: {title} by {author} ({genre}) - ${price}")
+                print(f"PASS {processed_count}: {title} by {author} ({genre}) - ${price}")
         
         print(f"\nProcessing Summary:")
         print(f"  Total books processed: {processed_count}")
         print(f"  Genre warnings: {genre_warnings}")
-        print("✓ CSV processing test completed successfully!")
+        print("PASS: CSV processing test completed successfully!")
         
         return True
         
@@ -105,8 +105,8 @@ if __name__ == "__main__":
     
     print("\n" + "=" * 60)
     if success:
-        print("✓ CSV processing logic is working correctly!")
+        print("PASS: CSV processing logic is working correctly!")
         print("The upload function should handle the new genre column properly.")
     else:
-        print("✗ Issues found in CSV processing logic.")
+        print("FAIL: Issues found in CSV processing logic.")
     print("=" * 60)

@@ -40,12 +40,12 @@ def test_checkout_workflow():
             print("   → Redirected to login (expected if not logged in)")
         elif 'cart' in response.url:
             print("   → Redirected to cart (expected if cart is empty)")
-        elif response.status_code == 200:
-            print("   ✓ Checkout page accessible")
+        if response.status_code == 200:
+            print("   PASS: Checkout page accessible")
         else:
-            print("   ✗ Unexpected response")
+            print("   FAIL: Unexpected response")
     except Exception as e:
-        print(f"   ✗ Error accessing checkout: {e}")
+        print(f"   FAIL: Error accessing checkout: {e}")
     
     # Test 3: Test the process_checkout endpoint
     print("\n3. Testing process_checkout endpoint...")
@@ -71,7 +71,7 @@ def test_checkout_workflow():
             print("   → Other response")
             
     except Exception as e:
-        print(f"   ✗ Error testing process_checkout: {e}")
+        print(f"   FAIL: Error testing process_checkout: {e}")
     
     # Test 4: Test our test route
     print("\n4. Testing test route...")
@@ -86,7 +86,7 @@ def test_checkout_workflow():
         print(f"   POST Content: {response.text[:100]}")
         
     except Exception as e:
-        print(f"   ✗ Error testing test route: {e}")
+        print(f"   FAIL: Error testing test route: {e}")
 
 if __name__ == "__main__":
     test_checkout_workflow()
