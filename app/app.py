@@ -543,6 +543,70 @@ def send_admin_notification(subject, message, order_details=None):
         print(f"Error sending admin notifications: {e}")
 
 
+def send_customer_purchase_notification(customer_email, customer_name, purchase_details, transaction_id):
+    """Send purchase confirmation email to customer."""
+    try:
+        subject = "Order Confirmation - Chapter 6: A Plot Twist Bookstore"
+        
+        # Build order summary
+        order_summary = ""
+        total_amount = 0
+        for item in purchase_details:
+            book_title = item.get('title', 'Unknown Book')
+            quantity = item.get('quantity', 1)
+            price = item.get('price', 0)
+            item_total = price * quantity
+            total_amount += item_total
+            order_summary += f"• {book_title} (Qty: {quantity}) - ${price:.2f} each = ${item_total:.2f}\n"
+        
+        body = f"""Dear {customer_name},
+
+Thank you for your purchase from Chapter 6: A Plot Twist Bookstore!
+
+Your order has been confirmed and is being processed.
+
+ORDER DETAILS:
+Transaction ID: {transaction_id}
+Order Date: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
+
+ITEMS ORDERED:
+{order_summary}
+TOTAL: ${total_amount:.2f}
+
+Your order status can be tracked by logging into your account at:
+http://127.0.0.1:5000/customer_login
+
+We'll send you another notification when your order ships.
+
+Thank you for choosing Chapter 6: A Plot Twist Bookstore!
+
+Best regards,
+The Chapter 6 Team
+Email: chapter6aplottwist@gmail.com
+"""
+        
+        # Send email
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = os.environ.get('GMAIL_EMAIL', 'chapter6aplottwist@gmail.com')
+        msg['To'] = customer_email
+        
+        smtp = smtplib.SMTP('smtp.gmail.com', 587)
+        smtp.starttls()
+        smtp.login(os.environ.get('GMAIL_EMAIL', 'chapter6aplottwist@gmail.com'), 
+                  os.environ.get('GMAIL_APP_PASSWORD', 'giuw lmir sdmo fgej'))
+        smtp.sendmail(os.environ.get('GMAIL_EMAIL', 'chapter6aplottwist@gmail.com'), 
+                     [customer_email], msg.as_string())
+        smtp.quit()
+        
+        print(f"Purchase confirmation sent to {customer_name} ({customer_email})")
+        return True
+        
+    except Exception as e:
+        print(f"Failed to send purchase confirmation to {customer_email}: {e}")
+        return False
+
+
 def send_2fa_code(user):
     """Send 2FA code to user's email."""
     if not user.email:
@@ -2916,6 +2980,75 @@ def process_checkout():
 
         # Commit all changes
         db.session.commit()
+        
+        # Prepare purchase details for customer notification
+        purchase_details = []
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                purchase_details.append({
+                    'title': book.title,
+                    'quantity': qty,
+                    'price': book.price
+                })
+        
+        # Send purchase confirmation email to customer
+        try:
+            send_customer_purchase_notification(
+                customer_email=current_user.email,
+                customer_name=current_user.full_name,
+                purchase_details=purchase_details,
+                transaction_id=payment_record.transaction_id
+            )
+        except Exception as e:
+            print(f"Failed to send customer notification: {e}")
+            # Don't fail the checkout if email fails
+        
+        # Send admin notification about new purchase
+        try:
+            # Prepare order details for admin
+            admin_order_details = {
+                'id': payment_record.transaction_id,
+                'customer_name': current_user.full_name,
+                'customer_email': current_user.email,
+                'customer_phone': current_user.phone or 'N/A',
+                'payment_method': payment_method,
+                'amount': total,
+                'items_count': len(purchase_details),
+                'timestamp': datetime.now().strftime('%B %d, %Y at %I:%M %p')
+            }
+            
+            # Build items summary for admin
+            items_summary = ""
+            for item in purchase_details:
+                items_summary += f"• {item['title']} (Qty: {item['quantity']}) - ${item['price']:.2f}\n"
+            
+            admin_message = f"""New purchase completed on Chapter 6: A Plot Twist Bookstore!
+
+CUSTOMER INFORMATION:
+Name: {current_user.full_name}
+Email: {current_user.email}
+Phone: {current_user.phone or 'N/A'}
+
+TRANSACTION DETAILS:
+Transaction ID: {payment_record.transaction_id}
+Payment Method: {payment_method.replace('_', ' ').title()}
+Total Amount: ${total:.2f}
+Date: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
+
+ITEMS PURCHASED:
+{items_summary}
+
+This order requires processing and fulfillment."""
+
+            send_admin_notification(
+                subject=f"New Purchase - ${total:.2f} - {current_user.full_name}",
+                message=admin_message,
+                order_details=admin_order_details
+            )
+        except Exception as e:
+            print(f"Failed to send admin notification: {e}")
+            # Don't fail the checkout if email fails
         
         # Track used discount code to prevent reuse
         if discount_code:
