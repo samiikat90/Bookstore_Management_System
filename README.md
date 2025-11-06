@@ -1,6 +1,6 @@
 # Chapter 6: A Plot Twist - Bookstore Management System
 
-A comprehensive Flask-based bookstore management system with automated setup, admin features, and order management capabilities.
+A comprehensive Flask-based bookstore management system with advanced features including two-factor authentication, payment validation, email notifications, comprehensive genre system, and customer data encryption.
 
 ## Quick Start for New Team Members
 
@@ -20,15 +20,23 @@ Make sure you have these installed:
 
 2. **Install Python Dependencies**
    ```bash
-   pip install flask flask-sqlalchemy flask-login werkzeug
+   # Install all required packages from requirements.txt
+   pip install -r requirements.txt
+   
+   # Or install individually if needed:
+   pip install flask flask-sqlalchemy flask-login werkzeug cryptography blinker
    ```
 
 3. **Start the Application**
    ```bash
-   # Option 1: Quick start (Windows)
-   .\start.ps1
+   # Option 1: Automated setup with virtual environment (Recommended)
+   .\run.ps1 -setup
+   .\run.ps1
    
-   # Option 2: Manual start (All platforms)
+   # Option 2: Quick start (Windows)
+   .\run.ps1
+   
+   # Option 3: Manual start (All platforms)
    python app/app.py
    ```
 
@@ -66,56 +74,83 @@ The system comes pre-populated with sample data:
 
 ## Key Features
 
-### Admin Dashboard
-- Real-time inventory and order tracking
-- Interactive management interface
-- User management capabilities
+### Core E-commerce Platform
+- **Complete Shopping Cart System** - Add, remove, update quantities with persistent storage
+- **Guest Checkout** - Purchase without account creation, with email confirmations
+- **Customer Registration & Login** - Full account management with order history
+- **Advanced Product Catalog** - Professional book display with genre badges
+- **Search & Filtering** - Find books by title, author, or genre
+
+### Advanced Security Features
+- **Two-Factor Authentication (2FA)** - Email-based security codes for all admin access
+- **Customer Data Encryption** - Sensitive information encrypted at rest using Fernet
+- **Secure Password Hashing** - Industry-standard password protection
+- **Session Management** - Automatic timeout and browser-close detection
+- **Admin Role Control** - Manager-level access controls
+
+### Payment & Order Processing
+- **Payment Validation System** - Luhn algorithm for credit cards, PayPal/bank validation
+- **Multiple Payment Methods** - Credit card, PayPal, bank transfer support
+- **Order Status Tracking** - Complete lifecycle from pending to delivered
+- **Email Notifications** - Automated customer confirmations and admin alerts
+- **Purchase History** - Detailed order tracking for customers
 
 ### Inventory Management
-- Add, edit, and delete books
-- CSV import/export functionality
-- Stock tracking and management
-- Professional book catalog with search
+- **Complete CRUD Operations** - Add, edit, delete books with validation
+- **CSV Import/Export** - Bulk inventory management with error handling
+- **Genre Classification** - 20+ predefined genres with visual badges
+- **Quantity Management** - Partial and full stock deletion with safety checks
+- **Stock Tracking** - Real-time inventory updates
 
-### Order Management
-- View and process customer orders
-- Update order statuses (Pending → Processing → Shipped → Completed)
-- Bulk order operations
-- Email notifications for status changes
+### Admin Dashboard
+- **Real-time Analytics** - Order, inventory, and user management
+- **Bulk Operations** - Mass order updates and inventory changes
+- **User Management** - Create and manage admin accounts
+- **Email System Integration** - SMTP configuration with Gmail
+- **Data Export** - CSV exports for orders and purchases
 
-### Security Features
-- Two-Factor Authentication (2FA) via email
-- Secure password hashing
-- Session management
-- Admin-only access controls
+### Professional UI/UX
+- **Bootstrap 4 Framework** - Responsive, mobile-first design
+- **Font Awesome Icons** - Professional iconography throughout
+- **Genre Badges** - Visual categorization on all book displays
+- **Status Indicators** - Color-coded order and inventory status
+- **Loading States** - User feedback for all operations
 
 ## Automated Scripts
 
 ### For Quick Operations:
 ```bash
-# Start the application with database check
-.\start.ps1
+# Start with virtual environment (Recommended)
+.\run.ps1 -setup    # First time setup
+.\run.ps1           # Regular startup
 
-# Reset database with fresh sample data
-.\reset_database.ps1
+# Legacy startup options
+.\start.ps1         # Quick start without venv
+python app/app.py   # Direct start
 
-# Check current database status
-python scripts/db_status.py
+# Database management
+.\reset_database.ps1    # Reset with fresh sample data
+python scripts/db_status.py    # Check database status
 
-# View all user accounts
-python scripts/check_users.py
-
-# Reset passwords (if needed)
-python scripts/reset_password.py
+# User management
+python scripts/check_users.py    # View all accounts
+python scripts/reset_password.py    # Reset passwords if needed
 ```
 
-### For Development:
+### For Development & Testing:
 ```bash
-# Create fresh sample data
-python scripts/setup_database.py
+# Sample data creation
+python scripts/setup_database.py    # Create fresh sample data
+python scripts/standardize_passwords.py    # Standardize admin passwords
 
-# Standardize all admin passwords
-python scripts/standardize_passwords.py
+# Payment system testing
+python test_payment_validation.py    # Test payment validation
+
+# Database schema checks
+python scripts/check_db_schema.py    # Verify database structure
+
+# Encryption migration (if needed)
+python migrate_encryption.py    # Migrate to encrypted customer data
 ```
 
 ## File Structure
@@ -123,19 +158,42 @@ python scripts/standardize_passwords.py
 ```
 Bookstore_Management_System/
 ├── app/
-│   ├── app.py              # Main Flask application
-│   └── templates/          # HTML templates
-├── scripts/                # Automation scripts
-│   ├── setup_database.py   # Create sample data
-│   ├── db_status.py       # Check database
-│   ├── reset_password.py   # Reset user passwords
+│   ├── app.py                    # Main Flask application
+│   ├── payment_utils.py         # Payment validation (Luhn algorithm)
+│   ├── payment_validator.py     # Payment method validation
+│   └── templates/               # HTML templates
+│       ├── index.html          # Homepage with genre badges
+│       ├── cart.html           # Shopping cart interface
+│       ├── payment.html        # Payment form with validation
+│       ├── admin_dashboard.html # Admin control panel
+│       ├── orders.html         # Order management
+│       ├── purchases.html      # Purchase tracking
+│       └── ...                 # Additional templates
+├── scripts/                     # Automation scripts
+│   ├── setup_database.py       # Create sample data
+│   ├── check_db_schema.py      # Database structure validation
+│   ├── db_status.py            # System status check
+│   ├── reset_password.py       # Password reset utility
 │   └── standardize_passwords.py
-├── instance/               # Database storage (auto-created)
-├── uploads/                # CSV files
-├── start.ps1              # Quick start script
-├── reset_database.ps1     # Database reset script
-├── QUICK_START.md         # Detailed setup guide
-└── requirements.txt       # Python dependencies
+├── instance/                    # Database storage (auto-created)
+│   └── uploads/                # File upload storage
+├── uploads/                     # CSV files and exports
+│   ├── BookListing.csv         # Sample inventory data
+│   └── UpdatedBookListing.csv  # Updated inventory
+├── tests/                       # Test files
+│   └── test_payment_validation.py # Payment system tests
+├── Documentation/               # Project documentation
+│   ├── AGILE_DOCUMENTATION.md  # Sprint logs and retrospectives
+│   ├── USER_STORIES.md         # Complete user story backlog
+│   ├── PRODUCT_BACKLOG.md      # Feature prioritization
+│   └── FINAL_FEATURE_SUMMARY.md # Feature completion summary
+├── run.ps1                     # Automated setup with virtual environment
+├── start.ps1                   # Quick start script
+├── reset_database.ps1          # Database reset script
+├── requirements.txt            # Python dependencies
+├── migrate_encryption.py       # Customer data encryption migration
+├── test_payment_validation.py  # Payment validation testing
+└── README.md                   # This file
 ```
 
 ## Troubleshooting
@@ -144,6 +202,7 @@ Bookstore_Management_System/
 
 **"Python not found"**
 - Install Python and ensure it's added to your system PATH
+- Try using `python3` instead of `python` on some systems
 
 **"Permission denied" (Windows PowerShell)**
 ```powershell
@@ -153,16 +212,46 @@ Set-ExecutionPolicy RemoteSigned
 
 **"Module not found" errors**
 ```bash
-pip install flask flask-sqlalchemy flask-login werkzeug
+# Install all dependencies:
+pip install -r requirements.txt
+
+# Or install specific missing modules:
+pip install flask flask-sqlalchemy flask-login werkzeug cryptography
+```
+
+**"Virtual environment issues"**
+```bash
+# Reset virtual environment:
+rm -rf venv  # or Remove-Item venv -Recurse on Windows
+.\run.ps1 -setup
 ```
 
 **Can't access website**
 - Make sure Flask is running (look for "Running on http://127.0.0.1:5000")
 - Check the correct URL: http://127.0.0.1:5000
+- Try a different port if 5000 is in use
 
 **Email/2FA issues**
 - Check your email (including spam folder) for the 6-digit code
 - Codes expire in 10 minutes - request a new one if needed
+- Ensure your email is correctly configured in your user account
+
+**Payment validation errors**
+- Use test credit card numbers for development (see payment_utils.py)
+- Ensure payment form fields are properly filled
+- Check browser console for JavaScript errors
+
+**Database issues**
+```bash
+# Check database status:
+python scripts/check_db_schema.py
+
+# Reset database if corrupted:
+.\reset_database.ps1
+
+# Migrate encryption if needed:
+python migrate_encryption.py
+```
 
 ### Getting Help:
 1. Check terminal output for error messages
@@ -194,28 +283,43 @@ pip install flask flask-sqlalchemy flask-login werkzeug
 - **Two-Factor Authentication** is required for all admin access
 - **Email notifications** are configured and working for order updates
 - **CSV import/export** supports large inventories with proper formatting
+- **Payment validation** includes Luhn algorithm for credit cards
+- **Customer data encryption** protects sensitive information at rest
+- **Genre system** displays consistently across all templates
+- **Guest checkout** supports customers without accounts
+- **Comprehensive documentation** available in /Documentation folder
 
 ## Technologies Used
 
-- **Backend**: Flask, SQLAlchemy, Flask-Login
+- **Backend**: Flask 3.1.2, SQLAlchemy 2.0.44, Flask-Login 0.6.3
 - **Frontend**: Bootstrap 4, Font Awesome, jQuery
-- **Database**: SQLite (development) with full schema
-- **Security**: 2FA, password hashing, session management
+- **Database**: SQLite (development) with full schema and encryption
+- **Security**: 2FA, password hashing, session management, data encryption
 - **Email**: Gmail SMTP for notifications and 2FA codes
+- **Payment**: Luhn algorithm validation, multiple payment methods
+- **Development**: Virtual environment support, automated testing
 
 ---
 
 ## Quick Reference Commands
 
 ```bash
-# Start application
-.\start.ps1
+# Setup and start (Recommended for new setup)
+.\run.ps1 -setup    # First time: creates venv and installs dependencies
+.\run.ps1           # Start application with virtual environment
 
-# Reset everything
-.\reset_database.ps1
+# Alternative startup methods
+.\start.ps1         # Quick start without virtual environment
+python app/app.py   # Direct start
 
-# Check status
-python scripts/db_status.py
+# Database operations
+.\reset_database.ps1           # Reset with fresh data
+python scripts/check_db_schema.py    # Verify database structure
+python migrate_encryption.py         # Migrate to encrypted data
+
+# Testing and validation
+python test_payment_validation.py    # Test payment system
+python scripts/db_status.py         # Check system status
 
 # Access application
 http://127.0.0.1:5000
@@ -223,11 +327,13 @@ http://127.0.0.1:5000
 # Login with your individual account
 Username: [your assigned username] (sfranco, bmorris, fbrown, or amurphy)
 Password: admin123
+# Then check email for 6-digit 2FA code
 ```
 
-For detailed setup instructions, see `QUICK_START.md`.
+For detailed setup instructions, see the comprehensive documentation in the `/Documentation` folder.
 
 ---
 
 **Repository**: https://github.com/samiikat90/Bookstore_Management_System  
-**Last Updated**: October 30, 2025
+**Last Updated**: November 5, 2025  
+**Current Version**: 1.0 - Full E-commerce Platform with Advanced Features
