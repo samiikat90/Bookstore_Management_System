@@ -543,21 +543,35 @@ def send_admin_notification(subject, message, order_details=None):
         print(f"Error sending admin notifications: {e}")
 
 
-def send_customer_purchase_notification(customer_email, customer_name, purchase_details, transaction_id):
+def send_customer_purchase_notification(customer_email, customer_name, purchase_details, transaction_id, discount_info=None):
     """Send purchase confirmation email to customer."""
     try:
         subject = "Order Confirmation - Chapter 6: A Plot Twist Bookstore"
         
         # Build order summary
         order_summary = ""
-        total_amount = 0
+        subtotal = 0
         for item in purchase_details:
             book_title = item.get('title', 'Unknown Book')
             quantity = item.get('quantity', 1)
             price = item.get('price', 0)
             item_total = price * quantity
-            total_amount += item_total
+            subtotal += item_total
             order_summary += f"• {book_title} (Qty: {quantity}) - ${price:.2f} each = ${item_total:.2f}\n"
+        
+        # Calculate discount and final total
+        discount_text = ""
+        final_total = subtotal
+        if discount_info:
+            discount_code = discount_info.get('code')
+            discount_amount = discount_info.get('amount', 0)
+            final_total = discount_info.get('final_total', subtotal)
+            if discount_code and discount_amount > 0:
+                discount_text = f"\nSubtotal: ${subtotal:.2f}\nDiscount ({discount_code}): -${discount_amount:.2f}"
+        
+        total_text = f"TOTAL: ${final_total:.2f}"
+        if discount_text:
+            total_text = f"{discount_text}\n{total_text}"
         
         body = f"""Dear {customer_name},
 
@@ -571,7 +585,7 @@ Order Date: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}
 
 ITEMS ORDERED:
 {order_summary}
-TOTAL: ${total_amount:.2f}
+{total_text}
 
 Your order status can be tracked by logging into your account at:
 http://127.0.0.1:5000/customer_login
@@ -2994,11 +3008,21 @@ def process_checkout():
         
         # Send purchase confirmation email to customer
         try:
+            # Prepare discount information for email
+            discount_info = None
+            if discount_code and discount_amount > 0:
+                discount_info = {
+                    'code': discount_code,
+                    'amount': discount_amount,
+                    'final_total': total
+                }
+            
             send_customer_purchase_notification(
                 customer_email=current_user.email,
                 customer_name=current_user.full_name,
                 purchase_details=purchase_details,
-                transaction_id=payment_record.transaction_id
+                transaction_id=payment_record.transaction_id,
+                discount_info=discount_info
             )
         except Exception as e:
             print(f"Failed to send customer notification: {e}")
@@ -3006,12 +3030,20 @@ def process_checkout():
         
         # Send admin notification about new purchase
         try:
+            # Get the first item for the basic notification (or create a summary)
+            first_item = purchase_details[0] if purchase_details else None
+            book_isbn_list = [isbn for isbn in cart.keys()]
+            quantity_total = sum(cart.values())
+            
             # Prepare order details for admin
             admin_order_details = {
                 'id': payment_record.transaction_id,
                 'customer_name': current_user.full_name,
                 'customer_email': current_user.email,
                 'customer_phone': current_user.phone or 'N/A',
+                'book_isbn': ', '.join(book_isbn_list) if book_isbn_list else 'N/A',
+                'quantity': quantity_total,
+                'status': 'Confirmed',
                 'payment_method': payment_method,
                 'amount': total,
                 'items_count': len(purchase_details),
