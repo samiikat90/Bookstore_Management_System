@@ -53,6 +53,29 @@
                         {% if discount_amount > 0 %}
                         <p class="text-success">Discount ({{ discount_code }}): -${{ "%.2f"|format(discount_amount) }}</p>
                         {% endif %}
+                        
+                        <!-- Discount Code Section -->
+                        <div class="mt-3">
+                            <h5><i class="fas fa-tags"></i> Discount Code</h5>
+                            {% if discount_code %}
+                                <div class="alert alert-success">
+                                    <strong>Active Discount:</strong> {{ discount_code }}
+                                    <a href="{{ url_for('remove_discount') }}" class="btn btn-sm btn-outline-danger ml-2">Remove</a>
+                                </div>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('apply_discount') }}">
+                                    <div class="input-group">
+                                        <input type="text" name="discount_code" class="form-control" placeholder="Enter discount code" required>
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-outline-hero">Apply</button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <small class="form-text text-muted mt-1">
+                                    Available codes: SAVE10 (10% off $30+), BOOK20 (20% off $50+), STUDENT15 (15% off $25+), FALL25 (25% off $100+), WINTER30 (30% off $75+)
+                                </small>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="col-md-6 text-right">
                         <h3 class="text-primary">Total: ${{ "%.2f"|format(total) }}</h3>
