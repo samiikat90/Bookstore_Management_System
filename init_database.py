@@ -19,7 +19,7 @@ def init_database():
         try:
             # Create all tables
             db.create_all()
-            print("✓ Database tables created successfully!")
+            print("SUCCESS: Database tables created successfully!")
             
             # Verify tables were created
             inspector = db.inspect(db.engine)

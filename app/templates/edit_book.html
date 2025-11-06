@@ -72,6 +72,34 @@
             </select>
           </div>
 
+          <!-- Genre dropdown -->
+          <div class="form-group">
+            <label for="genre">Genre</label>
+            <select name="genre" class="form-control">
+              <option value="">Select genre</option>
+              <option value="Fiction" {% if book.genre == 'Fiction' %}selected{% endif %}>Fiction</option>
+              <option value="Mystery" {% if book.genre == 'Mystery' %}selected{% endif %}>Mystery</option>
+              <option value="Romance" {% if book.genre == 'Romance' %}selected{% endif %}>Romance</option>
+              <option value="Science Fiction" {% if book.genre == 'Science Fiction' %}selected{% endif %}>Science Fiction</option>
+              <option value="Fantasy" {% if book.genre == 'Fantasy' %}selected{% endif %}>Fantasy</option>
+              <option value="Biography" {% if book.genre == 'Biography' %}selected{% endif %}>Biography</option>
+              <option value="History" {% if book.genre == 'History' %}selected{% endif %}>History</option>
+              <option value="Self-Help" {% if book.genre == 'Self-Help' %}selected{% endif %}>Self-Help</option>
+              <option value="Horror" {% if book.genre == 'Horror' %}selected{% endif %}>Horror</option>
+              <option value="Thriller" {% if book.genre == 'Thriller' %}selected{% endif %}>Thriller</option>
+              <option value="Adventure" {% if book.genre == 'Adventure' %}selected{% endif %}>Adventure</option>
+              <option value="Children" {% if book.genre == 'Children' %}selected{% endif %}>Children</option>
+              <option value="Young Adult" {% if book.genre == 'Young Adult' %}selected{% endif %}>Young Adult</option>
+              <option value="Poetry" {% if book.genre == 'Poetry' %}selected{% endif %}>Poetry</option>
+              <option value="Drama" {% if book.genre == 'Drama' %}selected{% endif %}>Drama</option>
+              <option value="Philosophy" {% if book.genre == 'Philosophy' %}selected{% endif %}>Philosophy</option>
+              <option value="Psychology" {% if book.genre == 'Psychology' %}selected{% endif %}>Psychology</option>
+              <option value="Business" {% if book.genre == 'Business' %}selected{% endif %}>Business</option>
+              <option value="Health & Wellness" {% if book.genre == 'Health & Wellness' %}selected{% endif %}>Health & Wellness</option>
+              <option value="Travel" {% if book.genre == 'Travel' %}selected{% endif %}>Travel</option>
+            </select>
+          </div>
+
           <!-- Description textarea -->
           <div class="form-group">
             <label for="description">Book Description</label>

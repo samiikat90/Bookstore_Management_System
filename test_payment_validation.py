@@ -37,7 +37,7 @@ def test_payment_validation():
         'cvv': '123'
     }
     is_valid, message = validate_payment_method('credit_card', valid_card)
-    print(f"   Result: {'✓ PASS' if is_valid else '✗ FAIL'}")
+    print(f"   Result: {'PASS' if is_valid else 'FAIL'}")
     print(f"   Message: {message}")
     print(f"   Card Type: {detect_card_type(valid_card['number'])}\n")
     
@@ -49,7 +49,7 @@ def test_payment_validation():
         'cvv': '123'
     }
     is_valid, message = validate_payment_method('credit_card', invalid_card)
-    print(f"   Result: {'✓ PASS' if not is_valid else '✗ FAIL'}")
+    print(f"   Result: {'PASS' if not is_valid else 'FAIL'}")
     print(f"   Message: {message}\n")
     
     # Test 3: Valid PayPal
@@ -58,7 +58,7 @@ def test_payment_validation():
         'email': 'user@example.com'
     }
     is_valid, message = validate_payment_method('paypal', valid_paypal)
-    print(f"   Result: {'✓ PASS' if is_valid else '✗ FAIL'}")
+    print(f"   Result: {'PASS' if is_valid else 'FAIL'}")
     print(f"   Message: {message}\n")
     
     # Test 4: Invalid PayPal
@@ -67,7 +67,7 @@ def test_payment_validation():
         'email': 'not-an-email'
     }
     is_valid, message = validate_payment_method('paypal', invalid_paypal)
-    print(f"   Result: {'✓ PASS' if not is_valid else '✗ FAIL'}")
+    print(f"   Result: {'PASS' if not is_valid else 'FAIL'}")
     print(f"   Message: {message}\n")
     
     # Test 5: Valid Bank Transfer
@@ -77,7 +77,7 @@ def test_payment_validation():
         'account_number': '1234567890'
     }
     is_valid, message = validate_payment_method('bank_transfer', valid_bank)
-    print(f"   Result: {'✓ PASS' if is_valid else '✗ FAIL'}")
+    print(f"   Result: {'PASS' if is_valid else 'FAIL'}")
     print(f"   Message: {message}\n")
     
     # Test 6: Card Type Detection
@@ -91,7 +91,7 @@ def test_payment_validation():
     
     for card_number, expected_type in test_cards:
         detected_type = detect_card_type(card_number)
-        result = "✓ PASS" if detected_type == expected_type else "✗ FAIL"
+        result = "PASS" if detected_type == expected_type else "FAIL"
         print(f"   {card_number[:4]}******: {detected_type} ({result})")
     
     print("\n7. Testing Payment Processing Simulation:")
@@ -101,10 +101,10 @@ def test_payment_validation():
     for i in range(3):
         try:
             result = process_payment(50.00, 'credit_card', valid_card)
-            print(f"   Attempt {i+1}: ✓ {result}")
+            print(f"   Attempt {i+1}: SUCCESS {result}")
         except PaymentError as e:
             error_type, user_message, suggested_action = handle_payment_error(e)
-            print(f"   Attempt {i+1}: ✗ {e.code} - {user_message}")
+            print(f"   Attempt {i+1}: ERROR {e.code} - {user_message}")
 
 def test_luhn_algorithm():
     """Test the Luhn algorithm with known test cases."""
@@ -128,7 +128,7 @@ def test_luhn_algorithm():
     
     for card_number, expected, description in test_cases:
         result = luhn_check(card_number)
-        status = "✓ PASS" if result == expected else "✗ FAIL"
+        status = "PASS" if result == expected else "FAIL"
         print(f"{card_number} | {'Valid' if expected else 'Invalid':8} | {'Valid' if result else 'Invalid':6} | {status}")
 
 if __name__ == "__main__":

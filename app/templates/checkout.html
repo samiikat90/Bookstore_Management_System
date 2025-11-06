@@ -181,7 +181,10 @@
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
                                 <h6 class="mb-0">{{ book.title }}</h6>
-                                <small class="text-muted">Qty: {{ quantity }} × ${{ "%.2f"|format(book.price) }}</small>
+                                <small class="text-muted">
+                                    <span class="badge badge-primary badge-sm">{{ book.genre }}</span>
+                                    Qty: {{ quantity }} × ${{ "%.2f"|format(book.price) }}
+                                </small>
                             </div>
                             <span class="font-weight-bold">${{ "%.2f"|format(book.price * quantity) }}</span>
                         </div>

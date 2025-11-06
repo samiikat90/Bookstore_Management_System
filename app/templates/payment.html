@@ -153,7 +153,8 @@
                     {% for book, quantity in cart_items %}
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
-                            <small class="text-muted">{{ book.title }}</small><br>
+                            <small class="text-muted">{{ book.title }}</small>
+                            <span class="badge badge-primary badge-sm">{{ book.genre }}</span><br>
                             <small>Qty: {{ quantity }}</small>
                         </div>
                         <div class="text-right">

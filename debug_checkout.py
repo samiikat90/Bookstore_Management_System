@@ -21,12 +21,12 @@ def test_checkout_workflow():
         response = session.get(BASE_URL)
         print(f"   Status: {response.status_code}")
         if response.status_code == 200:
-            print("   ✓ Home page accessible")
+            print("   SUCCESS: Home page accessible")
         else:
-            print("   ✗ Home page not accessible")
+            print("   ERROR: Home page not accessible")
             return
     except Exception as e:
-        print(f"   ✗ Error accessing home page: {e}")
+        print(f"   ERROR: Error accessing home page: {e}")
         return
     
     # Test 2: Can we access the checkout page directly?

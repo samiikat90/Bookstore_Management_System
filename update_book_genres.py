@@ -5,9 +5,11 @@ Script to add genres to all books currently in inventory
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from app.app import app, db, Book
+# Add the app directory to the Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
+
+from app import app, db, Book
 
 # Genre mapping based on book titles and typical literary classifications
 BOOK_GENRES = {

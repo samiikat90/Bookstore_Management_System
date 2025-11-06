@@ -23,7 +23,7 @@ def check_database():
     result = cursor.fetchone()
     
     if result:
-        print("✓ payment_methods table exists")
+        print("SUCCESS: payment_methods table exists")
         
         # Check the structure
         cursor.execute("PRAGMA table_info(payment_methods);")
@@ -32,14 +32,14 @@ def check_database():
         for col in columns:
             print(f"    {col[1]} {col[2]}")
     else:
-        print("✗ payment_methods table does not exist")
+        print("ERROR: payment_methods table does not exist")
     
     # Check if purchases table exists
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='purchases';")
     result = cursor.fetchone()
     
     if result:
-        print("✓ purchases table exists")
+        print("SUCCESS: purchases table exists")
         
         # Check the structure
         cursor.execute("PRAGMA table_info(purchases);")
@@ -48,7 +48,7 @@ def check_database():
         for col in columns:
             print(f"    {col[1]} {col[2]}")
     else:
-        print("✗ purchases table does not exist")
+        print("ERROR: purchases table does not exist")
     
     # Check all table names
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")

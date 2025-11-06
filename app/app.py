@@ -19,7 +19,7 @@ import csv
 import random
 import string
 import smtplib
-from payment_utils import validate_payment_method, process_payment, handle_payment_error, detect_card_type
+from payment_utils import validate_payment_method, process_payment, handle_payment_error, detect_card_type, luhn_check
 from payment_utils import PaymentError, CardDeclinedError, InvalidPaymentMethodError, InsufficientFundsError, NetworkTimeoutError
 from encryption_utils import DataEncryption
 
@@ -463,6 +463,12 @@ class Purchase(db.Model):
             'Cancelled': 'fas fa-times-circle'
         }
         return status_icons.get(self.status, 'fas fa-question-circle')
+    
+    def get_book(self):
+        """Return the Book object associated with this purchase."""
+        if self.book_isbn:
+            return Book.query.filter_by(isbn=self.book_isbn).first()
+        return None
 
 # Sale model for customer shopping cart purchases
 class Sale(db.Model):
@@ -572,6 +578,23 @@ class NotificationLog(db.Model):
     
     def __repr__(self):
         return f'<NotificationLog {self.customer_id}: {self.notification_type}>'
+
+
+# =============================
+# ENCRYPTION HELPER FUNCTIONS
+# =============================
+
+def encrypt_data(data):
+    """Helper function to encrypt sensitive data."""
+    if data is None:
+        return None
+    return encryption.encrypt(str(data))
+
+def decrypt_data(encrypted_data):
+    """Helper function to decrypt sensitive data."""
+    if encrypted_data is None:
+        return None
+    return encryption.decrypt(encrypted_data)
 
 
 @login_manager.user_loader
@@ -990,6 +1013,7 @@ def inventory():
     """Inventory management page with CSV upload/export functionality."""
     search = (request.args.get('search') or '').strip()
     category = (request.args.get('category') or '').strip()
+    selected_genre = (request.args.get('genre') or '').strip()
     
     # Get all books from database
     books_query = Book.query
@@ -1000,10 +1024,22 @@ def inventory():
     if category:
         books_query = books_query.filter(Book.cover_type == category)
     
+    if selected_genre:
+        books_query = books_query.filter(Book.genre == selected_genre)
+    
     books = books_query.all()
     categories = sorted(set(book.cover_type for book in Book.query.all() if book.cover_type))
     
-    return render_template('inventory.html', books=books, search=search, category=category, categories=categories)
+    # Get available genres from all books
+    available_genres = sorted(set(book.genre for book in Book.query.all() if book.genre))
+    
+    return render_template('inventory.html', 
+                         books=books, 
+                         search=search, 
+                         category=category, 
+                         selected_genre=selected_genre,
+                         categories=categories,
+                         available_genres=available_genres)
 
 
 @app.route('/orders')
@@ -1095,6 +1131,349 @@ def update_purchase(purchase_id):
 def purchase_detail(purchase_id):
     p = Purchase.query.get_or_404(purchase_id)
     return render_template('purchase_detail.html', p=p)
+
+
+@app.route('/checkout/guest', methods=['GET', 'POST'])
+def guest_checkout():
+    """Guest checkout page with minimal information required."""
+    cart = session.get('cart', {})
+    if not cart:
+        flash("Cart is empty!", "warning")
+        return redirect(url_for('view_cart'))
+    
+    if request.method == 'GET':
+        # Calculate cart totals
+        cart_items = []
+        subtotal = 0
+        
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                # Check inventory
+                if book.quantity < qty:
+                    flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
+                    return redirect(url_for('view_cart'))
+                cart_items.append((book, qty))
+                subtotal += book.price * qty
+        
+        # Calculate discount
+        discount_code = session.get('discount_code')
+        discount_amount = 0
+        if discount_code and discount_code in DISCOUNT_CODES:
+            discount_rate, min_order = DISCOUNT_CODES[discount_code]
+            if subtotal >= min_order:
+                discount_amount = subtotal * discount_rate
+        
+        total = subtotal - discount_amount
+        
+        return render_template('guest_checkout.html', 
+                             cart_items=cart_items,
+                             subtotal=subtotal,
+                             discount_amount=discount_amount,
+                             total=total)
+    
+    # Process guest checkout form
+    first_name = request.form.get('first_name', '').strip()
+    last_name = request.form.get('last_name', '').strip()
+    email = request.form.get('email', '').strip()
+    phone = request.form.get('phone', '').strip()
+    
+    # Get address fields
+    address_line1 = request.form.get('address_line1', '').strip()
+    address_line2 = request.form.get('address_line2', '').strip()
+    city = request.form.get('city', '').strip()
+    state = request.form.get('state', '').strip()
+    zip_code = request.form.get('zip_code', '').strip()
+    
+    payment_method = request.form.get('payment_method', '').strip()
+    
+    # Validate required fields
+    required_fields = [first_name, last_name, email, phone, address_line1, city, state, zip_code, payment_method]
+    if not all(required_fields):
+        flash("All required fields must be filled for guest checkout.", "danger")
+        return redirect(url_for('guest_checkout'))
+    
+    # Build complete address string for storage
+    address_parts = [address_line1]
+    if address_line2:
+        address_parts.append(address_line2)
+    address_parts.extend([city, state, zip_code])
+    complete_address = ', '.join(address_parts)
+    
+    # Validate email format
+    import re
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    if not re.match(email_pattern, email):
+        flash("Please enter a valid email address.", "danger")
+        return redirect(url_for('guest_checkout'))
+    
+    # Validate payment method
+    valid_payment_methods = ['credit_card', 'paypal', 'bank_transfer']
+    if payment_method not in valid_payment_methods:
+        flash("Invalid payment method selected.", "danger")
+        return redirect(url_for('guest_checkout'))
+    
+    # Process payment based on method
+    payment_success = False
+    payment_error = None
+    
+    print(f"DEBUG: Processing payment method: {payment_method}")
+    
+    try:
+        if payment_method == 'credit_card':
+            print("DEBUG: Processing credit card payment")
+            card_number = request.form.get('card_number', '').strip()
+            expiry_date = request.form.get('expiry_date', '').strip()
+            cvv = request.form.get('cvv', '').strip()
+            
+            if not all([card_number, expiry_date, cvv]):
+                flash("All credit card fields are required.", "danger")
+                return redirect(url_for('guest_checkout'))
+            
+            # Validate credit card
+            if not luhn_check(card_number):
+                flash("Invalid credit card number.", "danger")
+                return redirect(url_for('guest_checkout'))
+            
+            payment_success = True
+            print("DEBUG: Credit card payment validated successfully")
+            
+        elif payment_method == 'paypal':
+            print("DEBUG: Processing PayPal payment")
+            paypal_email = request.form.get('paypal_email', '').strip()
+            print(f"DEBUG: PayPal email received: {paypal_email}")
+            
+            if not paypal_email:
+                flash("PayPal email is required.", "danger")
+                return redirect(url_for('guest_checkout'))
+            
+            if not re.match(email_pattern, paypal_email):
+                flash("Please enter a valid PayPal email address.", "danger")
+                return redirect(url_for('guest_checkout'))
+            
+            payment_success = True
+            print("DEBUG: PayPal payment validated successfully")
+            
+        elif payment_method == 'bank_transfer':
+            print("DEBUG: Processing bank transfer payment")
+            bank_account = request.form.get('bank_account', '').strip()
+            
+            if not bank_account:
+                flash("Bank account number is required.", "danger")
+                return redirect(url_for('guest_checkout'))
+            
+            payment_success = True
+            print("DEBUG: Bank transfer payment validated successfully")
+        
+        print(f"DEBUG: Payment validation complete. Success: {payment_success}")
+        
+        if payment_success:
+            print("DEBUG: Starting purchase creation process")
+            # Calculate totals
+            subtotal = 0
+            cart_items = []
+            
+            for isbn, qty in cart.items():
+                book = Book.query.filter_by(isbn=isbn).first()
+                if book:
+                    cart_items.append((book, qty))
+                    subtotal += book.price * qty
+            
+            # Calculate discount
+            discount_code = session.get('discount_code')
+            discount_amount = 0
+            if discount_code and discount_code in DISCOUNT_CODES:
+                discount_rate, min_order = DISCOUNT_CODES[discount_code]
+                if subtotal >= min_order:
+                    discount_amount = subtotal * discount_rate
+            
+            total = subtotal - discount_amount
+            
+            # Create purchase record
+            from datetime import datetime
+            
+            # Combine first and last name for customer_name field
+            customer_full_name = f"{first_name} {last_name}"
+            
+            purchase = Purchase(
+                customer_name=customer_full_name,
+                customer_email_encrypted=encrypt_data(email),
+                customer_phone_encrypted=encrypt_data(phone),
+                customer_address_encrypted=encrypt_data(complete_address),
+                timestamp=datetime.utcnow(),
+                status='Pending'
+            )
+            
+            db.session.add(purchase)
+            db.session.flush()  # Get the purchase ID
+            
+            print(f"DEBUG: Purchase created with ID: {purchase.id}")
+            
+            # Create individual order records for each book and update inventory
+            for book, qty in cart_items:
+                print(f"DEBUG: Creating order for book {book.title}, qty: {qty}")
+                
+                # Create separate purchase record for each book (matching legacy structure)
+                book_purchase = Purchase(
+                    customer_name=customer_full_name,
+                    customer_email_encrypted=encrypt_data(email),
+                    customer_phone_encrypted=encrypt_data(phone),
+                    customer_address_encrypted=encrypt_data(complete_address),
+                    book_isbn=book.isbn,
+                    quantity=qty,
+                    timestamp=datetime.utcnow(),
+                    status='Pending'
+                )
+                db.session.add(book_purchase)
+                
+                # Update book inventory
+                book.quantity -= qty
+                print(f"DEBUG: Updated inventory for {book.title}, new quantity: {book.quantity}")
+            
+            db.session.commit()
+            
+            print(f"DEBUG: Purchase records created successfully")
+            
+            # Send email notifications
+            try:
+                # Prepare purchase details for emails
+                purchase_details = []
+                for book, qty in cart_items:
+                    purchase_details.append({
+                        'title': book.title,
+                        'author': book.author,
+                        'isbn': book.isbn,
+                        'quantity': qty,
+                        'price': book.price,
+                        'genre': book.genre
+                    })
+                
+                # Calculate discount info for email
+                discount_info = None
+                if discount_amount > 0:
+                    discount_info = {
+                        'code': discount_code,
+                        'amount': discount_amount,
+                        'final_total': total
+                    }
+                
+                # Send customer confirmation email
+                print(f"DEBUG: Sending customer confirmation email to {email}")
+                customer_email_sent = send_customer_purchase_notification(
+                    customer_email=email,
+                    customer_name=customer_full_name,
+                    purchase_details=purchase_details,
+                    transaction_id=f"GUEST-{purchase.id}",
+                    discount_info=discount_info
+                )
+                
+                if customer_email_sent:
+                    print(f"DEBUG: Customer confirmation email sent successfully")
+                else:
+                    print(f"DEBUG: Failed to send customer confirmation email")
+                
+                # Send admin notification
+                print(f"DEBUG: Sending admin notification for guest order")
+                admin_order_details = {
+                    'id': f"GUEST-{purchase.id}",
+                    'customer_name': customer_full_name,
+                    'customer_email': email,
+                    'customer_phone': phone,
+                    'customer_address': complete_address,
+                    'book_count': len(cart_items),
+                    'total_amount': total,
+                    'status': 'Pending',
+                    'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                
+                # Create summary of items for admin email
+                items_summary = ""
+                for book, qty in cart_items:
+                    items_summary += f"• {book.title} by {book.author} (ISBN: {book.isbn}) - Qty: {qty} @ ${book.price:.2f} each\n"
+                
+                admin_message = f"""A new guest order has been placed!
+
+Customer Information:
+- Name: {customer_full_name}
+- Email: {email}
+- Phone: {phone}
+- Address: {complete_address}
+- Payment Method: {payment_method.replace('_', ' ').title()}
+
+Order Summary:
+{items_summary}
+Subtotal: ${subtotal:.2f}"""
+                
+                if discount_amount > 0:
+                    admin_message += f"""
+Discount ({discount_code}): -${discount_amount:.2f}"""
+                
+                admin_message += f"""
+Total: ${total:.2f}
+
+Transaction ID: GUEST-{purchase.id}
+Order Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+
+Please process this order promptly."""
+                
+                send_admin_notification(
+                    subject=f"New Guest Order - #{purchase.id} - ${total:.2f}",
+                    message=admin_message,
+                    order_details=admin_order_details
+                )
+                
+                print(f"DEBUG: Admin notification sent for guest order")
+                
+            except Exception as email_error:
+                print(f"DEBUG: Email notification error: {email_error}")
+                # Don't fail the order if email fails - log and continue
+                app.logger.error(f"Email notification failed for guest order {purchase.id}: {email_error}")
+            
+            # Clear cart and discount
+            session.pop('cart', None)
+            session.pop('discount_code', None)
+            
+            flash(f"Thank you for your purchase! Your order #{purchase.id} has been confirmed.", "success")
+            return redirect(url_for('guest_purchase_confirmation', purchase_id=purchase.id))
+    
+    except Exception as e:
+        db.session.rollback()
+        print(f"DEBUG: Guest checkout error occurred: {str(e)}")
+        print(f"DEBUG: Error type: {type(e)}")
+        import traceback
+        print(f"DEBUG: Full traceback: {traceback.format_exc()}")
+        app.logger.error(f"Guest checkout error: {str(e)}")
+        flash(f"An error occurred processing your order: {str(e)}", "danger")
+        return redirect(url_for('guest_checkout'))
+    
+    flash("Payment processing failed. Please try again.", "danger")
+    return redirect(url_for('guest_checkout'))
+
+
+@app.route('/purchase/guest/<int:purchase_id>')
+def guest_purchase_confirmation(purchase_id):
+    """Guest purchase confirmation page."""
+    purchase = Purchase.query.get_or_404(purchase_id)
+    
+    # Get all purchases for this guest (with same customer info)
+    all_purchases = Purchase.query.filter_by(
+        customer_email_encrypted=purchase.customer_email_encrypted,
+        timestamp=purchase.timestamp
+    ).all()
+    
+    # Decrypt customer information for display
+    customer_info = {
+        'first_name': purchase.customer_name.split()[0] if purchase.customer_name else '',
+        'last_name': ' '.join(purchase.customer_name.split()[1:]) if purchase.customer_name and len(purchase.customer_name.split()) > 1 else '',
+        'email': decrypt_data(purchase.customer_email_encrypted),
+        'phone': decrypt_data(purchase.customer_phone_encrypted),
+        'address': decrypt_data(purchase.customer_address_encrypted)
+    }
+    
+    return render_template('guest_purchase_confirmation.html', 
+                         purchase=purchase, 
+                         all_purchases=all_purchases,
+                         customer=customer_info)
 
 
 @app.route('/purchases/export.csv')
@@ -1342,6 +1721,7 @@ def add_book():
         quantity = int(request.form.get('quantity', 0))
         cover_type = request.form.get('cover_type', '').strip()
         description = request.form.get('description', '').strip()
+        genre = request.form.get('genre', '').strip()
 
         new_book = Book(
             isbn=isbn,
@@ -1351,7 +1731,8 @@ def add_book():
             quantity=quantity,
             in_stock=quantity > 0,
             cover_type=cover_type,
-            description=description
+            description=description,
+            genre=genre
         )
         db.session.add(new_book)
         db.session.commit()
@@ -1378,6 +1759,7 @@ def edit_book(isbn):
             book.quantity = int(request.form.get('quantity', 0))
             book.cover_type = request.form.get('cover_type', '').strip()
             book.description = request.form.get('description', '').strip()
+            book.genre = request.form.get('genre', '').strip()
             book.in_stock = book.quantity > 0
             
             db.session.commit()
@@ -1568,6 +1950,15 @@ def upload_csv():
                         skipped_count += 1
                         continue
 
+                    # Handle genre field - validate against predefined genres
+                    genre = row.get('genre', '').strip()
+                    if genre and genre not in BOOK_GENRES:
+                        # If genre is not in our list, set to default
+                        flash(f"Warning: Unknown genre '{genre}' for book '{title}'. Setting to 'Fiction'.", 'warning')
+                        genre = 'Fiction'
+                    elif not genre:
+                        genre = 'Fiction'  # Default genre
+                    
                     cover_type = row.get('cover_type', '').strip()
                     description = row.get('description', '').strip()
 
@@ -1579,6 +1970,7 @@ def upload_csv():
                         book.price = price
                         book.quantity = quantity
                         book.in_stock = quantity > 0
+                        book.genre = genre
                         book.cover_type = cover_type
                         book.description = description
                         updated_count += 1
@@ -1591,6 +1983,7 @@ def upload_csv():
                             price=price,
                             quantity=quantity,
                             in_stock=quantity > 0,
+                            genre=genre,
                             cover_type=cover_type,
                             description=description
                         )
@@ -1632,7 +2025,7 @@ def export_inventory():
         
         # Create CSV content
         output = []
-        output.append(['isbn', 'title', 'author', 'price', 'quantity', 'cover_type', 'description', 'in_stock'])
+        output.append(['isbn', 'title', 'author', 'price', 'quantity', 'genre', 'cover_type', 'description', 'in_stock'])
         
         for book in books:
             output.append([
@@ -1641,6 +2034,7 @@ def export_inventory():
                 book.author,
                 book.price,
                 book.quantity,
+                book.genre or 'Fiction',  # Include genre with default
                 book.cover_type or '',
                 book.description or '',
                 'Yes' if book.in_stock else 'No'
@@ -2613,21 +3007,35 @@ def remove_notification():
 # Browse route for customer-facing book browsing
 @app.route('/browse')
 def browse():
-    """Browse books with search functionality for customers."""
+    """Browse books with search and genre filtering for customers."""
     search_query = request.args.get('q', '').strip()
+    genre_filter = request.args.get('genre', '').strip()
+    
+    # Build query with filters
+    query = Book.query
     
     if search_query:
-        books = Book.query.filter(
+        query = query.filter(
             or_(
                 Book.title.ilike(f'%{search_query}%'),
                 Book.author.ilike(f'%{search_query}%'),
                 Book.isbn.ilike(f'%{search_query}%')
             )
-        ).all()
-    else:
-        books = Book.query.all()
+        )
     
-    return render_template('index.html', inventory=books, search_query=search_query)
+    if genre_filter:
+        query = query.filter(Book.genre == genre_filter)
+    
+    books = query.all()
+    
+    # Get all available genres for the filter dropdown
+    available_genres = sorted([genre for genre in BOOK_GENRES if genre])
+    
+    return render_template('browse.html', 
+                         inventory=books, 
+                         search_query=search_query,
+                         genre_filter=genre_filter,
+                         genres=available_genres)
 
 
 # =============================================================================
@@ -2935,41 +3343,42 @@ def checkout_page():
         flash("Cart is empty!", "warning")
         return redirect(url_for('view_cart'))
     
-    # Check if user is logged in
-    if not current_user.is_authenticated or not hasattr(current_user, 'email'):
-        flash('Please login to complete checkout.', 'warning')
-        return redirect(url_for('customer_login'))
-    
-    # Calculate cart totals
-    cart_items = []
-    subtotal = 0
-    
-    for isbn, qty in cart.items():
-        book = Book.query.filter_by(isbn=isbn).first()
-        if book:
-            # Check inventory
-            if book.quantity < qty:
-                flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
-                return redirect(url_for('view_cart'))
-            cart_items.append((book, qty))
-            subtotal += book.price * qty
-    
-    # Calculate discount
-    discount_code = session.get('discount_code')
-    discount_amount = 0
-    if discount_code and discount_code in DISCOUNT_CODES:
-        discount_rate, min_order = DISCOUNT_CODES[discount_code]
-        if subtotal >= min_order:
-            discount_amount = subtotal * discount_rate
-    
-    total = subtotal - discount_amount
-    
-    return render_template('payment.html', 
-                         cart_items=cart_items,
-                         subtotal=subtotal,
-                         discount_amount=discount_amount,
-                         total=total,
-                         customer=current_user)
+    # Allow both logged in users and guests
+    if current_user.is_authenticated and hasattr(current_user, 'email'):
+        # Existing logged-in user flow
+        # Calculate cart totals
+        cart_items = []
+        subtotal = 0
+        
+        for isbn, qty in cart.items():
+            book = Book.query.filter_by(isbn=isbn).first()
+            if book:
+                # Check inventory
+                if book.quantity < qty:
+                    flash(f"Not enough inventory for {book.title}. Only {book.quantity} available.", "danger")
+                    return redirect(url_for('view_cart'))
+                cart_items.append((book, qty))
+                subtotal += book.price * qty
+        
+        # Calculate discount
+        discount_code = session.get('discount_code')
+        discount_amount = 0
+        if discount_code and discount_code in DISCOUNT_CODES:
+            discount_rate, min_order = DISCOUNT_CODES[discount_code]
+            if subtotal >= min_order:
+                discount_amount = subtotal * discount_rate
+        
+        total = subtotal - discount_amount
+        
+        return render_template('payment.html', 
+                             cart_items=cart_items,
+                             subtotal=subtotal,
+                             discount_amount=discount_amount,
+                             total=total,
+                             customer=current_user)
+    else:
+        # Guest checkout flow
+        return redirect(url_for('guest_checkout'))
 
 
 @app.route('/checkout', methods=['GET', 'POST'])
