@@ -7,7 +7,7 @@ import json
 import re
 
 def test_ajax_simple():
-    print("🔍 SIMPLE AJAX DEBUG TEST")
+    print("[DEBUG] SIMPLE AJAX DEBUG TEST")
     print("=" * 30)
     
     session = requests.Session()

@@ -125,19 +125,24 @@ def check_environment():
 	
 	# Check if app directory exists
 	app_dir = os.path.join(os.getcwd(), 'app')
-	if os.path.exists(app_dir):
+	app_dir_exists = os.path.exists(app_dir)
+	if app_dir_exists:
 		print(f"[SUCCESS] App directory exists: {app_dir}")
 	else:
 		print(f"[ERROR] App directory not found: {app_dir}")
 	
 	# Check if templates exist
 	templates_dir = os.path.join(app_dir, 'templates')
-	if os.path.exists(templates_dir):
+	templates_dir_exists = os.path.exists(templates_dir)
+	if templates_dir_exists:
 		templates = os.listdir(templates_dir)
 		print(f"[SUCCESS] Templates directory: {len(templates)} templates found")
 	else:
 		print(f"[ERROR] Templates directory not found: {templates_dir}")
 	
+	# Return False if critical directories are missing
+	if not app_dir_exists or not templates_dir_exists:
+		return False
 	return True
 
 def main():

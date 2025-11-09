@@ -19,7 +19,7 @@ from datetime import datetime
 # Add the app directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
 
-from app.encryption_utils import DataEncryption
+from app import encryption_utils
 
 def backup_database():
     """Create a backup of the current database."""
@@ -44,7 +44,7 @@ def migrate_customer_data():
         return
     
     print("Migrating customer data to encrypted format...")
-    encryption = DataEncryption()
+    encryption = encryption_utils.DataEncryption()
     
     try:
         conn = sqlite3.connect(db_path)
@@ -119,7 +119,7 @@ def migrate_purchase_data():
         return
     
     print("Migrating purchase data to encrypted format...")
-    encryption = DataEncryption()
+    encryption = encryption_utils.DataEncryption()
     
     try:
         conn = sqlite3.connect(db_path)
@@ -187,7 +187,7 @@ def migrate_payment_data():
         return
     
     print("Migrating payment method data to encrypted format...")
-    encryption = DataEncryption()
+    encryption = encryption_utils.DataEncryption()
     
     try:
         conn = sqlite3.connect(db_path)
@@ -245,7 +245,7 @@ def verify_encryption():
         return
     
     print("Verifying encryption integrity...")
-    encryption = DataEncryption()
+    encryption = encryption_utils.DataEncryption()
     
     try:
         conn = sqlite3.connect(db_path)
