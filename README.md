@@ -2,51 +2,124 @@
 
 A comprehensive Flask-based bookstore management system with advanced features including two-factor authentication, payment validation, email notifications, comprehensive genre system, and customer data encryption.
 
-## Quick Start for New Team Members
+## IMPORTANT: Setup Instructions for Team Members
+
+### If you received the repository URL or ZIP file, follow these EXACT steps to avoid CSRF and other issues:
 
 ### Prerequisites
-Make sure you have these installed:
+Make sure you have these installed BEFORE starting:
 - **Python 3.7+** - Download from [python.org](https://python.org)
-- **Git** - Download from [git-scm.com](https://git-scm.com)
+- **Git** - Download from [git-scm.com](https://git-scm.com) (if cloning from GitHub)
 - **Visual Studio Code** (recommended) - Download from [code.visualstudio.com](https://code.visualstudio.com)
 
-### Setup Instructions
+### STEP-BY-STEP SETUP PROCESS
+
+#### Method 1: From GitHub URL (Recommended)
 
 1. **Clone the Repository**
- ```bash
- git clone https://github.com/samiikat90/Bookstore_Management_System.git
- cd Bookstore_Management_System
- ```
+   ```bash
+   git clone https://github.com/samiikat90/Bookstore_Management_System.git
+   cd Bookstore_Management_System
+   ```
 
-2. **Install Python Dependencies**
- ```bash
- # Install all required packages from requirements.txt
- pip install -r requirements.txt
- 
- # Or install individually if needed:
- pip install flask flask-sqlalchemy flask-login werkzeug cryptography blinker
- ```
+2. **Set Up Python Virtual Environment (CRITICAL)**
+   ```powershell
+   # Windows PowerShell
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+   
+   # If you get execution policy error, run this first:
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```
+   
+   ```bash
+   # macOS/Linux
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
-3. **Start the Application**
- ```bash
- # Option 1: Automated setup with virtual environment (Recommended)
- .\run.ps1 -setup
- .\run.ps1
- 
- # Option 2: Quick start (Windows)
- .\run.ps1
- 
- # Option 3: Manual start (All platforms)
- python app/app.py
- ```
+3. **Install Dependencies (EXACT VERSIONS REQUIRED)**
+   ```bash
+   # Install all required packages with exact versions
+   pip install -r requirements.txt
+   
+   # Verify installation
+   pip list
+   ```
 
-4. **Access the Bookstore**
- - Open your browser to: **http://127.0.0.1:5000**
- - **Use your assigned login credentials** (see table below)
- - Each team member has their own individual account
+4. **Create Environment Configuration**
+   ```bash
+   # Copy the example environment file
+   copy .env.example .env    # Windows
+   # OR
+   cp .env.example .env      # macOS/Linux
+   ```
 
-### Login Credentials
-Each team member has their own admin account, all using the same password for convenience:
+5. **Initialize Database (REQUIRED)**
+   ```bash
+   # Create the database and populate with sample data
+   python scripts/setup_database.py
+   ```
+
+6. **Start the Application**
+   ```bash
+   python app/app.py
+   ```
+
+#### Method 2: From ZIP File
+
+1. **Extract the ZIP file** to your desired location
+
+2. **Open Terminal/PowerShell** in the extracted folder
+
+3. **Follow steps 2-6 from Method 1** exactly as written
+
+### CSRF TOKEN ISSUE - SOLUTION
+
+If you encounter "CSRF token missing" errors, this means the application setup wasn't completed properly. Here's the fix:
+
+#### Quick Fix for CSRF Issues:
+1. **Stop the application** (Ctrl+C in terminal)
+2. **Delete the instance folder** if it exists:
+   ```bash
+   rmdir /s instance    # Windows
+   rm -rf instance      # macOS/Linux
+   ```
+3. **Restart the setup process**:
+   ```bash
+   python scripts/setup_database.py
+   python app/app.py
+   ```
+
+#### Why CSRF Errors Happen:
+- Database not properly initialized
+- Missing environment configuration
+- Running without virtual environment
+- Old/cached database files
+
+### VERIFICATION STEPS
+
+After setup, verify everything works:
+
+1. **Check Database Status**:
+   ```bash
+   python scripts/check_db.py
+   ```
+
+2. **Test Login Process**:
+   - Go to http://127.0.0.1:5000
+   - Click "Admin Login" 
+   - Use credentials: username: `admin`, password: `admin123`
+   - Check email for 2FA code
+
+3. **Verify CSRF Protection**:
+   - Try adding a book to cart
+   - Try accessing admin dashboard
+   - No CSRF errors should appear
+
+### LOGIN CREDENTIALS
+
+Each team member has their own admin account:
 
 | Team Member | Username | Password | Email |
 |-------------|----------|----------|-------|
@@ -62,7 +135,7 @@ Each team member has their own admin account, all using the same password for co
 | manager1 | admin123 | manager1@plottwist.com | Store Manager |
 | supervisor | admin123 | supervisor@plottwist.com | Store Supervisor |
 
-**Note**: After entering your username/password, you'll need to check your email for a 6-digit security code to complete login (Two-Factor Authentication).
+**IMPORTANT**: After entering username/password, check your email for a 6-digit security code (Two-Factor Authentication).
 
 ## What's Included Out of the Box
 
@@ -196,68 +269,225 @@ Bookstore_Management_System/
  README.md # This file
 ```
 
-## Troubleshooting
+## Troubleshooting Common Issues
 
-### Common Issues:
+### CSRF Token Issues (Most Common)
 
-**"Python not found"**
-- Install Python and ensure it's added to your system PATH
-- Try using `python3` instead of `python` on some systems
+**Error Message**: "CSRF token missing" or "The CSRF token is missing"
 
-**"Permission denied" (Windows PowerShell)**
+**Root Cause**: Database not properly initialized or application running without proper setup
+
+**COMPLETE SOLUTION**:
+1. **Stop the application** (Ctrl+C in terminal)
+2. **Ensure virtual environment is active**:
+   ```bash
+   # Windows
+   .\venv\Scripts\Activate.ps1
+   
+   # macOS/Linux  
+   source venv/bin/activate
+   ```
+3. **Delete and recreate database**:
+   ```bash
+   # Remove corrupted database
+   rmdir /s instance    # Windows
+   rm -rf instance      # macOS/Linux
+   
+   # Recreate database with proper structure
+   python scripts/setup_database.py
+   ```
+4. **Restart application**:
+   ```bash
+   python app/app.py
+   ```
+5. **Test immediately**: Go to http://127.0.0.1:5000 and try admin login
+
+### Python Installation Issues
+
+**"Python not found" or "python: command not found"**
+
+**Solution**:
+1. Download Python from [python.org](https://python.org) 
+2. During installation, CHECK "Add Python to PATH"
+3. Restart terminal/command prompt
+4. Test with: `python --version`
+5. If still not working, try `python3` instead of `python`
+
+### Permission Issues (Windows PowerShell)
+
+**Error**: "execution of scripts is disabled on this system"
+
+**Solution**:
 ```powershell
-# Run as Administrator:
-Set-ExecutionPolicy RemoteSigned
+# Run PowerShell as Administrator, then:
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Then restart normal PowerShell and try again
 ```
 
-**"Module not found" errors**
+### Virtual Environment Issues
+
+**"venv not working" or "module not found" errors**
+
+**Complete Reset Solution**:
 ```bash
-# Install all dependencies:
+# Remove broken virtual environment
+rmdir /s venv           # Windows
+rm -rf venv            # macOS/Linux
+
+# Create fresh virtual environment  
+python -m venv venv
+
+# Activate it
+.\venv\Scripts\Activate.ps1    # Windows
+source venv/bin/activate       # macOS/Linux
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Or install specific missing modules:
-pip install flask flask-sqlalchemy flask-login werkzeug cryptography
+# Setup database
+python scripts/setup_database.py
+
+# Start application
+python app/app.py
 ```
 
-**"Virtual environment issues"**
+### Database Connection Issues
+
+**"No such table" or "database locked" errors**
+
+**Solution**:
 ```bash
-# Reset virtual environment:
-rm -rf venv # or Remove-Item venv -Recurse on Windows
-.\run.ps1 -setup
+# Check database status
+python scripts/check_db.py
+
+# If database is corrupted, reset it:
+python scripts/setup_database.py
+
+# If issues persist, delete everything and recreate:
+rmdir /s instance
+python scripts/setup_database.py
 ```
 
-**Can't access website**
-- Make sure Flask is running (look for "Running on http://127.0.0.1:5000")
-- Check the correct URL: http://127.0.0.1:5000
-- Try a different port if 5000 is in use
+### Email/2FA Not Working
 
-**Email/2FA issues**
-- Check your email (including spam folder) for the 6-digit code
-- Codes expire in 10 minutes - request a new one if needed
-- Ensure your email is correctly configured in your user account
+**"Didn't receive 2FA code" or "email not sending"**
 
-**Payment validation errors**
-- Use test credit card numbers for development (see payment_utils.py)
-- Ensure payment form fields are properly filled
-- Check browser console for JavaScript errors
+**Troubleshooting Steps**:
+1. **Check spam/junk folder** - codes often go there
+2. **Wait 2-3 minutes** - email delivery can be slow
+3. **Verify email address** in your user account settings
+4. **Try different email** if persistent issues
+5. **Check terminal output** for email errors
 
-**Database issues**
+**Alternative**: Use the admin account (`admin`/`admin123`) with email: admin@plottwist.com
+
+### Port Already in Use
+
+**"Port 5000 is already in use"**
+
+**Solution**:
 ```bash
-# Check database status:
-python scripts/check_db_schema.py
+# Find what's using port 5000:
+netstat -ano | findstr :5000    # Windows
+lsof -i :5000                   # macOS/Linux
 
-# Reset database if corrupted:
-.\reset_database.ps1
-
-# Migrate encryption if needed:
-python migrate_encryption.py
+# Kill the process using the port, then restart app
 ```
 
-### Getting Help:
-1. Check terminal output for error messages
-2. Review `QUICK_START.md` for detailed instructions
-3. Use `python scripts/db_status.py` to check system status
-4. Contact team lead if issues persist
+### Application Won't Start
+
+**"ModuleNotFoundError" or import errors**
+
+**Complete Fix**:
+```bash
+# 1. Verify virtual environment
+.\venv\Scripts\Activate.ps1    # Windows
+source venv/bin/activate       # macOS/Linux
+
+# 2. Upgrade pip
+python -m pip install --upgrade pip
+
+# 3. Install dependencies fresh
+pip uninstall -r requirements.txt -y
+pip install -r requirements.txt
+
+# 4. Setup database
+python scripts/setup_database.py
+
+# 5. Start application
+python app/app.py
+```
+
+### Browser Issues
+
+**"Can't access http://127.0.0.1:5000"**
+
+**Solutions**:
+1. **Verify Flask is running** - look for "Running on http://127.0.0.1:5000" in terminal
+2. **Check URL spelling** - must be exactly `http://127.0.0.1:5000`
+3. **Try different browser** - Chrome, Firefox, Edge
+4. **Disable browser extensions** - they can interfere with local development
+5. **Clear browser cache** - Ctrl+F5 or Cmd+Shift+R
+
+### Payment System Issues
+
+**Payment validation errors or "Invalid payment method"**
+
+**For Testing Use These**:
+```
+Valid Test Credit Card: 4532015112830366
+Valid PayPal Email: test@example.com
+Valid Bank Account: 123456789 (routing: 021000021)
+```
+
+### If All Else Fails - Nuclear Reset
+
+**Complete Fresh Start**:
+```bash
+# 1. Delete everything except source code
+rmdir /s venv instance __pycache__    # Windows
+rm -rf venv instance __pycache__      # macOS/Linux
+
+# 2. Fresh virtual environment
+python -m venv venv
+.\venv\Scripts\Activate.ps1    # Windows
+source venv/bin/activate       # macOS/Linux
+
+# 3. Fresh dependencies
+pip install -r requirements.txt
+
+# 4. Fresh database
+python scripts/setup_database.py
+
+# 5. Test immediately
+python app/app.py
+# Go to http://127.0.0.1:5000
+```
+
+### Getting Additional Help
+
+**If issues persist**:
+1. **Check terminal output** for specific error messages
+2. **Copy exact error text** when asking for help
+3. **Include your operating system** (Windows 10/11, macOS, Linux)
+4. **Try the "Nuclear Reset" above** before asking for help
+
+**Contact Information**:
+- Repository: https://github.com/samiikat90/Bookstore_Management_System
+- Issues: Create an issue on GitHub with error details
+
+### Quick Verification Checklist
+
+After setup, verify these work:
+- [ ] http://127.0.0.1:5000 loads the homepage
+- [ ] Admin login works with `admin`/`admin123`
+- [ ] 2FA email arrives (check spam folder)  
+- [ ] Can access admin dashboard after 2FA
+- [ ] Can add books to cart without CSRF errors
+- [ ] Database has sample books and orders
+
+If any of these fail, repeat the setup process from the beginning.
 
 ## Development Workflow
 
@@ -335,5 +565,5 @@ For detailed setup instructions, see the comprehensive documentation in the `/Do
 ---
 
 **Repository**: https://github.com/samiikat90/Bookstore_Management_System 
-**Last Updated**: November 5, 2025 
-**Current Version**: 1.0 - Full E-commerce Platform with Advanced Features
+**Last Updated**: November 9, 2025 
+**Current Version**: 2.0 - Production Ready with Comprehensive Documentation
