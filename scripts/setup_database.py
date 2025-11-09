@@ -6,7 +6,11 @@ This script will create sample books, users, and purchases if they don't exist.
 
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+# Add both the root directory and the app directory to the Python path
+root_dir = os.path.dirname(os.path.dirname(__file__))
+app_dir = os.path.join(root_dir, 'app')
+sys.path.append(root_dir)
+sys.path.append(app_dir)
 
 from app.app import app, db, Book, User, Purchase
 from werkzeug.security import generate_password_hash
