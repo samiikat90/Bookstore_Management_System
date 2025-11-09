@@ -1,198 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Chapter 6: A Plot Twist</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Crimson Text', serif;
-        }
-        
-        .hero-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 4rem;
-        }
-        
-        .title-section {
-            flex: 1;
-            max-width: 600px;
-        }
-        
-        .main-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 5rem;
-            font-weight: 400;
-            color: white;
-            line-height: 1.1;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-            margin: 0;
-            letter-spacing: 2px;
-        }
-        
-        .buttons-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-left: 2rem;
-        }
-        
-        .nav-btn {
-            background: transparent;
-            border: 2px solid rgba(255,255,255,0.8);
-            color: white;
-            padding: 1rem 2.5rem;
-            text-decoration: none;
-            font-family: 'Crimson Text', serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            text-align: center;
-            min-width: 280px;
-            text-transform: uppercase;
-        }
-        
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: white;
-            color: white;
-            text-decoration: none;
-            backdrop-filter: blur(10px);
-        }
-        
-        .footer-links {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-        }
-        
-        .footer-links a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            margin: 0 1rem;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-            text-decoration: none;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .hero-container {
-                padding: 0 2rem;
-            }
-            
-            .main-title {
-                font-size: 4rem;
-            }
-            
-            .nav-btn {
-                min-width: 250px;
-                padding: 0.9rem 2rem;
-            }
-        }
-        
-        @media (max-width: 992px) {
-            .hero-container {
-                flex-direction: column;
-                justify-content: center;
-                text-align: center;
-                padding: 2rem;
-            }
-            
-            .title-section {
-                margin-bottom: 3rem;
-            }
-            
-            .main-title {
-                font-size: 3.5rem;
-            }
-            
-            .buttons-section {
-                margin-left: 0;
-                align-items: center;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .main-title {
-                font-size: 2.8rem;
-            }
-            
-            .nav-btn {
-                min-width: 220px;
-                padding: 0.8rem 1.5rem;
-                font-size: 1rem;
-            }
-            
-            .hero-container {
-                padding: 1rem;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .main-title {
-                font-size: 2.2rem;
-            }
-            
-            .nav-btn {
-                min-width: 200px;
-                padding: 0.7rem 1.2rem;
-            }
-        }
-    </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ <title>Chapter 6: A Plot Twist</title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+ <style>
+ body, html {
+ margin: 0;
+ padding: 0;
+ height: 100%;
+ overflow: hidden;
+ font-family: 'Crimson Text', serif;
+ }
+ 
+ .hero-container {
+ position: relative;
+ width: 100%;
+ height: 100vh;
+ background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+ url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: 0 4rem;
+ }
+ 
+ .title-section {
+ flex: 1;
+ max-width: 600px;
+ }
+ 
+ .main-title {
+ font-family: 'Playfair Display', serif;
+ font-size: 5rem;
+ font-weight: 400;
+ color: white;
+ line-height: 1.1;
+ text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+ margin: 0;
+ letter-spacing: 2px;
+ }
+ 
+ .buttons-section {
+ display: flex;
+ flex-direction: column;
+ gap: 1rem;
+ margin-left: 2rem;
+ }
+ 
+ .nav-btn {
+ background: transparent;
+ border: 2px solid rgba(255,255,255,0.8);
+ color: white;
+ padding: 1rem 2.5rem;
+ text-decoration: none;
+ font-family: 'Crimson Text', serif;
+ font-size: 1.1rem;
+ font-weight: 600;
+ letter-spacing: 1px;
+ transition: all 0.3s ease;
+ text-align: center;
+ min-width: 280px;
+ text-transform: uppercase;
+ }
+ 
+ .nav-btn:hover {
+ background: rgba(255,255,255,0.1);
+ border-color: white;
+ color: white;
+ text-decoration: none;
+ backdrop-filter: blur(10px);
+ }
+ 
+ .footer-links {
+ position: absolute;
+ bottom: 2rem;
+ left: 50%;
+ transform: translateX(-50%);
+ text-align: center;
+ }
+ 
+ .footer-links a {
+ color: rgba(255,255,255,0.8);
+ text-decoration: none;
+ margin: 0 1rem;
+ font-size: 0.9rem;
+ transition: color 0.3s ease;
+ }
+ 
+ .footer-links a:hover {
+ color: white;
+ text-decoration: none;
+ }
+ 
+ /* Responsive Design */
+ @media (max-width: 1200px) {
+ .hero-container {
+ padding: 0 2rem;
+ }
+ 
+ .main-title {
+ font-size: 4rem;
+ }
+ 
+ .nav-btn {
+ min-width: 250px;
+ padding: 0.9rem 2rem;
+ }
+ }
+ 
+ @media (max-width: 992px) {
+ .hero-container {
+ flex-direction: column;
+ justify-content: center;
+ text-align: center;
+ padding: 2rem;
+ }
+ 
+ .title-section {
+ margin-bottom: 3rem;
+ }
+ 
+ .main-title {
+ font-size: 3.5rem;
+ }
+ 
+ .buttons-section {
+ margin-left: 0;
+ align-items: center;
+ }
+ }
+ 
+ @media (max-width: 768px) {
+ .main-title {
+ font-size: 2.8rem;
+ }
+ 
+ .nav-btn {
+ min-width: 220px;
+ padding: 0.8rem 1.5rem;
+ font-size: 1rem;
+ }
+ 
+ .hero-container {
+ padding: 1rem;
+ }
+ }
+ 
+ @media (max-width: 576px) {
+ .main-title {
+ font-size: 2.2rem;
+ }
+ 
+ .nav-btn {
+ min-width: 200px;
+ padding: 0.7rem 1.2rem;
+ }
+ }
+ </style>
 </head>
 <body>
-    <div class="hero-container">
-        <div class="title-section">
-            <h1 class="main-title">Chapter<br>6: A Plot<br>Twist</h1>
-        </div>
-        
-        <div class="buttons-section">
-            <a href="{{ url_for('customer_register') }}" class="nav-btn">
-                REGISTER
-            </a>
-            
-            <a href="{{ url_for('customer_login') }}" class="nav-btn">
-                CUSTOMER LOGIN
-            </a>
-            
-            <a href="{{ url_for('view_cart') }}" class="nav-btn">
-                GUEST CHECKOUT
-            </a>
-            
-            <a href="{{ url_for('browse') }}" class="nav-btn">
-                BROWSE OUR CATALOG
-            </a>
-            
-            <a href="{{ url_for('login') }}" class="nav-btn">
-                ADMIN LOG IN
-            </a>
-        </div>
-        
-        <div class="footer-links">
-            <a href="#" onclick="alert('Terms & Support - Contact us for assistance')">Terms & Support</a>
-            <a href="#" onclick="alert('Privacy Policy - Your privacy is important to us')">Privacy Policy</a>
-        </div>
-    </div>
+ <div class="hero-container">
+ <div class="title-section">
+ <h1 class="main-title">Chapter<br>6: A Plot<br>Twist</h1>
+ </div>
+ 
+ <div class="buttons-section">
+ <a href="{{ url_for('customer_register') }}" class="nav-btn">
+ REGISTER
+ </a>
+ 
+ <a href="{{ url_for('customer_login') }}" class="nav-btn">
+ CUSTOMER LOGIN
+ </a>
+ 
+ <a href="{{ url_for('view_cart') }}" class="nav-btn">
+ GUEST CHECKOUT
+ </a>
+ 
+ <a href="{{ url_for('browse') }}" class="nav-btn">
+ BROWSE OUR CATALOG
+ </a>
+ 
+ <a href="{{ url_for('login') }}" class="nav-btn">
+ ADMIN LOG IN
+ </a>
+ </div>
+ 
+ <div class="footer-links">
+ <a href="#" onclick="alert('Terms & Support - Contact us for assistance')">Terms & Support</a>
+ <a href="#" onclick="alert('Privacy Policy - Your privacy is important to us')">Privacy Policy</a>
+ </div>
+ </div>
 </body>
 </html>

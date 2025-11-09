@@ -1,192 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Join the Adventure - Chapter 6: A Plot Twist</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/enchanted-theme.css') }}">
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ <title>Join the Adventure - Chapter 6: A Plot Twist</title>
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/enchanted-theme.css') }}">
 </head>
 <body>
-    <!-- Floating Books Animation -->
-    <div class="floating-books">
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-        <div class="floating-book"></div>
-    </div>
+ <!-- Floating Books Animation -->
+ <div class="floating-books">
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ <div class="floating-book"></div>
+ </div>
 
-    <div class="container">
-        <div class="row justify-content-center" style="min-height: 100vh; align-items: center;">
-            <div class="col-md-8 col-lg-7">
-                <div class="enchanted-card">
-                    <div class="enchanted-header">
-                        <h2 class="brand-title mb-2">Chapter 6: A Plot Twist</h2>
-                        <p class="brand-subtitle mb-3">Where Every Story Finds Its Magic</p>
-                        <h4 class="mb-0"><i class="fas fa-scroll"></i> Begin Your Literary Journey</h4>
-                        <small class="text-light">Create Your Reader's Chronicle</small>
-                    </div>
-                    <div class="card-body p-4">
-                        <!-- Flash messages -->
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                            {% if messages %}
-                                {% for category, message in messages %}
-                                    <div class="alert enchanted-alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
-                                        {{ message }}
-                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endwith %}
+ <div class="container">
+ <div class="row justify-content-center" style="min-height: 100vh; align-items: center;">
+ <div class="col-md-8 col-lg-7">
+ <div class="enchanted-card">
+ <div class="enchanted-header">
+ <h2 class="brand-title mb-2">Chapter 6: A Plot Twist</h2>
+ <p class="brand-subtitle mb-3">Where Every Story Finds Its Magic</p>
+ <h4 class="mb-0"><i class="fas fa-scroll"></i> Begin Your Literary Journey</h4>
+ <small class="text-light">Create Your Reader's Chronicle</small>
+ </div>
+ <div class="card-body p-4">
+ <!-- Flash messages -->
+ {% with messages = get_flashed_messages(with_categories=true) %}
+ {% if messages %}
+ {% for category, message in messages %}
+ <div class="alert enchanted-alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+ {{ message }}
+ <button type="button" class="close" data-dismiss="alert">&times;</button>
+ </div>
+ {% endfor %}
+ {% endif %}
+ {% endwith %}
 
-                        <form method="POST">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="enchanted-form-group">
-                                        <label for="username" class="enchanted-label">
-                                            <i class="fas fa-feather-alt"></i> Chosen Pen Name
-                                        </label>
-                                        <input type="text" class="form-control enchanted-input" id="username" name="username" 
-                                               required minlength="3" placeholder="Your unique reader identity">
-                                        <small class="enchanted-small">At least 3 mystical characters</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="enchanted-form-group">
-                                        <label for="email" class="enchanted-label">
-                                            <i class="fas fa-envelope-open-text"></i> Scroll Address
-                                        </label>
-                                        <input type="email" class="form-control enchanted-input" id="email" name="email" 
-                                               required placeholder="your.scroll@realm.com">
-                                    </div>
-                                </div>
-                            </div>
+ <form method="POST">
+ <div class="row">
+ <div class="col-md-6">
+ <div class="enchanted-form-group">
+ <label for="username" class="enchanted-label">
+ <i class="fas fa-feather-alt"></i> Chosen Pen Name
+ </label>
+ <input type="text" class="form-control enchanted-input" id="username" name="username" 
+ required minlength="3" placeholder="Your unique reader identity">
+ <small class="enchanted-small">At least 3 mystical characters</small>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="enchanted-form-group">
+ <label for="email" class="enchanted-label">
+ <i class="fas fa-envelope-open-text"></i> Scroll Address
+ </label>
+ <input type="email" class="form-control enchanted-input" id="email" name="email" 
+ required placeholder="your.scroll@realm.com">
+ </div>
+ </div>
+ </div>
 
-                            <div class="enchanted-form-group">
-                                <label for="full_name" class="enchanted-label">
-                                    <i class="fas fa-signature"></i> True Name
-                                </label>
-                                <input type="text" class="form-control enchanted-input" id="full_name" name="full_name" 
-                                       required placeholder="Your full name as written in the great tome">
-                            </div>
+ <div class="enchanted-form-group">
+ <label for="full_name" class="enchanted-label">
+ <i class="fas fa-signature"></i> True Name
+ </label>
+ <input type="text" class="form-control enchanted-input" id="full_name" name="full_name" 
+ required placeholder="Your full name as written in the great tome">
+ </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="enchanted-form-group">
-                                        <label for="password" class="enchanted-label">
-                                            <i class="fas fa-magic"></i> Secret Incantation
-                                        </label>
-                                        <input type="password" class="form-control enchanted-input" id="password" name="password" 
-                                               required minlength="6" placeholder="Your magical password">
-                                        <small class="enchanted-small">At least 6 characters of power</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="enchanted-form-group">
-                                        <label for="confirm_password" class="enchanted-label">
-                                            <i class="fas fa-shield-alt"></i> Confirm Incantation
-                                        </label>
-                                        <input type="password" class="form-control enchanted-input" id="confirm_password" name="confirm_password" 
-                                               required placeholder="Repeat your magical words">
-                                    </div>
-                                </div>
-                            </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="enchanted-form-group">
+ <label for="password" class="enchanted-label">
+ <i class="fas fa-magic"></i> Secret Incantation
+ </label>
+ <input type="password" class="form-control enchanted-input" id="password" name="password" 
+ required minlength="6" placeholder="Your magical password">
+ <small class="enchanted-small">At least 6 characters of power</small>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="enchanted-form-group">
+ <label for="confirm_password" class="enchanted-label">
+ <i class="fas fa-shield-alt"></i> Confirm Incantation
+ </label>
+ <input type="password" class="form-control enchanted-input" id="confirm_password" name="confirm_password" 
+ required placeholder="Repeat your magical words">
+ </div>
+ </div>
+ </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="enchanted-form-group">
-                                        <label for="phone" class="enchanted-label">
-                                            <i class="fas fa-crystal-ball"></i> Crystal Communication (Optional)
-                                        </label>
-                                        <input type="tel" class="form-control enchanted-input" id="phone" name="phone" 
-                                               placeholder="Your crystal ball frequency">
-                                    </div>
-                                </div>
-                            </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="enchanted-form-group">
+ <label for="phone" class="enchanted-label">
+ <i class="fas fa-crystal-ball"></i> Crystal Communication (Optional)
+ </label>
+ <input type="tel" class="form-control enchanted-input" id="phone" name="phone" 
+ placeholder="Your crystal ball frequency">
+ </div>
+ </div>
+ </div>
 
-                            <div class="enchanted-form-group">
-                                <label for="address" class="enchanted-label">
-                                    <i class="fas fa-home"></i> Dwelling Place (Optional)
-                                </label>
-                                <textarea class="form-control enchanted-input" id="address" name="address" rows="3" 
-                                          placeholder="Your castle, cottage, or tower address"></textarea>
-                            </div>
+ <div class="enchanted-form-group">
+ <label for="address" class="enchanted-label">
+ <i class="fas fa-home"></i> Dwelling Place (Optional)
+ </label>
+ <textarea class="form-control enchanted-input" id="address" name="address" rows="3" 
+ placeholder="Your castle, cottage, or tower address"></textarea>
+ </div>
 
-                            <div class="form-group form-check">
-                                <input type="checkbox" class="form-check-input" id="receive_marketing" name="receive_marketing">
-                                <label class="form-check-label enchanted-small" for="receive_marketing">
-                                    <i class="fas fa-raven"></i> Send me magical ravens with news of new arrivals and mystical offers
-                                </label>
-                            </div>
+ <div class="form-group form-check">
+ <input type="checkbox" class="form-check-input" id="receive_marketing" name="receive_marketing">
+ <label class="form-check-label enchanted-small" for="receive_marketing">
+ <i class="fas fa-raven"></i> Send me magical ravens with news of new arrivals and mystical offers
+ </label>
+ </div>
 
-                            <div class="text-center">
-                                <button type="submit" class="btn magical-btn btn-lg">
-                                    <i class="fas fa-door-open"></i> Enter the Literary Realm
-                                </button>
-                            </div>
-                        </form>
+ <div class="text-center">
+ <button type="submit" class="btn magical-btn btn-lg">
+ <i class="fas fa-door-open"></i> Enter the Literary Realm
+ </button>
+ </div>
+ </form>
 
-                        <hr class="magical-divider">
+ <hr class="magical-divider">
 
-                        <div class="text-center">
-                            <p class="enchanted-small mb-3">
-                                <i class="fas fa-book-reader"></i> Already a member of our literary guild?
-                            </p>
-                            <a href="{{ url_for('customer_login') }}" class="enchanted-link">
-                                <i class="fas fa-door-open"></i> Return to Reader's Portal
-                            </a>
-                            <br><br>
-                            <a href="{{ url_for('browse') }}" class="enchanted-link">
-                                <i class="fas fa-compass"></i> Continue exploring as a wandering reader
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+ <div class="text-center">
+ <p class="enchanted-small mb-3">
+ <i class="fas fa-book-reader"></i> Already a member of our literary guild?
+ </p>
+ <a href="{{ url_for('customer_login') }}" class="enchanted-link">
+ <i class="fas fa-door-open"></i> Return to Reader's Portal
+ </a>
+ <br><br>
+ <a href="{{ url_for('browse') }}" class="enchanted-link">
+ <i class="fas fa-compass"></i> Continue exploring as a wandering reader
+ </a>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Enchanted form validation with magical feedback
-        document.getElementById('confirm_password').addEventListener('input', function() {
-            const password = document.getElementById('password').value;
-            const confirmPassword = this.value;
-            
-            if (password !== confirmPassword) {
-                this.setCustomValidity('The incantations do not align! Please ensure they match.');
-                this.style.borderColor = '#dc3545';
-            } else {
-                this.setCustomValidity('');
-                this.style.borderColor = '#ffd700';
-            }
-        });
-        
-        // Username validation with mystical guidance
-        document.getElementById('username').addEventListener('input', function() {
-            if (this.value.length < 3) {
-                this.setCustomValidity('Your pen name requires at least 3 mystical characters to hold power');
-                this.style.borderColor = '#dc3545';
-            } else {
-                this.setCustomValidity('');
-                this.style.borderColor = '#ffd700';
-            }
-        });
+ <!-- Bootstrap JS -->
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+ 
+ <script>
+ // Enchanted form validation with magical feedback
+ document.getElementById('confirm_password').addEventListener('input', function() {
+ const password = document.getElementById('password').value;
+ const confirmPassword = this.value;
+ 
+ if (password !== confirmPassword) {
+ this.setCustomValidity('The incantations do not align! Please ensure they match.');
+ this.style.borderColor = '#dc3545';
+ } else {
+ this.setCustomValidity('');
+ this.style.borderColor = '#ffd700';
+ }
+ });
+ 
+ // Username validation with mystical guidance
+ document.getElementById('username').addEventListener('input', function() {
+ if (this.value.length < 3) {
+ this.setCustomValidity('Your pen name requires at least 3 mystical characters to hold power');
+ this.style.borderColor = '#dc3545';
+ } else {
+ this.setCustomValidity('');
+ this.style.borderColor = '#ffd700';
+ }
+ });
 
-        // Add sparkle effect on form submission
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const submitBtn = document.querySelector('.magical-btn');
-            submitBtn.innerHTML = '<i class="fas fa-magic"></i> <span class="magical-loading"></span> Weaving your story...';
-            submitBtn.disabled = true;
-        });
-    </script>
+ // Add sparkle effect on form submission
+ document.querySelector('form').addEventListener('submit', function(e) {
+ const submitBtn = document.querySelector('.magical-btn');
+ submitBtn.innerHTML = '<i class="fas fa-magic"></i> <span class="magical-loading"></span> Weaving your story...';
+ submitBtn.disabled = true;
+ });
+ </script>
 </body>
 </html>

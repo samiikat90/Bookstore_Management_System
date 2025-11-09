@@ -4,186 +4,187 @@
 
 {% block content %}
 <div class="main-container">
-    <div class="text-center mb-4">
-        <h1 class="page-title">
-            <i class="fas fa-edit"></i> Edit My Profile
-        </h1>
-        <p class="lead text-muted">Update your account information and preferences</p>
-    </div>
+ <div class="text-center mb-4">
+ <h1 class="page-title">
+ <i class="fas fa-edit"></i> Edit My Profile
+ </h1>
+ <p class="lead text-muted">Update your account information and preferences</p>
+ </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <!-- Account Sidebar -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h5 class="card-title text-center">
-                        <i class="fas fa-compass"></i> Navigation
-                    </h5>
-                    <div class="list-group list-group-flush">
-                        <a href="{{ url_for('customer_dashboard') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-home"></i> Dashboard
-                        </a>
-                        <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-user"></i> Account Information
-                        </a>
-                        <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-shopping-bag"></i> Order History
-                        </a>
-                        <a href="{{ url_for('customer_notifications') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-bell"></i> Notifications
-                        </a>
-                        <a href="{{ url_for('catalog_view') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-book-open"></i> Browse Catalog
-                        </a>
-                        {% if not (current_user.is_authenticated and current_user.is_manager) %}
-                        <a href="{{ url_for('view_cart') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-shopping-cart"></i> Shopping Cart
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
+ <div class="row">
+ <div class="col-md-4">
+ <!-- Account Sidebar -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title text-center">
+ <i class="fas fa-compass"></i> Navigation
+ </h5>
+ <div class="list-group list-group-flush">
+ <a href="{{ url_for('customer_dashboard') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-home"></i> Dashboard
+ </a>
+ <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-user"></i> Account Information
+ </a>
+ <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-shopping-bag"></i> Order History
+ </a>
+ <a href="{{ url_for('customer_notifications') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-bell"></i> Notifications
+ </a>
+ <a href="{{ url_for('catalog_view') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-book-open"></i> Browse Catalog
+ </a>
+ {% if not (current_user.is_authenticated and current_user.is_manager) %}
+ <a href="{{ url_for('view_cart') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-shopping-cart"></i> Shopping Cart
+ </a>
+ {% endif %}
+ </div>
+ </div>
+ </div>
+ </div>
 
-        <div class="col-md-8">
-            <!-- Edit Account Form -->
-            <div class="card-hero">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-user-edit"></i> Account Information
-                    </h4>
-                    
-                    <form method="POST" class="mt-4">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="full_name" class="text-primary">
-                                        <i class="fas fa-id-card"></i> Full Name
-                                    </label>
-                                    <input type="text" class="form-control" id="full_name" name="full_name" 
-                                           required value="{{ customer.full_name }}" placeholder="Enter your full name">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email" class="text-primary">
-                                        <i class="fas fa-envelope"></i> Email Address
-                                    </label>
-                                    <input type="email" class="form-control" id="email" name="email" 
-                                           required value="{{ customer.email }}" placeholder="Enter email address">
-                                </div>
-                            </div>
-                        </div>
+ <div class="col-md-8">
+ <!-- Edit Account Form -->
+ <div class="card-hero">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-user-edit"></i> Account Information
+ </h4>
+ 
+ <form method="POST" class="mt-4">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="full_name" class="text-primary">
+ <i class="fas fa-id-card"></i> Full Name
+ </label>
+ <input type="text" class="form-control" id="full_name" name="full_name" 
+ required value="{{ customer.full_name }}" placeholder="Enter your full name">
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="email" class="text-primary">
+ <i class="fas fa-envelope"></i> Email Address
+ </label>
+ <input type="email" class="form-control" id="email" name="email" 
+ required value="{{ customer.email }}" placeholder="Enter email address">
+ </div>
+ </div>
+ </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone" class="text-primary">
-                                        <i class="fas fa-phone"></i> Phone Number 
-                                        <small class="text-muted">(Optional)</small>
-                                    </label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" 
-                                           value="{{ customer.phone if customer.phone else '' }}" 
-                                           placeholder="Enter phone number">
-                                </div>
-                            </div>
-                        </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="phone" class="text-primary">
+ <i class="fas fa-phone"></i> Phone Number 
+ <small class="text-muted">(Optional)</small>
+ </label>
+ <input type="tel" class="form-control" id="phone" name="phone" 
+ value="{{ customer.phone if customer.phone else '' }}" 
+ placeholder="Enter phone number">
+ </div>
+ </div>
+ </div>
 
-                        <div class="form-group">
-                            <label for="address_line1" class="text-primary">
-                                <i class="fas fa-map-marker-alt"></i> Address Line 1
-                                <small class="text-muted">(Optional)</small>
-                            </label>
-                            <input type="text" class="form-control" id="address_line1" name="address_line1" 
-                                   value="{{ customer.address_line1 if customer.address_line1 else '' }}" 
-                                   placeholder="Street address, P.O. box, company name, c/o">
-                        </div>
+ <div class="form-group">
+ <label for="address_line1" class="text-primary">
+ <i class="fas fa-map-marker-alt"></i> Address Line 1
+ <small class="text-muted">(Optional)</small>
+ </label>
+ <input type="text" class="form-control" id="address_line1" name="address_line1" 
+ value="{{ customer.address_line1 if customer.address_line1 else '' }}" 
+ placeholder="Street address, P.O. box, company name, c/o">
+ </div>
 
-                        <div class="form-group">
-                            <label for="address_line2" class="text-primary">
-                                Address Line 2
-                                <small class="text-muted">(Optional)</small>
-                            </label>
-                            <input type="text" class="form-control" id="address_line2" name="address_line2" 
-                                   value="{{ customer.address_line2 if customer.address_line2 else '' }}" 
-                                   placeholder="Apartment, suite, unit, building, floor, etc.">
-                        </div>
+ <div class="form-group">
+ <label for="address_line2" class="text-primary">
+ Address Line 2
+ <small class="text-muted">(Optional)</small>
+ </label>
+ <input type="text" class="form-control" id="address_line2" name="address_line2" 
+ value="{{ customer.address_line2 if customer.address_line2 else '' }}" 
+ placeholder="Apartment, suite, unit, building, floor, etc.">
+ </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="city" class="text-primary">
-                                        <i class="fas fa-city"></i> City
-                                        <small class="text-muted">(Optional)</small>
-                                    </label>
-                                    <input type="text" class="form-control" id="city" name="city" 
-                                           value="{{ customer.city if customer.city else '' }}" 
-                                           placeholder="City">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="state" class="text-primary">
-                                        <i class="fas fa-flag"></i> State
-                                        <small class="text-muted">(Optional)</small>
-                                    </label>
-                                    <input type="text" class="form-control" id="state" name="state" 
-                                           value="{{ customer.state if customer.state else '' }}" 
-                                           placeholder="State">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="zip_code" class="text-primary">
-                                        <i class="fas fa-mail-bulk"></i> Zip Code
-                                        <small class="text-muted">(Optional)</small>
-                                    </label>
-                                    <input type="text" class="form-control" id="zip_code" name="zip_code" 
-                                           value="{{ customer.zip_code if customer.zip_code else '' }}" 
-                                           placeholder="12345">
-                                </div>
-                            </div>
-                        </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="city" class="text-primary">
+ <i class="fas fa-city"></i> City
+ <small class="text-muted">(Optional)</small>
+ </label>
+ <input type="text" class="form-control" id="city" name="city" 
+ value="{{ customer.city if customer.city else '' }}" 
+ placeholder="City">
+ </div>
+ </div>
+ <div class="col-md-4">
+ <div class="form-group">
+ <label for="state" class="text-primary">
+ <i class="fas fa-flag"></i> State
+ <small class="text-muted">(Optional)</small>
+ </label>
+ <input type="text" class="form-control" id="state" name="state" 
+ value="{{ customer.state if customer.state else '' }}" 
+ placeholder="State">
+ </div>
+ </div>
+ <div class="col-md-2">
+ <div class="form-group">
+ <label for="zip_code" class="text-primary">
+ <i class="fas fa-mail-bulk"></i> Zip Code
+ <small class="text-muted">(Optional)</small>
+ </label>
+ <input type="text" class="form-control" id="zip_code" name="zip_code" 
+ value="{{ customer.zip_code if customer.zip_code else '' }}" 
+ placeholder="12345">
+ </div>
+ </div>
+ </div>
 
-                        <div class="card bg-light p-3 mb-4">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="receive_marketing" 
-                                       name="receive_marketing" {{ 'checked' if customer.receive_marketing else '' }}>
-                                <label class="form-check-label" for="receive_marketing">
-                                    <i class="fas fa-envelope-open-text"></i> 
-                                    I would like to receive promotional emails about new books and special offers
-                                </label>
-                            </div>
-                        </div>
+ <div class="card bg-light p-3 mb-4">
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="receive_marketing" 
+ name="receive_marketing" {{ 'checked' if customer.receive_marketing else '' }}>
+ <label class="form-check-label" for="receive_marketing">
+ <i class="fas fa-envelope-open-text"></i> 
+ I would like to receive promotional emails about new books and special offers
+ </label>
+ </div>
+ </div>
 
-                        <div class="card bg-light p-3 mb-4">
-                            <h6 class="text-primary mb-3">
-                                <i class="fas fa-info-circle"></i> Account Details
-                            </h6>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>Username:</strong> {{ customer.username }}
-                                    <br><small class="text-muted">Username cannot be changed</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Member Since:</strong> {{ customer.date_registered.strftime('%B %Y') }}
-                                    <br><small class="text-muted">{{ (now() - customer.date_registered).days }} days ago</small>
-                                </div>
-                            </div>
-                        </div>
+ <div class="card bg-light p-3 mb-4">
+ <h6 class="text-primary mb-3">
+ <i class="fas fa-info-circle"></i> Account Details
+ </h6>
+ <div class="row">
+ <div class="col-md-6">
+ <strong>Username:</strong> {{ customer.username }}
+ <br><small class="text-muted">Username cannot be changed</small>
+ </div>
+ <div class="col-md-6">
+ <strong>Member Since:</strong> {{ customer.date_registered.strftime('%B %Y') }}
+ <br><small class="text-muted">{{ (now() - customer.date_registered).days }} days ago</small>
+ </div>
+ </div>
+ </div>
 
-                        <div class="text-center">
-                            <button type="submit" class="btn-hero mr-2">
-                                <i class="fas fa-save"></i> Save Changes
-                            </button>
-                            <a href="{{ url_for('customer_account') }}" class="btn-outline-hero">
-                                <i class="fas fa-arrow-left"></i> Back to Account
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+ <div class="text-center">
+ <button type="submit" class="btn-hero mr-2">
+ <i class="fas fa-save"></i> Save Changes
+ </button>
+ <a href="{{ url_for('customer_account') }}" class="btn-outline-hero">
+ <i class="fas fa-arrow-left"></i> Back to Account
+ </a>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
+ </div>
 </div>
 {% endblock %}

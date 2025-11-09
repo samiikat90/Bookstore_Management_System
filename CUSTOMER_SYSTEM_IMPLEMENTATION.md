@@ -35,16 +35,16 @@ I've successfully implemented a comprehensive customer registration and login sy
 ### Database Model (Customer)
 ```python
 class Customer(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    full_name = db.Column(db.String(100), nullable=False)
-    phone = db.Column(db.String(20), nullable=True)
-    address = db.Column(db.Text, nullable=True)
-    date_registered = db.Column(db.DateTime, default=datetime.utcnow)
-    is_active = db.Column(db.Boolean, default=True)
-    receive_marketing = db.Column(db.Boolean, default=False)
+ id = db.Column(db.Integer, primary_key=True)
+ username = db.Column(db.String(80), unique=True, nullable=False)
+ email = db.Column(db.String(120), unique=True, nullable=False)
+ password_hash = db.Column(db.String(128), nullable=False)
+ full_name = db.Column(db.String(100), nullable=False)
+ phone = db.Column(db.String(20), nullable=True)
+ address = db.Column(db.Text, nullable=True)
+ date_registered = db.Column(db.DateTime, default=datetime.utcnow)
+ is_active = db.Column(db.Boolean, default=True)
+ receive_marketing = db.Column(db.Boolean, default=False)
 ```
 
 ### Authentication Routes
@@ -213,12 +213,12 @@ The customer registration and login system is now fully operational and provides
 
 ## System Status
 
-- **Customer Registration** - Complete with validation and security  
-- **Customer Login** - Flexible authentication with username or email  
-- **Account Management** - Profile editing and order history  
-- **Enhanced Navigation** - Customer-friendly browse experience  
-- **Order Tracking** - Purchase history linked to customer accounts  
-- **Security** - Proper authentication and session management  
-- **User Experience** - Professional UI with responsive design  
+- **Customer Registration** - Complete with validation and security 
+- **Customer Login** - Flexible authentication with username or email 
+- **Account Management** - Profile editing and order history 
+- **Enhanced Navigation** - Customer-friendly browse experience 
+- **Order Tracking** - Purchase history linked to customer accounts 
+- **Security** - Proper authentication and session management 
+- **User Experience** - Professional UI with responsive design 
 
 The system is ready for customer use and testing!

@@ -7,7 +7,7 @@
 - `test_*.py` files (7 files) - Moved testing to `tests/` folder only
 - `migrate_2fa.py` - Duplicate migration file
 - `check_purchases.py` - Development utility script
-- `check_users.py` - Development utility script  
+- `check_users.py` - Development utility script 
 - `import_csv_direct.py` - Development utility script
 
 ### Redundant Folders
@@ -28,8 +28,8 @@
 - **Before**: 15 separate import statements with duplicates
 - **After**: 10 organized import statements grouped by type
 - **Removed duplicates**: 
-  - `from flask import session` (duplicate of main flask import)
-  - `from functools import wraps` (duplicate import)
+ - `from flask import session` (duplicate of main flask import)
+ - `from functools import wraps` (duplicate import)
 
 ### Organized Import Structure
 ```python
@@ -72,7 +72,7 @@ import smtplib
 ### Essential Scripts (4 files)
 - `scripts/create_admin_users.py` - Primary admin user creation tool
 - `scripts/create_sample_orders.py` - Sample data generation
-- `scripts/create_sample_purchases.py` - Sample data generation  
+- `scripts/create_sample_purchases.py` - Sample data generation 
 - `scripts/check_db.py` - Database inspection utility
 
 ### Configuration and Documentation

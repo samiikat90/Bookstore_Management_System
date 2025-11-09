@@ -30,8 +30,8 @@ I've successfully implemented an automatic session timeout feature for admin use
 #### Configuration
 ```python
 # Auto-logout configuration for admin inactivity
-ADMIN_SESSION_TIMEOUT = timedelta(minutes=10)  # 10 minutes of inactivity
-SESSION_WARNING_TIME = timedelta(minutes=8)    # Show warning at 8 minutes
+ADMIN_SESSION_TIMEOUT = timedelta(minutes=10) # 10 minutes of inactivity
+SESSION_WARNING_TIME = timedelta(minutes=8) # Show warning at 8 minutes
 ```
 
 #### Enhanced Authentication
@@ -41,9 +41,9 @@ SESSION_WARNING_TIME = timedelta(minutes=8)    # Show warning at 8 minutes
 
 #### New API Routes
 ```python
-@app.route('/api/session_status')           # Check session status
-@app.route('/api/extend_session', methods=['POST'])  # Extend session
-@app.route('/api/check_timeout')            # Check for timeout
+@app.route('/api/session_status') # Check session status
+@app.route('/api/extend_session', methods=['POST']) # Extend session
+@app.route('/api/check_timeout') # Check for timeout
 ```
 
 ### Client-Side Implementation
@@ -81,8 +81,8 @@ document.addEventListener('click', trackActivity);
 1. **Warning modal appears**: Clear notification of impending timeout
 2. **Countdown timer**: Shows exact minutes remaining
 3. **Two options available**:
-   - **"Extend Session"**: Resets timer to 10 minutes
-   - **"Logout Now"**: Immediate logout
+ - **"Extend Session"**: Resets timer to 10 minutes
+ - **"Logout Now"**: Immediate logout
 
 ### Automatic Logout (at 10 minutes)
 1. **Session expired message**: Clear notification
@@ -105,8 +105,8 @@ document.addEventListener('click', trackActivity);
 
 ### Timeout Settings (easily adjustable)
 ```python
-ADMIN_SESSION_TIMEOUT = timedelta(minutes=10)  # Total timeout period
-SESSION_WARNING_TIME = timedelta(minutes=8)    # When to show warning
+ADMIN_SESSION_TIMEOUT = timedelta(minutes=10) # Total timeout period
+SESSION_WARNING_TIME = timedelta(minutes=8) # When to show warning
 ```
 
 ### Monitoring Frequency

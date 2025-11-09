@@ -38,9 +38,9 @@ Your Chapter 6: A Plot Twist bookstore management system now includes all the en
 - **Add new books** individually
 - **Edit existing books** with full detail updates
 - **Delete books** with quantity options:
-  - Partial quantity deletion
-  - Complete book removal
-  - Safety checks for pending orders
+ - Partial quantity deletion
+ - Complete book removal
+ - Safety checks for pending orders
 - **CSV Import/Export** with scientific notation support
 - Bulk inventory operations
 - Stock tracking and availability
@@ -91,23 +91,23 @@ Your Chapter 6: A Plot Twist bookstore management system now includes all the en
 
 ```
 Chapter-6-A-Plot-Twist-main/
-├── app/                          # Main Flask application
-│   ├── app.py                       # Core application (1500+ lines)
-│   └── templates/                   # All HTML templates (13 files)
-├── scripts/                      # Essential utility scripts (4 files)
-│   ├── create_admin_users.py        # Admin user creation
-│   ├── create_sample_orders.py      # Sample data generation
-│   ├── create_sample_purchases.py   # Sample data generation
-│   └── check_db.py                  # Database inspection
-├── tests/                        # Test files
-├── instance/                     # Database and uploads (auto-created)
-├── uploads/                      # CSV files for import/export
-├── venv/                         # Python virtual environment
-├── README.md                     # Comprehensive documentation
-├── requirements.txt              # Python dependencies
-├── run.ps1                       # Windows startup script
-├── .env & .env.example           # Environment configuration
-└── Feature Documentation Files   # Complete implementation guides
+ app/ # Main Flask application
+ app.py # Core application (1500+ lines)
+ templates/ # All HTML templates (13 files)
+ scripts/ # Essential utility scripts (4 files)
+ create_admin_users.py # Admin user creation
+ create_sample_orders.py # Sample data generation
+ create_sample_purchases.py # Sample data generation
+ check_db.py # Database inspection
+ tests/ # Test files
+ instance/ # Database and uploads (auto-created)
+ uploads/ # CSV files for import/export
+ venv/ # Python virtual environment
+ README.md # Comprehensive documentation
+ requirements.txt # Python dependencies
+ run.ps1 # Windows startup script
+ .env & .env.example # Environment configuration
+ Feature Documentation Files # Complete implementation guides
 ```
 
 ## **Key Achievements**

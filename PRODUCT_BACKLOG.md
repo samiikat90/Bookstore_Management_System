@@ -2,12 +2,12 @@
 
 ## Backlog Overview
 
-**Product:** Chapter 6: A Plot Twist Bookstore Management System  
-**Product Owner:** Development Team Lead  
-**Backlog Last Updated:** November 5, 2025  
-**Total Items:** 45 user stories  
-**Sprint Ready Items:** 12  
-**Estimated Velocity:** 22 story points per sprint  
+**Product:** Chapter 6: A Plot Twist Bookstore Management System 
+**Product Owner:** Development Team Lead 
+**Backlog Last Updated:** November 5, 2025 
+**Total Items:** 45 user stories 
+**Sprint Ready Items:** 12 
+**Estimated Velocity:** 22 story points per sprint 
 
 ---
 
@@ -37,8 +37,8 @@
 | BSM-071 | Advanced Analytics Dashboard | P1 | 25 | 8.8 | Order/inventory data |
 | BSM-075 | Inventory Alerts System | P2 | 12 | 8.1 | Inventory management |
 
-**Sprint Capacity:** 22 story points  
-**Recommended:** BSM-075 (12 pts) + smaller tasks  
+**Sprint Capacity:** 22 story points 
+**Recommended:** BSM-075 (12 pts) + smaller tasks 
 
 ---
 
@@ -82,9 +82,9 @@
 ### **Large Epics Requiring Breakdown**
 
 #### **BSM-079: Subscription Service (45 points)**
-**Status:** Needs epic breakdown  
-**Business Case:** Monthly recurring revenue, customer retention  
-**Technical Challenges:** Payment processing, inventory automation, shipping integration  
+**Status:** Needs epic breakdown 
+**Business Case:** Monthly recurring revenue, customer retention 
+**Technical Challenges:** Payment processing, inventory automation, shipping integration 
 
 **Proposed Breakdown:**
 - BSM-079a: Subscription plan management (8 pts)
@@ -94,9 +94,9 @@
 - BSM-079e: Customer subscription portal (8 pts)
 
 #### **BSM-070: Mobile App Development (40 points)**
-**Status:** Needs technology decision  
-**Business Case:** Mobile commerce growth, customer convenience  
-**Technical Challenges:** Platform choice, API development, app store deployment  
+**Status:** Needs technology decision 
+**Business Case:** Mobile commerce growth, customer convenience 
+**Technical Challenges:** Platform choice, API development, app store deployment 
 
 **Proposed Breakdown:**
 - BSM-070a: Mobile API development (13 pts)
@@ -139,7 +139,7 @@
 | Sprint 5 | 22 | 22 | 100% | Advanced features added |
 | Sprint 6 | 26 | 26 | 100% | Genre & email system |
 
-**Average Velocity:** 23.3 story points per sprint  
+**Average Velocity:** 23.3 story points per sprint 
 **Overall Completion Rate:** 100%
 
 ---
@@ -149,7 +149,7 @@
 ### **Recently Refined Items**
 
 #### **BSM-073: Wishlist Functionality**
-**Refinement Date:** Nov 1, 2025  
+**Refinement Date:** Nov 1, 2025 
 **Changes Made:**
 - Clarified user interface requirements
 - Added persistent storage requirements
@@ -164,7 +164,7 @@
 - Wishlist visible in customer account
 
 #### **BSM-074: Book Reviews & Ratings**
-**Refinement Date:** Nov 3, 2025  
+**Refinement Date:** Nov 3, 2025 
 **Changes Made:**
 - Added moderation requirements
 - Defined rating scale (1-5 stars)
@@ -338,8 +338,8 @@
 
 ### **Weekly Backlog Refinement**
 
-**Schedule:** Every Tuesday, 1 hour  
-**Attendees:** Product Owner, Scrum Master, Development Team  
+**Schedule:** Every Tuesday, 1 hour 
+**Attendees:** Product Owner, Scrum Master, Development Team 
 
 **Agenda:**
 1. Review upcoming sprint items (15 min)
@@ -349,8 +349,8 @@
 
 ### **Monthly Backlog Review**
 
-**Schedule:** First Monday of each month, 2 hours  
-**Attendees:** All stakeholders  
+**Schedule:** First Monday of each month, 2 hours 
+**Attendees:** All stakeholders 
 
 **Agenda:**
 1. Review completed features and metrics (30 min)
@@ -360,8 +360,8 @@
 
 ### **Quarterly Roadmap Planning**
 
-**Schedule:** Quarterly, 4 hours  
-**Attendees:** Leadership team, Product Owner, key stakeholders  
+**Schedule:** Quarterly, 4 hours 
+**Attendees:** Leadership team, Product Owner, key stakeholders 
 
 **Agenda:**
 1. Business goal alignment (60 min)
@@ -393,7 +393,7 @@
 
 ---
 
-**Document Maintained By:** Product Owner  
-**Last Review:** November 5, 2025  
-**Next Review:** November 19, 2025  
+**Document Maintained By:** Product Owner 
+**Last Review:** November 5, 2025 
+**Next Review:** November 19, 2025 
 **Document Version:** 1.0

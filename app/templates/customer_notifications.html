@@ -4,320 +4,323 @@
 
 {% block content %}
 <div class="main-container">
-    <div class="text-center mb-4">
-        <h1 class="page-title">
-            <i class="fas fa-bell"></i> My Notification Preferences
-        </h1>
-        <p class="lead text-muted">Manage your book and genre notifications</p>
-        
-        <!-- Discount Code Promotion -->
-        <div class="alert alert-info mt-3">
-            <h5><i class="fas fa-tags"></i> Get Exclusive Discount Codes!</h5>
-            <p class="mb-2">Set up notifications below to receive special discount codes and promotional offers directly to your email.</p>
-            <small class="text-muted">We send discount codes for seasonal sales, special events, and exclusive member offers.</small>
-        </div>
-    </div>
+ <div class="text-center mb-4">
+ <h1 class="page-title">
+ <i class="fas fa-bell"></i> My Notification Preferences
+ </h1>
+ <p class="lead text-muted">Manage your book and genre notifications</p>
+ 
+ <!-- Discount Code Promotion -->
+ <div class="alert alert-info mt-3">
+ <h5><i class="fas fa-tags"></i> Get Exclusive Discount Codes!</h5>
+ <p class="mb-2">Set up notifications below to receive special discount codes and promotional offers directly to your email.</p>
+ <small class="text-muted">We send discount codes for seasonal sales, special events, and exclusive member offers.</small>
+ </div>
+ </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <!-- Account Sidebar -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h5 class="card-title text-center">
-                        <i class="fas fa-compass"></i> Navigation
-                    </h5>
-                    <div class="list-group list-group-flush">
-                        <a href="{{ url_for('customer_dashboard') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-home"></i> Dashboard
-                        </a>
-                        <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-user"></i> Account Information
-                        </a>
-                        <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-shopping-bag"></i> Order History
-                        </a>
-                        <a href="{{ url_for('customer_notifications') }}" class="list-group-item list-group-item-action active" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); border-color: #8B4513; color: white; font-weight: 600;">
-                            <i class="fas fa-bell"></i> Notifications
-                        </a>
-                        <a href="{{ url_for('catalog_view') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-book-open"></i> Browse Catalog
-                        </a>
-                        {% if not (current_user.is_authenticated and current_user.is_manager) %}
-                        <a href="{{ url_for('view_cart') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-shopping-cart"></i> Shopping Cart
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
+ <div class="row">
+ <div class="col-md-4">
+ <!-- Account Sidebar -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title text-center">
+ <i class="fas fa-compass"></i> Navigation
+ </h5>
+ <div class="list-group list-group-flush">
+ <a href="{{ url_for('customer_dashboard') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-home"></i> Dashboard
+ </a>
+ <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-user"></i> Account Information
+ </a>
+ <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-shopping-bag"></i> Order History
+ </a>
+ <a href="{{ url_for('customer_notifications') }}" class="list-group-item list-group-item-action active" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); border-color: #8B4513; color: white; font-weight: 600;">
+ <i class="fas fa-bell"></i> Notifications
+ </a>
+ <a href="{{ url_for('catalog_view') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-book-open"></i> Browse Catalog
+ </a>
+ {% if not (current_user.is_authenticated and current_user.is_manager) %}
+ <a href="{{ url_for('view_cart') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-shopping-cart"></i> Shopping Cart
+ </a>
+ {% endif %}
+ </div>
+ </div>
+ </div>
+ </div>
 
-        <div class="col-md-8">
-            <!-- Add New Notifications -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-plus-circle"></i> Add New Notifications
-                    </h4>
-                    
-                    <form method="POST" action="{{ url_for('customer_notifications') }}">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label for="new_book_title">
-                                        <i class="fas fa-book"></i> Book Title
-                                    </label>
-                                    <input type="text" class="form-control" id="new_book_title" name="new_book_title" 
-                                           placeholder="Enter a book title">
-                                    <small class="form-text text-muted">
-                                        Get notified when this book becomes available
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label for="new_genre">
-                                        <i class="fas fa-tags"></i> Genre
-                                    </label>
-                                    <select class="form-control" id="new_genre" name="new_genre" style="width: 100%; min-height: 38px;">
-                                        <option value="">Select a genre</option>
-                                        <option value="Fiction">Fiction</option>
-                                        <option value="Mystery">Mystery</option>
-                                        <option value="Romance">Romance</option>
-                                        <option value="Science Fiction">Science Fiction</option>
-                                        <option value="Fantasy">Fantasy</option>
-                                        <option value="Biography">Biography</option>
-                                        <option value="History">History</option>
-                                        <option value="Self-Help">Self-Help</option>
-                                        <option value="Horror">Horror</option>
-                                        <option value="Thriller">Thriller</option>
-                                        <option value="Adventure">Adventure</option>
-                                        <option value="Children">Children</option>
-                                        <option value="Young Adult">Young Adult</option>
-                                        <option value="Poetry">Poetry</option>
-                                        <option value="Drama">Drama</option>
-                                        <option value="Philosophy">Philosophy</option>
-                                        <option value="Psychology">Psychology</option>
-                                        <option value="Business">Business</option>
-                                        <option value="Health & Wellness">Health & Wellness</option>
-                                        <option value="Travel">Travel</option>
-                                    </select>
-                                    <small class="form-text text-muted">
-                                        Get notified about new books in this genre
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-center">
-                            <button type="submit" class="btn-hero">
-                                <i class="fas fa-bell-o"></i> Add Notification
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+ <div class="col-md-8">
+ <!-- Add New Notifications -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-plus-circle"></i> Add New Notifications
+ </h4>
+ 
+ <form method="POST" action="{{ url_for('customer_notifications') }}">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <div class="row">
+ <div class="col-md-6 mb-3">
+ <div class="form-group">
+ <label for="new_book_title">
+ <i class="fas fa-book"></i> Book Title
+ </label>
+ <input type="text" class="form-control" id="new_book_title" name="new_book_title" 
+ placeholder="Enter a book title">
+ <small class="form-text text-muted">
+ Get notified when this book becomes available
+ </small>
+ </div>
+ </div>
+ <div class="col-md-6 mb-3">
+ <div class="form-group">
+ <label for="new_genre">
+ <i class="fas fa-tags"></i> Genre
+ </label>
+ <select class="form-control" id="new_genre" name="new_genre" style="width: 100%; min-height: 38px;">
+ <option value="">Select a genre</option>
+ <option value="Fiction">Fiction</option>
+ <option value="Mystery">Mystery</option>
+ <option value="Romance">Romance</option>
+ <option value="Science Fiction">Science Fiction</option>
+ <option value="Fantasy">Fantasy</option>
+ <option value="Biography">Biography</option>
+ <option value="History">History</option>
+ <option value="Self-Help">Self-Help</option>
+ <option value="Horror">Horror</option>
+ <option value="Thriller">Thriller</option>
+ <option value="Adventure">Adventure</option>
+ <option value="Children">Children</option>
+ <option value="Young Adult">Young Adult</option>
+ <option value="Poetry">Poetry</option>
+ <option value="Drama">Drama</option>
+ <option value="Philosophy">Philosophy</option>
+ <option value="Psychology">Psychology</option>
+ <option value="Business">Business</option>
+ <option value="Health & Wellness">Health & Wellness</option>
+ <option value="Travel">Travel</option>
+ </select>
+ <small class="form-text text-muted">
+ Get notified about new books in this genre
+ </small>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="text-center">
+ <button type="submit" class="btn-hero">
+ <i class="fas fa-bell-o"></i> Add Notification
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
 
-            <!-- Book Notifications -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-book"></i> Book Title Notifications
-                    </h4>
-                    
-                    {% if book_notifications %}
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Book Title</th>
-                                        <th>Author</th>
-                                        <th>Added</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for notification in book_notifications %}
-                                    <tr>
-                                        <td>{{ notification.book_title }}</td>
-                                        <td>{{ notification.author or 'Any' }}</td>
-                                        <td>{{ notification.created_date.strftime('%b %d, %Y') }}</td>
-                                        <td>
-                                            {% if notification.is_active %}
-                                                <span class="badge badge-success">Active</span>
-                                            {% else %}
-                                                <span class="badge badge-secondary">Inactive</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <form method="POST" action="{{ url_for('remove_notification') }}" style="display: inline;">
-                                                <input type="hidden" name="notification_type" value="book">
-                                                <input type="hidden" name="notification_id" value="{{ notification.id }}">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                        onclick="return confirm('Remove this notification?')">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-book fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No book notifications set up yet.</p>
-                            <p class="text-muted">Add a book title above to get notified when it becomes available.</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+ <!-- Book Notifications -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-book"></i> Book Title Notifications
+ </h4>
+ 
+ {% if book_notifications %}
+ <div class="table-responsive">
+ <table class="table table-striped">
+ <thead>
+ <tr>
+ <th>Book Title</th>
+ <th>Author</th>
+ <th>Added</th>
+ <th>Status</th>
+ <th>Actions</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for notification in book_notifications %}
+ <tr>
+ <td>{{ notification.book_title }}</td>
+ <td>{{ notification.author or 'Any' }}</td>
+ <td>{{ notification.created_date.strftime('%b %d, %Y') }}</td>
+ <td>
+ {% if notification.is_active %}
+ <span class="badge badge-success">Active</span>
+ {% else %}
+ <span class="badge badge-secondary">Inactive</span>
+ {% endif %}
+ </td>
+ <td>
+ <form method="POST" action="{{ url_for('remove_notification') }}" style="display: inline;">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <input type="hidden" name="notification_type" value="book">
+ <input type="hidden" name="notification_id" value="{{ notification.id }}">
+ <button type="submit" class="btn btn-sm btn-outline-danger" 
+ onclick="return confirm('Remove this notification?')">
+ <i class="fas fa-times"></i>
+ </button>
+ </form>
+ </td>
+ </tr>
+ {% endfor %}
+ </tbody>
+ </table>
+ </div>
+ {% else %}
+ <div class="text-center py-4">
+ <i class="fas fa-book fa-3x text-muted mb-3"></i>
+ <p class="text-muted">No book notifications set up yet.</p>
+ <p class="text-muted">Add a book title above to get notified when it becomes available.</p>
+ </div>
+ {% endif %}
+ </div>
+ </div>
 
-            <!-- Genre Notifications -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-tags"></i> Genre Notifications
-                    </h4>
-                    
-                    {% if genre_notifications %}
-                        <div class="row">
-                            {% for notification in genre_notifications %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card border">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="card-title mb-1">{{ notification.genre }}</h6>
-                                                <small class="text-muted">
-                                                    Added {{ notification.created_date.strftime('%b %d, %Y') }}
-                                                </small>
-                                            </div>
-                                            <div>
-                                                {% if notification.is_active %}
-                                                    <span class="badge badge-success mb-2">Active</span>
-                                                {% else %}
-                                                    <span class="badge badge-secondary mb-2">Inactive</span>
-                                                {% endif %}
-                                                <br>
-                                                <form method="POST" action="{{ url_for('remove_notification') }}" style="display: inline;">
-                                                    <input type="hidden" name="notification_type" value="genre">
-                                                    <input type="hidden" name="notification_id" value="{{ notification.id }}">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                            onclick="return confirm('Remove this notification?')">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No genre notifications set up yet.</p>
-                            <p class="text-muted">Add a genre above to get notified about new books in that category.</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+ <!-- Genre Notifications -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-tags"></i> Genre Notifications
+ </h4>
+ 
+ {% if genre_notifications %}
+ <div class="row">
+ {% for notification in genre_notifications %}
+ <div class="col-md-6 mb-3">
+ <div class="card border">
+ <div class="card-body">
+ <div class="d-flex justify-content-between align-items-center">
+ <div>
+ <h6 class="card-title mb-1">{{ notification.genre }}</h6>
+ <small class="text-muted">
+ Added {{ notification.created_date.strftime('%b %d, %Y') }}
+ </small>
+ </div>
+ <div>
+ {% if notification.is_active %}
+ <span class="badge badge-success mb-2">Active</span>
+ {% else %}
+ <span class="badge badge-secondary mb-2">Inactive</span>
+ {% endif %}
+ <br>
+ <form method="POST" action="{{ url_for('remove_notification') }}" style="display: inline;">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <input type="hidden" name="notification_type" value="genre">
+ <input type="hidden" name="notification_id" value="{{ notification.id }}">
+ <button type="submit" class="btn btn-sm btn-outline-danger" 
+ onclick="return confirm('Remove this notification?')">
+ <i class="fas fa-times"></i>
+ </button>
+ </form>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ {% endfor %}
+ </div>
+ {% else %}
+ <div class="text-center py-4">
+ <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+ <p class="text-muted">No genre notifications set up yet.</p>
+ <p class="text-muted">Add a genre above to get notified about new books in that category.</p>
+ </div>
+ {% endif %}
+ </div>
+ </div>
 
-            <!-- Notification History -->
-            <div class="card-hero">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-history"></i> Recent Notifications
-                    </h4>
-                    
-                    {% if notification_logs %}
-                        <div class="list-group list-group-flush">
-                            {% for log in notification_logs[:10] %}
-                            <div class="list-group-item">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="mb-1">
-                                            {% if log.notification_type == 'book' %}
-                                                <i class="fas fa-book text-primary"></i> {{ log.book_title }}
-                                            {% else %}
-                                                <i class="fas fa-tags text-success"></i> {{ log.genre }}
-                                            {% endif %}
-                                        </h6>
-                                        <p class="mb-1">{{ log.message }}</p>
-                                        <small class="text-muted">{{ log.sent_date.strftime('%b %d, %Y at %I:%M %p') }}</small>
-                                    </div>
-                                    <div>
-                                        {% if log.email_sent %}
-                                            <span class="badge badge-success">Email Sent</span>
-                                        {% else %}
-                                            <span class="badge badge-warning">Notification Only</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No notifications sent yet.</p>
-                            <p class="text-muted">You'll see your notification history here once we start sending alerts.</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+ <!-- Notification History -->
+ <div class="card-hero">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-history"></i> Recent Notifications
+ </h4>
+ 
+ {% if notification_logs %}
+ <div class="list-group list-group-flush">
+ {% for log in notification_logs[:10] %}
+ <div class="list-group-item">
+ <div class="d-flex justify-content-between align-items-start">
+ <div>
+ <h6 class="mb-1">
+ {% if log.notification_type == 'book' %}
+ <i class="fas fa-book text-primary"></i> {{ log.book_title }}
+ {% else %}
+ <i class="fas fa-tags text-success"></i> {{ log.genre }}
+ {% endif %}
+ </h6>
+ <p class="mb-1">{{ log.message }}</p>
+ <small class="text-muted">{{ log.sent_date.strftime('%b %d, %Y at %I:%M %p') }}</small>
+ </div>
+ <div>
+ {% if log.email_sent %}
+ <span class="badge badge-success">Email Sent</span>
+ {% else %}
+ <span class="badge badge-warning">Notification Only</span>
+ {% endif %}
+ </div>
+ </div>
+ </div>
+ {% endfor %}
+ </div>
+ {% else %}
+ <div class="text-center py-4">
+ <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+ <p class="text-muted">No notifications sent yet.</p>
+ <p class="text-muted">You'll see your notification history here once we start sending alerts.</p>
+ </div>
+ {% endif %}
+ </div>
+ </div>
+ </div>
+ </div>
 </div>
 
 <style>
 /* Custom styling for notification form */
 .form-control {
-    min-height: 38px;
-    padding: 8px 12px;
+ min-height: 38px;
+ padding: 8px 12px;
 }
 
 select.form-control {
-    height: auto !important;
-    min-height: 38px;
-    padding: 6px 12px;
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    width: 100% !important;
+ height: auto !important;
+ min-height: 38px;
+ padding: 6px 12px;
+ background-color: #fff;
+ border: 1px solid #ced4da;
+ border-radius: 0.25rem;
+ width: 100% !important;
 }
 
 select.form-control option {
-    padding: 5px 10px;
-    white-space: nowrap;
-    overflow: visible;
-    text-overflow: clip;
+ padding: 5px 10px;
+ white-space: nowrap;
+ overflow: visible;
+ text-overflow: clip;
 }
 
 /* Ensure dropdown text is fully visible */
 #new_genre {
-    font-size: 14px;
-    line-height: 1.5;
+ font-size: 14px;
+ line-height: 1.5;
 }
 
 /* Fix for dropdown arrow */
 select.form-control:not([multiple]):not([size]) {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 8px center;
-    background-repeat: no-repeat;
-    background-size: 16px 12px;
-    padding-right: 32px;
+ background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+ background-position: right 8px center;
+ background-repeat: no-repeat;
+ background-size: 16px 12px;
+ padding-right: 32px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .col-md-6 {
-        margin-bottom: 15px;
-    }
+ .col-md-6 {
+ margin-bottom: 15px;
+ }
 }
 </style>
 {% endblock %}

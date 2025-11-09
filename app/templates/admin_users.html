@@ -1,215 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin User Management - Chapter 6: A Plot Twist</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        /* Override any inherited hero theme styles */
-        html, body {
-            background: #f8f9fa !important;
-            background-image: none !important;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-        }
-        
-        body::before {
-            display: none !important;
-        }
-        
-        .container {
-            background: transparent !important;
-            backdrop-filter: none !important;
-        }
-        
-        .card {
-            background: white !important;
-            border: 1px solid #dee2e6 !important;
-            backdrop-filter: none !important;
-        }
-    </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="csrf-token" content="{{ csrf_token() }}">
+ <title>Admin User Management - Chapter 6: A Plot Twist</title>
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+ 
+ <style>
+ /* Override any inherited hero theme styles */
+ html, body {
+ background: #f8f9fa !important;
+ background-image: none !important;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+ }
+ 
+ body::before {
+ display: none !important;
+ }
+ 
+ .container {
+ background: transparent !important;
+ backdrop-filter: none !important;
+ }
+ 
+ .card {
+ background: white !important;
+ border: 1px solid #dee2e6 !important;
+ backdrop-filter: none !important;
+ }
+ </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url_for('index') }}">Chapter 6: A Plot Twist</a>
-        <div class="navbar-nav ml-auto">
-            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
-            <a class="nav-link" href="{{ url_for('catalog_view') }}">Catalog</a>
-            <a class="nav-link" href="{{ url_for('admin_users') }}">Admin Users</a>
-            <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
-        </div>
-    </nav>
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+ <a class="navbar-brand" href="{{ url_for('index') }}">Chapter 6: A Plot Twist</a>
+ <div class="navbar-nav ml-auto">
+ <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+ <a class="nav-link" href="{{ url_for('catalog_view') }}">Catalog</a>
+ <a class="nav-link" href="{{ url_for('admin_users') }}">Admin Users</a>
+ <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+ </div>
+ </nav>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-users-cog"></i> Admin User Management</h2>
-                    <a href="{{ url_for('create_admin_user') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Create New Admin User
-                    </a>
-                </div>
+ <div class="container mt-4">
+ <div class="row">
+ <div class="col-12">
+ <div class="d-flex justify-content-between align-items-center mb-4">
+ <h2><i class="fas fa-users-cog"></i> Admin User Management</h2>
+ <a href="{{ url_for('create_admin_user') }}" class="btn btn-primary">
+ <i class="fas fa-plus"></i> Create New Admin User
+ </a>
+ </div>
 
-                <!-- Flash messages -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                                {{ message }}
-                                <button type="button" class="close" data-dismiss="alert">
-                                    <span>&times;</span>
-                                </button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
+ <!-- Flash messages -->
+ {% with messages = get_flashed_messages(with_categories=true) %}
+ {% if messages %}
+ {% for category, message in messages %}
+ <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+ {{ message }}
+ <button type="button" class="close" data-dismiss="alert">
+ <span>&times;</span>
+ </button>
+ </div>
+ {% endfor %}
+ {% endif %}
+ {% endwith %}
 
-                <!-- Admin Users Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-list"></i> Current Admin Users ({{ users|length }})</h5>
-                    </div>
-                    <div class="card-body">
-                        {% if users %}
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th>Username</th>
-                                            <th>Full Name</th>
-                                            <th>Email</th>
-                                            <th>Notifications</th>
-                                            <th>Created</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for user in users %}
-                                            <tr>
-                                                <td>
-                                                    <strong>{{ user.username }}</strong>
-                                                    {% if user.id == current_user.id %}
-                                                        <span class="badge badge-info ml-1">You</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ user.full_name or user.username }}</td>
-                                                <td>
-                                                    <i class="fas fa-envelope text-muted"></i>
-                                                    {{ user.email or 'No email' }}
-                                                </td>
-                                                <td>
-                                                    {% if user.receive_notifications %}
-                                                        <span class="badge badge-success">
-                                                            <i class="fas fa-bell"></i> Enabled
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="badge badge-secondary">
-                                                            <i class="fas fa-bell-slash"></i> Disabled
-                                                        </span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    <small class="text-muted">
-                                                        {{ user.id }}
-                                                    </small>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <a href="{{ url_for('edit_admin_user', user_id=user.id) }}" 
-                                                           class="btn btn-outline-primary" title="Edit User">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        {% if user.id != current_user.id %}
-                                                            <button type="button" class="btn btn-outline-danger" 
-                                                                    data-toggle="modal" 
-                                                                    data-target="#deleteModal{{ user.id }}"
-                                                                    title="Delete User">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        {% else %}
-                                                            <button type="button" class="btn btn-outline-secondary" 
-                                                                    disabled title="Cannot delete yourself">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        {% endif %}
-                                                    </div>
-                                                </td>
-                                            </tr>
+ <!-- Admin Users Table -->
+ <div class="card">
+ <div class="card-header">
+ <h5 class="mb-0"><i class="fas fa-list"></i> Current Admin Users ({{ users|length }})</h5>
+ </div>
+ <div class="card-body">
+ {% if users %}
+ <div class="table-responsive">
+ <table class="table table-hover">
+ <thead class="thead-light">
+ <tr>
+ <th>Username</th>
+ <th>Full Name</th>
+ <th>Email</th>
+ <th>Notifications</th>
+ <th>Created</th>
+ <th>Actions</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for user in users %}
+ <tr>
+ <td>
+ <strong>{{ user.username }}</strong>
+ {% if user.id == current_user.id %}
+ <span class="badge badge-info ml-1">You</span>
+ {% endif %}
+ </td>
+ <td>{{ user.full_name or user.username }}</td>
+ <td>
+ <i class="fas fa-envelope text-muted"></i>
+ {{ user.email or 'No email' }}
+ </td>
+ <td>
+ <div class="custom-control custom-switch">
+ <input type="checkbox" 
+ class="custom-control-input notification-toggle" 
+ id="notifications{{ user.id }}"
+ data-user-id="{{ user.id }}"
+ data-username="{{ user.username }}"
+ {% if user.receive_notifications %}checked{% endif %}>
+ <label class="custom-control-label" for="notifications{{ user.id }}">
+ <span class="toggle-text">
+ {% if user.receive_notifications %}
+ <i class="fas fa-bell text-success"></i> Enabled
+ {% else %}
+ <i class="fas fa-bell-slash text-muted"></i> Disabled
+ {% endif %}
+ </span>
+ </label>
+ </div>
+ </td>
+ <td>
+ <small class="text-muted">
+ {{ user.id }}
+ </small>
+ </td>
+ <td>
+ <div class="btn-group btn-group-sm" role="group">
+ <a href="{{ url_for('edit_admin_user', user_id=user.id) }}" 
+ class="btn btn-outline-primary" title="Edit User">
+ <i class="fas fa-edit"></i>
+ </a>
+ {% if user.id != current_user.id %}
+ <button type="button" class="btn btn-outline-danger" 
+ data-toggle="modal" 
+ data-target="#deleteModal{{ user.id }}"
+ title="Delete User">
+ <i class="fas fa-trash"></i>
+ </button>
+ {% else %}
+ <button type="button" class="btn btn-outline-secondary" 
+ disabled title="Cannot delete yourself">
+ <i class="fas fa-trash"></i>
+ </button>
+ {% endif %}
+ </div>
+ </td>
+ </tr>
+ {% endfor %}
+ </tbody>
+ </table>
+ </div>
+ {% else %}
+ <div class="text-center py-4">
+ <i class="fas fa-users fa-3x text-muted mb-3"></i>
+ <h5 class="text-muted">No admin users found</h5>
+ <p class="text-muted">Create your first admin user to get started.</p>
+ <a href="{{ url_for('create_admin_user') }}" class="btn btn-primary">
+ <i class="fas fa-plus"></i> Create Admin User
+ </a>
+ </div>
+ {% endif %}
+ </div>
+ </div>
 
-                                            <!-- Delete Confirmation Modal -->
-                                            {% if user.id != current_user.id %}
-                                                <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">Confirm Deletion</h5>
-                                                                <button type="button" class="close" data-dismiss="modal">
-                                                                    <span>&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>Are you sure you want to delete admin user <strong>{{ user.username }}</strong>?</p>
-                                                                <p class="text-danger"><small>This action cannot be undone.</small></p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                                <form method="POST" action="{{ url_for('delete_admin_user', user_id=user.id) }}" style="display: inline;">
-                                                                    <button type="submit" class="btn btn-danger">Delete User</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <div class="text-center py-4">
-                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">No admin users found</h5>
-                                <p class="text-muted">Create your first admin user to get started.</p>
-                                <a href="{{ url_for('create_admin_user') }}" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i> Create Admin User
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+ <!-- Delete Confirmation Modals -->
+ {% if users %}
+ {% for user in users %}
+ {% if user.id != current_user.id %}
+ <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
+ <div class="modal-dialog">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title">Confirm Deletion</h5>
+ <button type="button" class="close" data-dismiss="modal">
+ <span>&times;</span>
+ </button>
+ </div>
+ <div class="modal-body">
+ <p>Are you sure you want to delete admin user <strong>{{ user.username }}</strong>?</p>
+ <p class="text-danger"><small>This action cannot be undone.</small></p>
+ </div>
+ <div class="modal-footer">
+ <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+ <form method="POST" action="{{ url_for('delete_admin_user', user_id=user.id) }}" style="display: inline;">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <button type="submit" class="btn btn-danger">Delete User</button>
+ </form>
+ </div>
+ </div>
+ </div>
+ </div>
+ {% endif %}
+ {% endfor %}
+ {% endif %}
 
-                <!-- Info Card -->
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h6 class="card-title"><i class="fas fa-info-circle"></i> Admin User Information</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-check text-success"></i> Admin users can manage inventory and orders</li>
-                                    <li><i class="fas fa-check text-success"></i> Access to all management features</li>
-                                    <li><i class="fas fa-check text-success"></i> Can create, edit, and delete other admin users</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-bell text-info"></i> Email notifications for new orders</li>
-                                    <li><i class="fas fa-bell text-info"></i> Alerts for order status changes</li>
-                                    <li><i class="fas fa-bell text-info"></i> Bulk update notifications</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+ <!-- Info Card -->
+ <div class="card mt-4">
+ <div class="card-body">
+ <h6 class="card-title"><i class="fas fa-info-circle"></i> Admin User Information</h6>
+ <div class="row">
+ <div class="col-md-6">
+ <ul class="list-unstyled">
+ <li><i class="fas fa-check text-success"></i> Admin users can manage inventory and orders</li>
+ <li><i class="fas fa-check text-success"></i> Access to all management features</li>
+ <li><i class="fas fa-check text-success"></i> Can create, edit, and delete other admin users</li>
+ </ul>
+ </div>
+ <div class="col-md-6">
+ <ul class="list-unstyled">
+ <li><i class="fas fa-bell text-info"></i> Toggle email notifications on/off per admin</li>
+ <li><i class="fas fa-bell text-info"></i> Real-time notification for new orders</li>
+ <li><i class="fas fa-bell text-info"></i> Alerts for order status changes</li>
+ </ul>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Session Timeout Management -->
-    <script src="{{ url_for('static', filename='js/session-timeout.js') }}"></script>
+ <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+ 
+ <!-- Session Timeout Management -->
+ <script src="{{ url_for('static', filename='js/session-timeout.js') }}"></script>
+ 
+ <!-- Notification Toggle Functionality -->
+ <script>
+ $(document).ready(function() {
+ // Get CSRF token from meta tag
+ const csrfToken = $('meta[name=csrf-token]').attr('content');
+ 
+ $('.notification-toggle').on('change', function() {
+ const userId = $(this).data('user-id');
+ const username = $(this).data('username');
+ const toggleElement = $(this);
+ const labelElement = toggleElement.parent().find('.toggle-text');
+ 
+ // Disable toggle during request
+ toggleElement.prop('disabled', true);
+ 
+ // Show loading state
+ labelElement.html('<i class="fas fa-spinner fa-spin"></i> Updating...');
+ 
+ $.ajax({
+ url: `/admin/users/${userId}/toggle_notifications`,
+ method: 'POST',
+ headers: {
+ 'Content-Type': 'application/json',
+ 'X-CSRFToken': csrfToken
+ },
+ success: function(response) {
+ if (response.success) {
+ // Update the display based on new state
+ if (response.receive_notifications) {
+ labelElement.html('<i class="fas fa-bell text-success"></i> Enabled');
+ toggleElement.prop('checked', true);
+ } else {
+ labelElement.html('<i class="fas fa-bell-slash text-muted"></i> Disabled');
+ toggleElement.prop('checked', false);
+ }
+ 
+ // Show success message
+ showNotification('success', response.message);
+ } else {
+ // Revert toggle state on error
+ toggleElement.prop('checked', !toggleElement.prop('checked'));
+ labelElement.html(toggleElement.prop('checked') ? 
+ '<i class="fas fa-bell text-success"></i> Enabled' : 
+ '<i class="fas fa-bell-slash text-muted"></i> Disabled');
+ showNotification('error', response.message);
+ }
+ },
+ error: function(xhr, status, error) {
+ // Revert toggle state on error
+ toggleElement.prop('checked', !toggleElement.prop('checked'));
+ labelElement.html(toggleElement.prop('checked') ? 
+ '<i class="fas fa-bell text-success"></i> Enabled' : 
+ '<i class="fas fa-bell-slash text-muted"></i> Disabled');
+ showNotification('error', 'Failed to update notification settings');
+ },
+ complete: function() {
+ // Re-enable toggle
+ toggleElement.prop('disabled', false);
+ }
+ });
+ });
+ 
+ function showNotification(type, message) {
+ // Create notification element
+ const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+ const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
+ 
+ const notification = $(`
+ <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+ style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+ <i class="fas ${iconClass}"></i> ${message}
+ <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+ <span aria-hidden="true">&times;</span>
+ </button>
+ </div>
+ `);
+ 
+ $('body').append(notification);
+ 
+ // Auto-dismiss after 3 seconds
+ setTimeout(function() {
+ notification.alert('close');
+ }, 3000);
+ }
+ });
+ </script>
 </body>
 </html>

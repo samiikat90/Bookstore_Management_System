@@ -2,10 +2,10 @@
 
 ## Project Overview
 
-**Project Name:** Chapter 6: A Plot Twist - Bookstore Management System  
-**Team:** Samantha Franco, Becky Morris, Felicia Brown, Anthony Murphy  
-**Technology Stack:** Flask, SQLAlchemy, Bootstrap, SQLite  
-**Repository:** https://github.com/samiikat90/Bookstore_Management_System  
+**Project Name:** Chapter 6: A Plot Twist - Bookstore Management System 
+**Team:** Samantha Franco, Becky Morris, Felicia Brown, Anthony Murphy 
+**Technology Stack:** Flask, SQLAlchemy, Bootstrap, SQLite 
+**Repository:** https://github.com/samiikat90/Bookstore_Management_System 
 
 ---
 
@@ -34,7 +34,7 @@
 ## Sprint Log
 
 ### **Sprint 1: Foundation & Core Setup** COMPLETED
-**Duration:** 5 days  
+**Duration:** 5 days 
 **Sprint Goal:** Establish basic bookstore functionality with admin authentication
 
 #### Completed Stories:
@@ -53,7 +53,7 @@
 ---
 
 ### **Sprint 2: Security Enhancement** COMPLETED
-**Duration:** 3 days  
+**Duration:** 3 days 
 **Sprint Goal:** Implement two-factor authentication and session security
 
 #### Completed Stories:
@@ -72,7 +72,7 @@
 ---
 
 ### **Sprint 3: Inventory Management** COMPLETED
-**Duration:** 4 days  
+**Duration:** 4 days 
 **Sprint Goal:** Complete inventory management with CSV capabilities
 
 #### Completed Stories:
@@ -91,7 +91,7 @@
 ---
 
 ### **Sprint 4: Customer System** COMPLETED
-**Duration:** 6 days  
+**Duration:** 6 days 
 **Sprint Goal:** Build complete customer registration and account management
 
 #### Completed Stories:
@@ -110,7 +110,7 @@
 ---
 
 ### **Sprint 5: Advanced Features** COMPLETED
-**Duration:** 4 days  
+**Duration:** 4 days 
 **Sprint Goal:** Payment validation, email notifications, and UI enhancements
 
 #### Completed Stories:
@@ -129,7 +129,7 @@
 ---
 
 ### **Sprint 6: Genre System & Email Enhancement** COMPLETED
-**Duration:** 2 days  
+**Duration:** 2 days 
 **Sprint Goal:** Comprehensive genre display and guest checkout notifications
 
 #### Completed Stories:
@@ -152,9 +152,9 @@
 ### **Epic 1: Core E-commerce Platform**
 
 #### [BSM-001] Basic Application Setup
-**As a** development team  
-**I want** a Flask application with proper structure  
-**So that** we can build features on a solid foundation  
+**As a** development team 
+**I want** a Flask application with proper structure 
+**So that** we can build features on a solid foundation 
 
 **Acceptance Criteria:**
 - Flask application runs without errors
@@ -168,9 +168,9 @@
 ---
 
 #### [BSM-004] Book Catalog Display
-**As a** customer  
-**I want** to see available books with details  
-**So that** I can browse and select books to purchase  
+**As a** customer 
+**I want** to see available books with details 
+**So that** I can browse and select books to purchase 
 
 **Acceptance Criteria:**
 - Books display with title, author, price
@@ -184,9 +184,9 @@
 ---
 
 #### [BSM-052] Advanced Shopping Cart
-**As a** customer  
-**I want** to manage items in my shopping cart  
-**So that** I can review and modify my order before checkout  
+**As a** customer 
+**I want** to manage items in my shopping cart 
+**So that** I can review and modify my order before checkout 
 
 **Acceptance Criteria:**
 - Add/remove items from cart
@@ -202,9 +202,9 @@
 ### **Epic 2: Security & Authentication**
 
 #### [BSM-020] Two-Factor Authentication
-**As a** system administrator  
-**I want** two-factor authentication for admin accounts  
-**So that** unauthorized access is prevented  
+**As a** system administrator 
+**I want** two-factor authentication for admin accounts 
+**So that** unauthorized access is prevented 
 
 **Acceptance Criteria:**
 - Email-based 2FA codes
@@ -218,9 +218,9 @@
 ---
 
 #### [BSM-023] Auto-logout on Browser Close
-**As a** system administrator  
-**I want** sessions to end when browser closes  
-**So that** security is maintained on shared computers  
+**As a** system administrator 
+**I want** sessions to end when browser closes 
+**So that** security is maintained on shared computers 
 
 **Acceptance Criteria:**
 - Detects browser close events
@@ -234,9 +234,9 @@
 ---
 
 #### [BSM-024] Password Security
-**As a** system administrator  
-**I want** strong password requirements  
-**So that** accounts are protected from unauthorized access  
+**As a** system administrator 
+**I want** strong password requirements 
+**So that** accounts are protected from unauthorized access 
 
 **Acceptance Criteria:**
 - Minimum 6 characters
@@ -252,9 +252,9 @@
 ### **Epic 3: Inventory Management**
 
 #### [BSM-030] Add/Edit/Delete Books
-**As an** admin user  
-**I want** to manage book inventory  
-**So that** the catalog stays current and accurate  
+**As an** admin user 
+**I want** to manage book inventory 
+**So that** the catalog stays current and accurate 
 
 **Acceptance Criteria:**
 - Add new books with all details
@@ -268,9 +268,9 @@
 ---
 
 #### [BSM-031] Quantity-Based Deletion
-**As an** admin user  
-**I want** to delete specific quantities of books  
-**So that** I can manage partial stock removal  
+**As an** admin user 
+**I want** to delete specific quantities of books 
+**So that** I can manage partial stock removal 
 
 **Acceptance Criteria:**
 - Option to delete partial quantities
@@ -284,9 +284,9 @@
 ---
 
 #### [BSM-032] CSV Import/Export
-**As an** admin user  
-**I want** to import/export inventory via CSV  
-**So that** I can manage large inventories efficiently  
+**As an** admin user 
+**I want** to import/export inventory via CSV 
+**So that** I can manage large inventories efficiently 
 
 **Acceptance Criteria:**
 - Import books from CSV files
@@ -300,9 +300,9 @@
 ---
 
 #### [BSM-034] Genre Classification
-**As an** admin user  
-**I want** to assign genres to books  
-**So that** customers can filter and find books by category  
+**As an** admin user 
+**I want** to assign genres to books 
+**So that** customers can filter and find books by category 
 
 **Acceptance Criteria:**
 - 20+ predefined genres available
@@ -318,9 +318,9 @@
 ### **Epic 4: Customer Experience**
 
 #### [BSM-040] Customer Registration
-**As a** potential customer  
-**I want** to create an account  
-**So that** I can track orders and manage my information  
+**As a** potential customer 
+**I want** to create an account 
+**So that** I can track orders and manage my information 
 
 **Acceptance Criteria:**
 - Registration form with validation
@@ -334,9 +334,9 @@
 ---
 
 #### [BSM-041] Customer Login/Logout
-**As a** registered customer  
-**I want** to log into my account  
-**So that** I can access my order history and account features  
+**As a** registered customer 
+**I want** to log into my account 
+**So that** I can access my order history and account features 
 
 **Acceptance Criteria:**
 - Login with username or email
@@ -350,9 +350,9 @@
 ---
 
 #### [BSM-042] Customer Account Dashboard
-**As a** logged-in customer  
-**I want** to view my account information  
-**So that** I can manage my profile and see my activity  
+**As a** logged-in customer 
+**I want** to view my account information 
+**So that** I can manage my profile and see my activity 
 
 **Acceptance Criteria:**
 - Display personal information
@@ -366,9 +366,9 @@
 ---
 
 #### [BSM-043] Order History Tracking
-**As a** customer  
-**I want** to see my past orders  
-**So that** I can track purchases and reorder books  
+**As a** customer 
+**I want** to see my past orders 
+**So that** I can track purchases and reorder books 
 
 **Acceptance Criteria:**
 - List all past orders
@@ -382,9 +382,9 @@
 ---
 
 #### [BSM-044] Guest Checkout
-**As a** non-registered customer  
-**I want** to purchase books without creating an account  
-**So that** I can complete quick purchases  
+**As a** non-registered customer 
+**I want** to purchase books without creating an account 
+**So that** I can complete quick purchases 
 
 **Acceptance Criteria:**
 - Checkout without registration
@@ -400,9 +400,9 @@
 ### **Epic 5: Order Processing**
 
 #### [BSM-051] Email Notification System
-**As an** admin user  
-**I want** to receive email notifications for new orders  
-**So that** I can process orders promptly  
+**As an** admin user 
+**I want** to receive email notifications for new orders 
+**So that** I can process orders promptly 
 
 **Acceptance Criteria:**
 - Email notifications for new orders
@@ -416,9 +416,9 @@
 ---
 
 #### [BSM-050] Payment Validation
-**As a** system  
-**I want** to validate payment information  
-**So that** fraudulent transactions are prevented  
+**As a** system 
+**I want** to validate payment information 
+**So that** fraudulent transactions are prevented 
 
 **Acceptance Criteria:**
 - Luhn algorithm for credit cards
@@ -432,9 +432,9 @@
 ---
 
 #### [BSM-053] Discount Code System
-**As a** customer  
-**I want** to apply discount codes  
-**So that** I can get promotional pricing  
+**As a** customer 
+**I want** to apply discount codes 
+**So that** I can get promotional pricing 
 
 **Acceptance Criteria:**
 - Apply discount codes at checkout
@@ -450,9 +450,9 @@
 ### **Epic 6: Data Management**
 
 #### [BSM-060] Genre Display Enhancement
-**As a** customer  
-**I want** to see book genres everywhere  
-**So that** I can identify book types quickly  
+**As a** customer 
+**I want** to see book genres everywhere 
+**So that** I can identify book types quickly 
 
 **Acceptance Criteria:**
 - Genre badges on all book displays
@@ -466,9 +466,9 @@
 ---
 
 #### [BSM-062] Guest Checkout Email Confirmations
-**As a** guest customer  
-**I want** to receive order confirmation emails  
-**So that** I have proof of purchase and order details  
+**As a** guest customer 
+**I want** to receive order confirmation emails 
+**So that** I have proof of purchase and order details 
 
 **Acceptance Criteria:**
 - Confirmation email sent immediately
@@ -482,9 +482,9 @@
 ---
 
 #### [BSM-063] Admin Order Notifications
-**As an** admin user  
-**I want** notifications for new guest orders  
-**So that** I can process orders promptly  
+**As an** admin user 
+**I want** notifications for new guest orders 
+**So that** I can process orders promptly 
 
 **Acceptance Criteria:**
 - Email sent to all admin users
@@ -502,39 +502,39 @@
 ### **High Priority (Next Sprint)**
 
 #### [BSM-070] Mobile App Development
-**Priority:** High  
-**Story Points:** 40  
-**Epic:** Customer Experience  
+**Priority:** High 
+**Story Points:** 40 
+**Epic:** Customer Experience 
 
-**As a** mobile user  
-**I want** a native mobile app  
-**So that** I can shop conveniently from my phone  
+**As a** mobile user 
+**I want** a native mobile app 
+**So that** I can shop conveniently from my phone 
 
 **Notes:** React Native or Flutter implementation
 
 ---
 
 #### [BSM-071] Advanced Analytics Dashboard
-**Priority:** High  
-**Story Points:** 25  
-**Epic:** Data Management  
+**Priority:** High 
+**Story Points:** 25 
+**Epic:** Data Management 
 
-**As an** admin user  
-**I want** detailed analytics and reports  
-**So that** I can make data-driven business decisions  
+**As an** admin user 
+**I want** detailed analytics and reports 
+**So that** I can make data-driven business decisions 
 
 **Notes:** Sales trends, customer behavior, inventory insights
 
 ---
 
 #### [BSM-072] Book Recommendation Engine
-**Priority:** High  
-**Story Points:** 30  
-**Epic:** Customer Experience  
+**Priority:** High 
+**Story Points:** 30 
+**Epic:** Customer Experience 
 
-**As a** customer  
-**I want** personalized book recommendations  
-**So that** I can discover books I might enjoy  
+**As a** customer 
+**I want** personalized book recommendations 
+**So that** I can discover books I might enjoy 
 
 **Notes:** Machine learning based on purchase history
 
@@ -543,57 +543,57 @@
 ### **Medium Priority**
 
 #### [BSM-073] Wishlist Functionality
-**Priority:** Medium  
-**Story Points:** 15  
-**Epic:** Customer Experience  
+**Priority:** Medium 
+**Story Points:** 15 
+**Epic:** Customer Experience 
 
-**As a** customer  
-**I want** to save books for later  
-**So that** I can purchase them when ready  
+**As a** customer 
+**I want** to save books for later 
+**So that** I can purchase them when ready 
 
 ---
 
 #### [BSM-074] Book Reviews and Ratings
-**Priority:** Medium  
-**Story Points:** 20  
-**Epic:** Customer Experience  
+**Priority:** Medium 
+**Story Points:** 20 
+**Epic:** Customer Experience 
 
-**As a** customer  
-**I want** to read and write book reviews  
-**So that** I can make informed purchasing decisions  
+**As a** customer 
+**I want** to read and write book reviews 
+**So that** I can make informed purchasing decisions 
 
 ---
 
 #### [BSM-075] Inventory Alerts
-**Priority:** Medium  
-**Story Points:** 12  
-**Epic:** Inventory Management  
+**Priority:** Medium 
+**Story Points:** 12 
+**Epic:** Inventory Management 
 
-**As an** admin user  
-**I want** alerts for low stock levels  
-**So that** I can reorder books before running out  
+**As an** admin user 
+**I want** alerts for low stock levels 
+**So that** I can reorder books before running out 
 
 ---
 
 #### [BSM-076] Social Media Integration
-**Priority:** Medium  
-**Story Points:** 18  
-**Epic:** Customer Experience  
+**Priority:** Medium 
+**Story Points:** 18 
+**Epic:** Customer Experience 
 
-**As a** customer  
-**I want** to share book purchases on social media  
-**So that** I can recommend books to friends  
+**As a** customer 
+**I want** to share book purchases on social media 
+**So that** I can recommend books to friends 
 
 ---
 
 #### [BSM-077] Advanced Search Filters
-**Priority:** Medium  
-**Story Points:** 15  
-**Epic:** Customer Experience  
+**Priority:** Medium 
+**Story Points:** 15 
+**Epic:** Customer Experience 
 
-**As a** customer  
-**I want** advanced search options  
-**So that** I can find specific books quickly  
+**As a** customer 
+**I want** advanced search options 
+**So that** I can find specific books quickly 
 
 **Notes:** Price range, publication date, author, multiple genres
 
@@ -602,57 +602,57 @@
 ### **Low Priority (Future Consideration)**
 
 #### [BSM-078] Multi-language Support
-**Priority:** Low  
-**Story Points:** 35  
-**Epic:** Customer Experience  
+**Priority:** Low 
+**Story Points:** 35 
+**Epic:** Customer Experience 
 
-**As an** international customer  
-**I want** the site in my language  
-**So that** I can shop comfortably  
+**As an** international customer 
+**I want** the site in my language 
+**So that** I can shop comfortably 
 
 ---
 
 #### [BSM-079] Subscription Service
-**Priority:** Low  
-**Story Points:** 45  
-**Epic:** Core E-commerce  
+**Priority:** Low 
+**Story Points:** 45 
+**Epic:** Core E-commerce 
 
-**As a** customer  
-**I want** monthly book subscription boxes  
-**So that** I can discover new books regularly  
+**As a** customer 
+**I want** monthly book subscription boxes 
+**So that** I can discover new books regularly 
 
 ---
 
 #### [BSM-080] API for Third-party Integration
-**Priority:** Low  
-**Story Points:** 30  
-**Epic:** Data Management  
+**Priority:** Low 
+**Story Points:** 30 
+**Epic:** Data Management 
 
-**As a** developer  
-**I want** REST API access  
-**So that** I can integrate with other systems  
+**As a** developer 
+**I want** REST API access 
+**So that** I can integrate with other systems 
 
 ---
 
 #### [BSM-081] Advanced Reporting
-**Priority:** Low  
-**Story Points:** 25  
-**Epic:** Data Management  
+**Priority:** Low 
+**Story Points:** 25 
+**Epic:** Data Management 
 
-**As an** admin user  
-**I want** customizable reports  
-**So that** I can analyze specific business metrics  
+**As an** admin user 
+**I want** customizable reports 
+**So that** I can analyze specific business metrics 
 
 ---
 
 #### [BSM-082] Loyalty Program
-**Priority:** Low  
-**Story Points:** 28  
-**Epic:** Customer Experience  
+**Priority:** Low 
+**Story Points:** 28 
+**Epic:** Customer Experience 
 
-**As a** frequent customer  
-**I want** loyalty points and rewards  
-**So that** I can get benefits from repeat purchases  
+**As a** frequent customer 
+**I want** loyalty points and rewards 
+**So that** I can get benefits from repeat purchases 
 
 ---
 
@@ -814,6 +814,6 @@ A user story is complete when:
 
 ---
 
-**Last Updated:** November 5, 2025  
-**Document Version:** 1.0  
+**Last Updated:** November 5, 2025 
+**Document Version:** 1.0 
 **Next Review:** Sprint 7 Planning

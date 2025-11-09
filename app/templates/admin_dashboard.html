@@ -1,567 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Prevent caching of dashboard data -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>Admin Dashboard</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <!-- Prevent caching of dashboard data -->
+ <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+ <meta http-equiv="Pragma" content="no-cache">
+ <meta http-equiv="Expires" content="0">
+ <title>Admin Dashboard</title>
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <!-- Font Awesome for icons -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-  
-  <style>
-    /* COMPLETE OVERRIDE OF ALL HERO THEME ELEMENTS */
-    
-    /* Reset everything */
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    /* Force clean background - override all hero styles */
-    html {
-      background: #f8f9fa !important;
-      background-image: none !important;
-      background-attachment: initial !important;
-      background-size: initial !important;
-      background-position: initial !important;
-      background-repeat: initial !important;
-    }
-    
-    body {
-      background: #f8f9fa !important;
-      background-image: none !important;
-      background-attachment: initial !important;
-      background-size: initial !important;
-      background-position: initial !important;
-      background-repeat: initial !important;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
-      font-size: 14px !important;
-      line-height: 1.5 !important;
-      color: #212529 !important;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
-    
-    /* Remove any pseudo-elements that might add hero backgrounds */
-    body::before, body::after,
-    html::before, html::after {
-      display: none !important;
-      content: none !important;
-      background: none !important;
-    }
-    
-    /* Override any hero navigation */
-    .hero-header, .hero-nav, .hero-brand {
-      display: none !important;
-    }
-    
-    /* Force clean containers */
-    .container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl {
-      background: transparent !important;
-      background-image: none !important;
-      backdrop-filter: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      border: none !important;
-    }
-    
-    /* Clean card styling */
-    .card, .card-body, .card-header, .card-footer {
-      background: white !important;
-      background-image: none !important;
-      border: 1px solid #dee2e6 !important;
-      backdrop-filter: none !important;
-      border-radius: 0.375rem !important;
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-    }
-    
-    /* Dashboard specific cards */
-    .dashboard-card {
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-      cursor: pointer;
-      background: white !important;
-      border: 1px solid #dee2e6 !important;
-      backdrop-filter: none !important;
-    }
-    .dashboard-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    }
-    .text-decoration-none:hover {
-      text-decoration: none !important;
-    }
-    .dashboard-card:hover .card-body {
-      color: white !important;
-    }
-    
-    /* Clean navbar */
-    .navbar {
-      background: white !important;
-      background-image: none !important;
-      border-bottom: 1px solid #dee2e6;
-      backdrop-filter: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-    }
-    
-    .navbar-brand {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-      font-size: 1.25rem !important;
-      font-weight: normal !important;
-      color: #212529 !important;
-      text-shadow: none !important;
-    }
-    
-    /* Override all typography */
-    h1, h2, h3, h4, h5, h6 {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-      font-weight: 500 !important;
-      color: #212529 !important;
-      text-shadow: none !important;
-    }
-    
-    p, span, div, a {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-      color: #212529 !important;
-      text-shadow: none !important;
-    }
-    
-    /* Override buttons */
-    .btn {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-      border-radius: 0.375rem !important;
-      font-weight: 400 !important;
-    }
-    
-    /* Override any hero-specific classes that might be applied */
-    .btn-hero, .btn-outline-hero, .card-hero, .main-container, .page-title {
-      all: unset !important;
-    }
-    
-    /* Force clean alerts */
-    .alert {
-      background: #f8f9fa !important;
-      border: 1px solid #dee2e6 !important;
-      border-radius: 0.375rem !important;
-      backdrop-filter: none !important;
-    }
-    
-    /* Override any modal styling */
-    .modal-content {
-      background: white !important;
-      backdrop-filter: none !important;
-      border-radius: 0.375rem !important;
-      border: 1px solid #dee2e6 !important;
-    }
-    
-    .modal-header {
-      background: white !important;
-      border-bottom: 1px solid #dee2e6 !important;
-      padding: 1rem !important;
-    }
-    
-    .modal-title {
-      color: #212529 !important;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-      font-size: 1.25rem !important;
-      font-weight: 500 !important;
-      margin: 0 !important;
-    }
-    
-    .modal-body {
-      background: white !important;
-      color: #212529 !important;
-      padding: 1rem !important;
-    }
-    
-    .modal-footer {
-      background: white !important;
-      border-top: 1px solid #dee2e6 !important;
-      padding: 1rem !important;
-    }
-    
-    /* Fix table headers in modals */
-    .modal-body table {
-      background: white !important;
-    }
-    
-    .modal-body table thead th {
-      background: #f8f9fa !important;
-      color: #212529 !important;
-      border-bottom: 2px solid #dee2e6 !important;
-      font-weight: 600 !important;
-    }
-    
-    .modal-body table tbody td {
-      background: white !important;
-      color: #212529 !important;
-      border-bottom: 1px solid #dee2e6 !important;
-    }
-    
-    /* Clean table styling */
-    .table {
-      background: white !important;
-      backdrop-filter: none !important;
-    }
-    
-    .table thead th {
-      background: #f8f9fa !important;
-      border-bottom: 2px solid #dee2e6 !important;
-      color: #212529 !important;
-      font-weight: 600 !important;
-    }
-    
-    .table tbody td {
-      background: white !important;
-      color: #212529 !important;
-      border-bottom: 1px solid #dee2e6 !important;
-    }
-  </style>
+ <!-- Bootstrap CSS -->
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ <!-- Font Awesome for icons -->
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+ 
+ <style>
+ /* COMPLETE OVERRIDE OF ALL HERO THEME ELEMENTS */
+ 
+ /* Reset everything */
+ *, *::before, *::after {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+ }
+ 
+ /* Force clean background - override all hero styles */
+ html {
+ background: #f8f9fa !important;
+ background-image: none !important;
+ background-attachment: initial !important;
+ background-size: initial !important;
+ background-position: initial !important;
+ background-repeat: initial !important;
+ }
+ 
+ body {
+ background: #f8f9fa !important;
+ background-image: none !important;
+ background-attachment: initial !important;
+ background-size: initial !important;
+ background-position: initial !important;
+ background-repeat: initial !important;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+ font-size: 14px !important;
+ line-height: 1.5 !important;
+ color: #212529 !important;
+ min-height: 100vh;
+ overflow-x: hidden;
+ position: relative;
+ }
+ 
+ /* Remove any pseudo-elements that might add hero backgrounds */
+ body::before, body::after,
+ html::before, html::after {
+ display: none !important;
+ content: none !important;
+ background: none !important;
+ }
+ 
+ /* Override any hero navigation */
+ .hero-header, .hero-nav, .hero-brand {
+ display: none !important;
+ }
+ 
+ /* Force clean containers */
+ .container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl {
+ background: transparent !important;
+ background-image: none !important;
+ backdrop-filter: none !important;
+ border-radius: 0 !important;
+ box-shadow: none !important;
+ border: none !important;
+ }
+ 
+ /* Clean card styling */
+ .card, .card-body, .card-header, .card-footer {
+ background: white !important;
+ background-image: none !important;
+ border: 1px solid #dee2e6 !important;
+ backdrop-filter: none !important;
+ border-radius: 0.375rem !important;
+ box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+ }
+ 
+ /* Dashboard specific cards */
+ .dashboard-card {
+ transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+ cursor: pointer;
+ background: white !important;
+ border: 1px solid #dee2e6 !important;
+ backdrop-filter: none !important;
+ }
+ .dashboard-card:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+ }
+ .text-decoration-none:hover {
+ text-decoration: none !important;
+ }
+ .dashboard-card:hover .card-body {
+ color: white !important;
+ }
+ 
+ /* Clean navbar */
+ .navbar {
+ background: white !important;
+ background-image: none !important;
+ border-bottom: 1px solid #dee2e6;
+ backdrop-filter: none !important;
+ border-radius: 0 !important;
+ box-shadow: none !important;
+ }
+ 
+ .navbar-brand {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+ font-size: 1.25rem !important;
+ font-weight: normal !important;
+ color: #212529 !important;
+ text-shadow: none !important;
+ }
+ 
+ /* Override all typography */
+ h1, h2, h3, h4, h5, h6 {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+ font-weight: 500 !important;
+ color: #212529 !important;
+ text-shadow: none !important;
+ }
+ 
+ p, span, div, a {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+ color: #212529 !important;
+ text-shadow: none !important;
+ }
+ 
+ /* Override buttons */
+ .btn {
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+ border-radius: 0.375rem !important;
+ font-weight: 400 !important;
+ }
+ 
+ /* Override any hero-specific classes that might be applied */
+ .btn-hero, .btn-outline-hero, .card-hero, .main-container, .page-title {
+ all: unset !important;
+ }
+ 
+ /* Force clean alerts */
+ .alert {
+ background: #f8f9fa !important;
+ border: 1px solid #dee2e6 !important;
+ border-radius: 0.375rem !important;
+ backdrop-filter: none !important;
+ }
+ 
+ /* Override any modal styling */
+ .modal-content {
+ background: white !important;
+ backdrop-filter: none !important;
+ border-radius: 0.375rem !important;
+ border: 1px solid #dee2e6 !important;
+ }
+ 
+ .modal-header {
+ background: white !important;
+ border-bottom: 1px solid #dee2e6 !important;
+ padding: 1rem !important;
+ }
+ 
+ .modal-title {
+ color: #212529 !important;
+ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+ font-size: 1.25rem !important;
+ font-weight: 500 !important;
+ margin: 0 !important;
+ }
+ 
+ .modal-body {
+ background: white !important;
+ color: #212529 !important;
+ padding: 1rem !important;
+ }
+ 
+ .modal-footer {
+ background: white !important;
+ border-top: 1px solid #dee2e6 !important;
+ padding: 1rem !important;
+ }
+ 
+ /* Fix table headers in modals */
+ .modal-body table {
+ background: white !important;
+ }
+ 
+ .modal-body table thead th {
+ background: #f8f9fa !important;
+ color: #212529 !important;
+ border-bottom: 2px solid #dee2e6 !important;
+ font-weight: 600 !important;
+ }
+ 
+ .modal-body table tbody td {
+ background: white !important;
+ color: #212529 !important;
+ border-bottom: 1px solid #dee2e6 !important;
+ }
+ 
+ /* Clean table styling */
+ .table {
+ background: white !important;
+ backdrop-filter: none !important;
+ }
+ 
+ .table thead th {
+ background: #f8f9fa !important;
+ border-bottom: 2px solid #dee2e6 !important;
+ color: #212529 !important;
+ font-weight: 600 !important;
+ }
+ 
+ .table tbody td {
+ background: white !important;
+ color: #212529 !important;
+ border-bottom: 1px solid #dee2e6 !important;
+ }
+ </style>
 </head>
 <body class="bg-light">
-  <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4">
-    <a class="navbar-brand" href="#">Admin Dashboard</a>
-    <div class="ml-auto d-flex gap-2">
-      <button class="btn btn-outline-primary mr-2" data-toggle="modal" data-target="#ordersModal">
-        All Orders
-        {% if pending_count and pending_count > 0 %}
-          <span class="badge badge-danger">{{ pending_count }}</span>
-        {% endif %}
-      </button>
-      <button class="btn btn-outline-success mr-2" data-toggle="modal" data-target="#addAdminModal">
-        <i class="fas fa-user-plus"></i> Add Admin User
-      </button>
-      <a class="btn btn-outline-info mr-2" href="{{ url_for('admin_users') }}">Admin Users</a>
-      <a class="btn btn-outline-secondary mr-2" href="{{ url_for('logout') }}">Sign Out</a>
-    </div>
-  </nav>
+ <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4">
+ <a class="navbar-brand" href="#">Admin Dashboard</a>
+ <div class="ml-auto d-flex gap-2">
+ <button class="btn btn-outline-success mr-2" data-toggle="modal" data-target="#addAdminModal">
+ <i class="fas fa-user-plus"></i> Add Admin User
+ </button>
+ <a class="btn btn-outline-info mr-2" href="{{ url_for('admin_users') }}">Admin Users</a>
+ <a class="btn btn-outline-warning mr-2" href="{{ url_for('manual_low_stock_check') }}" title="Check for low stock items and send notifications">
+ <i class="fas fa-exclamation-triangle"></i> Check Low Stock
+ </a>
+ <a class="btn btn-outline-secondary mr-2" href="{{ url_for('logout') }}">Sign Out</a>
+ </div>
+ </nav>
 
-  <div class="container">
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert">
-              <span>&times;</span>
-            </button>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+ <div class="container">
+ <!-- Flash messages -->
+ {% with messages = get_flashed_messages(with_categories=true) %}
+ {% if messages %}
+ {% for category, message in messages %}
+ <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+ {{ message }}
+ <button type="button" class="close" data-dismiss="alert">
+ <span>&times;</span>
+ </button>
+ </div>
+ {% endfor %}
+ {% endif %}
+ {% endwith %}
 
-    <!-- Quick Stats Cards -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <a href="{{ url_for('admin_users') }}" class="text-decoration-none">
-          <div class="card bg-primary text-white h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-users"></i> Admin Users</h5>
-              <p class="card-text">{{ recent_admin_users|length }} recent admin users</p>
-              <small>
-                {% for user in recent_admin_users[:3] %}
-                  {{ user.username }}{% if not loop.last %}, {% endif %}
-                {% endfor %}
-                {% if recent_admin_users|length > 3 %}...{% endif %}
-              </small>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="{{ url_for('all_orders') }}" class="text-decoration-none">
-          <div class="card bg-warning text-white h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-clock"></i> Pending Orders</h5>
-              <p class="card-text">{{ pending_count }} orders need attention</p>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="{{ url_for('inventory') }}" class="text-decoration-none">
-          <div class="card bg-success text-white h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-warehouse"></i> Inventory</h5>
-              <p class="card-text">{{ inventory|length }} books in stock</p>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="col-md-3">
-        <a href="{{ url_for('sales_report') }}" class="text-decoration-none">
-          <div class="card bg-info text-white h-100 dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-chart-line"></i> Sales Report</h5>
-              <p class="card-text">View customer purchases</p>
-            </div>
-          </div>
-        </a>
-      </div>
-    </div>
+ <!-- Quick Stats Cards -->
+ <div class="row mb-4">
+ <div class="col-md-3">
+ <a href="{{ url_for('admin_users') }}" class="text-decoration-none">
+ <div class="card bg-primary text-white h-100 dashboard-card">
+ <div class="card-body">
+ <h5 class="card-title"><i class="fas fa-users"></i> Admin Users</h5>
+ <p class="card-text">{{ recent_admin_users|length }} recent admin users</p>
+ <small>
+ {% for user in recent_admin_users[:3] %}
+ {{ user.username }}{% if not loop.last %}, {% endif %}
+ {% endfor %}
+ {% if recent_admin_users|length > 3 %}...{% endif %}
+ </small>
+ </div>
+ </div>
+ </a>
+ </div>
+ <div class="col-md-3">
+ <a href="{{ url_for('orders_view') }}" class="text-decoration-none">
+ <div class="card bg-info text-white h-100 dashboard-card">
+ <div class="card-body">
+ <h5 class="card-title"><i class="fas fa-list-alt"></i> Order History</h5>
+ <p class="card-text">{{ total_order_count }} total orders</p>
+ <small class="text-white-50">All order statuses</small>
+ </div>
+ </div>
+ </a>
+ </div>
+ <div class="col-md-3">
+ <a href="{{ url_for('inventory') }}" class="text-decoration-none">
+ <div class="card bg-success text-white h-100 dashboard-card">
+ <div class="card-body">
+ <h5 class="card-title"><i class="fas fa-warehouse"></i> Inventory</h5>
+ <p class="card-text">{{ inventory|length }} books in stock</p>
+ </div>
+ </div>
+ </a>
+ </div>
+ <div class="col-md-3">
+ <a href="{{ url_for('sales_report') }}" class="text-decoration-none">
+ <div class="card bg-info text-white h-100 dashboard-card">
+ <div class="card-body">
+ <h5 class="card-title"><i class="fas fa-chart-line"></i> Sales Report</h5>
+ <p class="card-text">View customer purchases</p>
+ </div>
+ </div>
+ </a>
+ </div>
+ </div>
 
-    <!-- Additional Navigation -->
-    <div class="row mb-4">
-      <div class="col-md-6">
-        <a href="{{ url_for('browse') }}" class="btn btn-outline-primary btn-block">
-          <i class="fas fa-shopping-cart"></i> Customer Shopping View
-        </a>
-      </div>
-    </div>
+ <!-- Additional Navigation -->
+ <div class="row mb-4">
+ <div class="col-md-6">
+ <a href="{{ url_for('browse') }}" class="btn btn-outline-primary btn-block">
+ <i class="fas fa-shopping-cart"></i> Customer Shopping View
+ </a>
+ </div>
+ </div>
 
-    <!-- Tabs for Inventory and Orders -->
-    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
-      <li class="nav-item">
-        <a class="nav-link active" id="inventory-tab" data-toggle="tab" href="#inventory" role="tab">Inventory</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="orders-tab" data-toggle="tab" href="#orders" role="tab">All Orders</a>
-      </li>
-    </ul>
+ <!-- Inventory Management Section -->
+ <div class="mt-3">
+ <!-- Mini Inventory Management Section -->
+ <div class="card">
+ <div class="card-header d-flex justify-content-between align-items-center">
+ <h5 class="mb-0">
+ <i class="fas fa-warehouse"></i> Inventory Overview ({{ inventory|length }} books)
+ </h5>
+ <a href="{{ url_for('inventory') }}" class="btn btn-primary">
+ <i class="fas fa-cog"></i> Full Inventory Management
+ </a>
+ </div>
+ <div class="card-body">
+ {% if inventory %}
+ <div class="table-responsive">
+ <table class="table table-hover">
+ <thead class="thead-light">
+ <tr>
+ <th>Title</th>
+ <th>Author</th>
+ <th>Genre</th>
+ <th>Price</th>
+ <th>Stock</th>
+ <th>Type</th>
+ <th>Actions</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for book in inventory[:10] %}
+ <tr>
+ <td><strong>{{ book.title }}</strong></td>
+ <td>{{ book.author }}</td>
+ <td>
+ <span class="badge badge-info">{{ book.genre or 'Fiction' }}</span>
+ </td>
+ <td class="text-success">${{ '%.2f'|format(book.price) }}</td>
+ <td>
+ <span class="badge {% if book.quantity < 5 %}badge-warning{% elif book.quantity < 2 %}badge-danger{% else %}badge-success{% endif %}">
+ {{ book.quantity }}
+ </span>
+ </td>
+ <td>{{ book.cover_type }}</td>
+ <td>
+ <a href="{{ url_for('edit_book', isbn=book.isbn) }}" class="btn btn-outline-primary btn-sm">
+ <i class="fas fa-edit"></i>
+ </a>
+ </td>
+ </tr>
+ {% endfor %}
+ {% if inventory|length > 10 %}
+ <tr>
+ <td colspan="7" class="text-center text-muted">
+ <em>... and {{ inventory|length - 10 }} more books</em>
+ <br>
+ <a href="{{ url_for('inventory') }}" class="btn btn-link">View All Books</a>
+ </td>
+ </tr>
+ {% endif %}
+ </tbody>
+ </table>
+ </div>
+ {% else %}
+ <div class="text-center py-4">
+ <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+ <h5 class="text-muted">No Books in Inventory</h5>
+ <p class="text-muted">Start by adding books to your inventory.</p>
+ <a href="{{ url_for('add_book') }}" class="btn btn-primary">
+ <i class="fas fa-plus"></i> Add First Book
+ </a>
+ </div>
+ {% endif %}
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-    <div class="tab-content mt-3">
-      <div class="tab-pane fade show active" id="inventory" role="tabpanel">
-        <!-- Mini Inventory Management Section -->
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-              <i class="fas fa-warehouse"></i> Inventory Overview ({{ inventory|length }} books)
-            </h5>
-            <a href="{{ url_for('inventory') }}" class="btn btn-primary">
-              <i class="fas fa-cog"></i> Full Inventory Management
-            </a>
-          </div>
-          <div class="card-body">
-            {% if inventory %}
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead class="thead-light">
-                  <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Genre</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for book in inventory[:10] %}
-                  <tr>
-                    <td><strong>{{ book.title }}</strong></td>
-                    <td>{{ book.author }}</td>
-                    <td>
-                      <span class="badge badge-info">{{ book.genre or 'Fiction' }}</span>
-                    </td>
-                    <td class="text-success">${{ '%.2f'|format(book.price) }}</td>
-                    <td>
-                      <span class="badge {% if book.quantity < 5 %}badge-warning{% elif book.quantity < 2 %}badge-danger{% else %}badge-success{% endif %}">
-                        {{ book.quantity }}
-                      </span>
-                    </td>
-                    <td>{{ book.cover_type }}</td>
-                    <td>
-                      <a href="{{ url_for('edit_book', isbn=book.isbn) }}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-edit"></i>
-                      </a>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                  {% if inventory|length > 10 %}
-                  <tr>
-                    <td colspan="7" class="text-center text-muted">
-                      <em>... and {{ inventory|length - 10 }} more books</em>
-                      <br>
-                      <a href="{{ url_for('inventory') }}" class="btn btn-link">View All Books</a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                </tbody>
-              </table>
-            </div>
-            {% else %}
-            <div class="text-center py-4">
-              <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-              <h5 class="text-muted">No Books in Inventory</h5>
-              <p class="text-muted">Start by adding books to your inventory.</p>
-              <a href="{{ url_for('add_book') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add First Book
-              </a>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="tab-pane fade" id="orders" role="tabpanel">
-        {% include '_orders_table.html' %}
-      </div>
-    </div>
-  </div>
+ <!-- Add Admin User Modal -->
+ <div class="modal fade" id="addAdminModal" tabindex="-1" role="dialog">
+ <div class="modal-dialog" role="document">
+ <div class="modal-content">
+ <div class="modal-header">
+ <h5 class="modal-title">
+ <i class="fas fa-user-plus"></i> Add New Admin User
+ </h5>
+ <button type="button" class="close" data-dismiss="modal">&times;</button>
+ </div>
+ <form method="POST" action="{{ url_for('create_admin_user_dashboard') }}" id="addAdminForm">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <div class="modal-body">
+ <div class="form-group">
+ <label for="modalUsername">Username <span class="text-danger">*</span></label>
+ <input type="text" class="form-control" id="modalUsername" name="username" 
+ placeholder="Enter username" required>
+ </div>
+ 
+ <div class="form-group">
+ <label for="modalPassword">Password <span class="text-danger">*</span></label>
+ <div class="input-group">
+ <input type="password" class="form-control" id="modalPassword" name="password" 
+ placeholder="Enter password" required>
+ <div class="input-group-append">
+ <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPassword()">
+ <i class="fas fa-eye" id="modalToggleIcon"></i>
+ </button>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="form-group">
+ <label for="modalEmail">Email Address <span class="text-danger">*</span></label>
+ <input type="email" class="form-control" id="modalEmail" name="email" 
+ placeholder="Enter email address" required>
+ </div>
+ 
+ <div class="form-group">
+ <label for="modalFullName">Full Name</label>
+ <input type="text" class="form-control" id="modalFullName" name="full_name" 
+ placeholder="Enter full name (optional)">
+ </div>
+ 
+ <div class="form-group">
+ <div class="custom-control custom-checkbox">
+ <input type="checkbox" class="custom-control-input" id="modalNotifications" 
+ name="receive_notifications" checked>
+ <label class="custom-control-label" for="modalNotifications">
+ <i class="fas fa-bell text-primary"></i> Enable Email Notifications
+ </label>
+ </div>
+ <small class="form-text text-muted">
+ User will receive notifications for new orders and status changes.
+ </small>
+ </div>
+ </div>
+ <div class="modal-footer">
+ <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+ <button type="submit" class="btn btn-success">
+ <i class="fas fa-save"></i> Create Admin User
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
 
-  <!-- Orders Modal -->
-  <div class="modal fade" id="ordersModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">All Orders</h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <div class="modal-body">
-          {% include '_orders_table.html' %}
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
+ <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+ 
+ <script>
+ function toggleModalPassword() {
+ const passwordField = document.getElementById('modalPassword');
+ const toggleIcon = document.getElementById('modalToggleIcon');
+ 
+ if (passwordField.type === 'password') {
+ passwordField.type = 'text';
+ toggleIcon.classList.remove('fa-eye');
+ toggleIcon.classList.add('fa-eye-slash');
+ } else {
+ passwordField.type = 'password';
+ toggleIcon.classList.remove('fa-eye-slash');
+ toggleIcon.classList.add('fa-eye');
+ }
+ }
 
-  <!-- Add Admin User Modal -->
-  <div class="modal fade" id="addAdminModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            <i class="fas fa-user-plus"></i> Add New Admin User
-          </h5>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <form method="POST" action="{{ url_for('create_admin_user_dashboard') }}" id="addAdminForm">
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="modalUsername">Username <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="modalUsername" name="username" 
-                     placeholder="Enter username" required>
-            </div>
-            
-            <div class="form-group">
-              <label for="modalPassword">Password <span class="text-danger">*</span></label>
-              <div class="input-group">
-                <input type="password" class="form-control" id="modalPassword" name="password" 
-                       placeholder="Enter password" required>
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="button" onclick="toggleModalPassword()">
-                    <i class="fas fa-eye" id="modalToggleIcon"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label for="modalEmail">Email Address <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" id="modalEmail" name="email" 
-                     placeholder="Enter email address" required>
-            </div>
-            
-            <div class="form-group">
-              <label for="modalFullName">Full Name</label>
-              <input type="text" class="form-control" id="modalFullName" name="full_name" 
-                     placeholder="Enter full name (optional)">
-            </div>
-            
-            <div class="form-group">
-              <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="modalNotifications" 
-                       name="receive_notifications" checked>
-                <label class="custom-control-label" for="modalNotifications">
-                  <i class="fas fa-bell text-primary"></i> Enable Email Notifications
-                </label>
-              </div>
-              <small class="form-text text-muted">
-                User will receive notifications for new orders and status changes.
-              </small>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-success">
-              <i class="fas fa-save"></i> Create Admin User
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+ // Clear form when modal is closed
+ $('#addAdminModal').on('hidden.bs.modal', function () {
+ $('#addAdminForm')[0].reset();
+ // Reset password visibility
+ document.getElementById('modalPassword').type = 'password';
+ document.getElementById('modalToggleIcon').classList.remove('fa-eye-slash');
+ document.getElementById('modalToggleIcon').classList.add('fa-eye');
+ });
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    function toggleModalPassword() {
-      const passwordField = document.getElementById('modalPassword');
-      const toggleIcon = document.getElementById('modalToggleIcon');
-      
-      if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-      } else {
-        passwordField.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-      }
-    }
+ // Auto-refresh dashboard data every 60 seconds to keep counts current
+ setInterval(function() {
+ location.reload();
+ }, 60000); // 60 seconds
 
-    // Clear form when modal is closed
-    $('#addAdminModal').on('hidden.bs.modal', function () {
-      $('#addAdminForm')[0].reset();
-      // Reset password visibility
-      document.getElementById('modalPassword').type = 'password';
-      document.getElementById('modalToggleIcon').classList.remove('fa-eye-slash');
-      document.getElementById('modalToggleIcon').classList.add('fa-eye');
-    });
+ // Automatic logout when browser/tab is closed (less sensitive)
+ let isLoggedOut = false;
+ let isNavigating = false;
 
-    // Auto-refresh dashboard data every 60 seconds to keep counts current
-    setInterval(function() {
-      location.reload();
-    }, 60000); // 60 seconds
+ function performLogout() {
+ if (!isLoggedOut && !isNavigating) {
+ isLoggedOut = true;
+ navigator.sendBeacon('{{ url_for("logout_ajax") }}', new FormData());
+ }
+ }
 
-    // Automatic logout when browser/tab is closed (less sensitive)
-    let isLoggedOut = false;
-    let isNavigating = false;
+ // Mark when we're navigating to another page in the same app
+ document.addEventListener('click', function(event) {
+ const link = event.target.closest('a');
+ if (link && link.href && link.href.includes(window.location.origin)) {
+ isNavigating = true;
+ // Reset navigation flag after a short delay
+ setTimeout(function() {
+ isNavigating = false;
+ }, 1000);
+ }
+ });
 
-    function performLogout() {
-      if (!isLoggedOut && !isNavigating) {
-        isLoggedOut = true;
-        navigator.sendBeacon('{{ url_for("logout_ajax") }}', new FormData());
-      }
-    }
+ // Only logout on actual browser close, not navigation
+ window.addEventListener('beforeunload', function(event) {
+ // Only logout if we're not navigating within the app
+ if (!isNavigating) {
+ performLogout();
+ }
+ });
 
-    // Mark when we're navigating to another page in the same app
-    document.addEventListener('click', function(event) {
-      const link = event.target.closest('a');
-      if (link && link.href && link.href.includes(window.location.origin)) {
-        isNavigating = true;
-        // Reset navigation flag after a short delay
-        setTimeout(function() {
-          isNavigating = false;
-        }, 1000);
-      }
-    });
-
-    // Only logout on actual browser close, not navigation
-    window.addEventListener('beforeunload', function(event) {
-      // Only logout if we're not navigating within the app
-      if (!isNavigating) {
-        performLogout();
-      }
-    });
-
-    // Remove the sensitive visibility change and pagehide listeners
-    // as they were causing logout during normal navigation
-  </script>
-  
-  <!-- Session Timeout Management -->
-  <script src="{{ url_for('static', filename='js/session-timeout.js') }}"></script>
+ // Remove the sensitive visibility change and pagehide listeners
+ // as they were causing logout during normal navigation
+ </script>
+ 
+ <!-- Session Timeout Management -->
+ <script src="{{ url_for('static', filename='js/session-timeout.js') }}"></script>
 </body>
 </html>

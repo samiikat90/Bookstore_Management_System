@@ -13,37 +13,37 @@ Make sure you have these installed:
 ### Setup Instructions
 
 1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/samiikat90/Bookstore_Management_System.git
-   cd Bookstore_Management_System
-   ```
+ ```bash
+ git clone https://github.com/samiikat90/Bookstore_Management_System.git
+ cd Bookstore_Management_System
+ ```
 
 2. **Install Python Dependencies**
-   ```bash
-   # Install all required packages from requirements.txt
-   pip install -r requirements.txt
-   
-   # Or install individually if needed:
-   pip install flask flask-sqlalchemy flask-login werkzeug cryptography blinker
-   ```
+ ```bash
+ # Install all required packages from requirements.txt
+ pip install -r requirements.txt
+ 
+ # Or install individually if needed:
+ pip install flask flask-sqlalchemy flask-login werkzeug cryptography blinker
+ ```
 
 3. **Start the Application**
-   ```bash
-   # Option 1: Automated setup with virtual environment (Recommended)
-   .\run.ps1 -setup
-   .\run.ps1
-   
-   # Option 2: Quick start (Windows)
-   .\run.ps1
-   
-   # Option 3: Manual start (All platforms)
-   python app/app.py
-   ```
+ ```bash
+ # Option 1: Automated setup with virtual environment (Recommended)
+ .\run.ps1 -setup
+ .\run.ps1
+ 
+ # Option 2: Quick start (Windows)
+ .\run.ps1
+ 
+ # Option 3: Manual start (All platforms)
+ python app/app.py
+ ```
 
 4. **Access the Bookstore**
-   - Open your browser to: **http://127.0.0.1:5000**
-   - **Use your assigned login credentials** (see table below)
-   - Each team member has their own individual account
+ - Open your browser to: **http://127.0.0.1:5000**
+ - **Use your assigned login credentials** (see table below)
+ - Each team member has their own individual account
 
 ### Login Credentials
 Each team member has their own admin account, all using the same password for convenience:
@@ -121,79 +121,79 @@ The system comes pre-populated with sample data:
 ### For Quick Operations:
 ```bash
 # Start with virtual environment (Recommended)
-.\run.ps1 -setup    # First time setup
-.\run.ps1           # Regular startup
+.\run.ps1 -setup # First time setup
+.\run.ps1 # Regular startup
 
 # Legacy startup options
-.\start.ps1         # Quick start without venv
-python app/app.py   # Direct start
+.\start.ps1 # Quick start without venv
+python app/app.py # Direct start
 
 # Database management
-.\reset_database.ps1    # Reset with fresh sample data
-python scripts/db_status.py    # Check database status
+.\reset_database.ps1 # Reset with fresh sample data
+python scripts/db_status.py # Check database status
 
 # User management
-python scripts/check_users.py    # View all accounts
-python scripts/reset_password.py    # Reset passwords if needed
+python scripts/check_users.py # View all accounts
+python scripts/reset_password.py # Reset passwords if needed
 ```
 
 ### For Development & Testing:
 ```bash
 # Sample data creation
-python scripts/setup_database.py    # Create fresh sample data
-python scripts/standardize_passwords.py    # Standardize admin passwords
+python scripts/setup_database.py # Create fresh sample data
+python scripts/standardize_passwords.py # Standardize admin passwords
 
 # Payment system testing
-python test_payment_validation.py    # Test payment validation
+python test_payment_validation.py # Test payment validation
 
 # Database schema checks
-python scripts/check_db_schema.py    # Verify database structure
+python scripts/check_db_schema.py # Verify database structure
 
 # Encryption migration (if needed)
-python migrate_encryption.py    # Migrate to encrypted customer data
+python migrate_encryption.py # Migrate to encrypted customer data
 ```
 
 ## File Structure
 
 ```
 Bookstore_Management_System/
-├── app/
-│   ├── app.py                    # Main Flask application
-│   ├── payment_utils.py         # Payment validation (Luhn algorithm)
-│   ├── payment_validator.py     # Payment method validation
-│   └── templates/               # HTML templates
-│       ├── index.html          # Homepage with genre badges
-│       ├── cart.html           # Shopping cart interface
-│       ├── payment.html        # Payment form with validation
-│       ├── admin_dashboard.html # Admin control panel
-│       ├── orders.html         # Order management
-│       ├── purchases.html      # Purchase tracking
-│       └── ...                 # Additional templates
-├── scripts/                     # Automation scripts
-│   ├── setup_database.py       # Create sample data
-│   ├── check_db_schema.py      # Database structure validation
-│   ├── db_status.py            # System status check
-│   ├── reset_password.py       # Password reset utility
-│   └── standardize_passwords.py
-├── instance/                    # Database storage (auto-created)
-│   └── uploads/                # File upload storage
-├── uploads/                     # CSV files and exports
-│   ├── BookListing.csv         # Sample inventory data
-│   └── UpdatedBookListing.csv  # Updated inventory
-├── tests/                       # Test files
-│   └── test_payment_validation.py # Payment system tests
-├── Documentation/               # Project documentation
-│   ├── AGILE_DOCUMENTATION.md  # Sprint logs and retrospectives
-│   ├── USER_STORIES.md         # Complete user story backlog
-│   ├── PRODUCT_BACKLOG.md      # Feature prioritization
-│   └── FINAL_FEATURE_SUMMARY.md # Feature completion summary
-├── run.ps1                     # Automated setup with virtual environment
-├── start.ps1                   # Quick start script
-├── reset_database.ps1          # Database reset script
-├── requirements.txt            # Python dependencies
-├── migrate_encryption.py       # Customer data encryption migration
-├── test_payment_validation.py  # Payment validation testing
-└── README.md                   # This file
+ app/
+ app.py # Main Flask application
+ payment_utils.py # Payment validation (Luhn algorithm)
+ payment_validator.py # Payment method validation
+ templates/ # HTML templates
+ index.html # Homepage with genre badges
+ cart.html # Shopping cart interface
+ payment.html # Payment form with validation
+ admin_dashboard.html # Admin control panel
+ orders.html # Order management
+ purchases.html # Purchase tracking
+ ... # Additional templates
+ scripts/ # Automation scripts
+ setup_database.py # Create sample data
+ check_db_schema.py # Database structure validation
+ db_status.py # System status check
+ reset_password.py # Password reset utility
+ standardize_passwords.py
+ instance/ # Database storage (auto-created)
+ uploads/ # File upload storage
+ uploads/ # CSV files and exports
+ BookListing.csv # Sample inventory data
+ UpdatedBookListing.csv # Updated inventory
+ tests/ # Test files
+ test_payment_validation.py # Payment system tests
+ Documentation/ # Project documentation
+ AGILE_DOCUMENTATION.md # Sprint logs and retrospectives
+ USER_STORIES.md # Complete user story backlog
+ PRODUCT_BACKLOG.md # Feature prioritization
+ FINAL_FEATURE_SUMMARY.md # Feature completion summary
+ run.ps1 # Automated setup with virtual environment
+ start.ps1 # Quick start script
+ reset_database.ps1 # Database reset script
+ requirements.txt # Python dependencies
+ migrate_encryption.py # Customer data encryption migration
+ test_payment_validation.py # Payment validation testing
+ README.md # This file
 ```
 
 ## Troubleshooting
@@ -222,7 +222,7 @@ pip install flask flask-sqlalchemy flask-login werkzeug cryptography
 **"Virtual environment issues"**
 ```bash
 # Reset virtual environment:
-rm -rf venv  # or Remove-Item venv -Recurse on Windows
+rm -rf venv # or Remove-Item venv -Recurse on Windows
 .\run.ps1 -setup
 ```
 
@@ -265,11 +265,11 @@ python migrate_encryption.py
 1. Edit files in VS Code
 2. Test locally with `.\start.ps1`
 3. Commit changes:
-   ```bash
-   git add .
-   git commit -m "Describe your changes"
-   git push origin main
-   ```
+ ```bash
+ git add .
+ git commit -m "Describe your changes"
+ git push origin main
+ ```
 
 ### Reset to Clean State:
 ```bash
@@ -305,21 +305,21 @@ python migrate_encryption.py
 
 ```bash
 # Setup and start (Recommended for new setup)
-.\run.ps1 -setup    # First time: creates venv and installs dependencies
-.\run.ps1           # Start application with virtual environment
+.\run.ps1 -setup # First time: creates venv and installs dependencies
+.\run.ps1 # Start application with virtual environment
 
 # Alternative startup methods
-.\start.ps1         # Quick start without virtual environment
-python app/app.py   # Direct start
+.\start.ps1 # Quick start without virtual environment
+python app/app.py # Direct start
 
 # Database operations
-.\reset_database.ps1           # Reset with fresh data
-python scripts/check_db_schema.py    # Verify database structure
-python migrate_encryption.py         # Migrate to encrypted data
+.\reset_database.ps1 # Reset with fresh data
+python scripts/check_db_schema.py # Verify database structure
+python migrate_encryption.py # Migrate to encrypted data
 
 # Testing and validation
-python test_payment_validation.py    # Test payment system
-python scripts/db_status.py         # Check system status
+python test_payment_validation.py # Test payment system
+python scripts/db_status.py # Check system status
 
 # Access application
 http://127.0.0.1:5000
@@ -334,6 +334,6 @@ For detailed setup instructions, see the comprehensive documentation in the `/Do
 
 ---
 
-**Repository**: https://github.com/samiikat90/Bookstore_Management_System  
-**Last Updated**: November 5, 2025  
+**Repository**: https://github.com/samiikat90/Bookstore_Management_System 
+**Last Updated**: November 5, 2025 
 **Current Version**: 1.0 - Full E-commerce Platform with Advanced Features

@@ -4,289 +4,290 @@
 
 {% block content %}
 <div class="main-container">
-    <div class="text-center mb-4">
-        <h1 class="page-title">
-            <i class="fas fa-credit-card"></i> Secure Checkout
-        </h1>
-        <p class="lead text-muted">Complete your literary journey</p>
-    </div>
+ <div class="text-center mb-4">
+ <h1 class="page-title">
+ <i class="fas fa-credit-card"></i> Secure Checkout
+ </h1>
+ <p class="lead text-muted">Complete your literary journey</p>
+ </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <!-- Payment Method Selection -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-lock"></i> Payment Information
-                    </h4>
-                    
-                    <form method="POST" action="{{ url_for('checkout') }}" id="checkoutForm">
-                        <!-- Payment Method Tabs -->
-                        <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="credit-card-tab" data-toggle="tab" href="#credit-card" role="tab">
-                                    <i class="fas fa-credit-card"></i> Credit Card
-                                </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="paypal-tab" data-toggle="tab" href="#paypal" role="tab">
-                                    <i class="fab fa-paypal"></i> PayPal
-                                </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="bank-transfer-tab" data-toggle="tab" href="#bank-transfer" role="tab">
-                                    <i class="fas fa-university"></i> Bank Transfer
-                                </a>
-                            </li>
-                        </ul>
+ <div class="row">
+ <div class="col-md-8">
+ <!-- Payment Method Selection -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-lock"></i> Payment Information
+ </h4>
+ 
+ <form method="POST" action="{{ url_for('checkout') }}" id="checkoutForm">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <!-- Payment Method Tabs -->
+ <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+ <li class="nav-item" role="presentation">
+ <a class="nav-link active" id="credit-card-tab" data-toggle="tab" href="#credit-card" role="tab">
+ <i class="fas fa-credit-card"></i> Credit Card
+ </a>
+ </li>
+ <li class="nav-item" role="presentation">
+ <a class="nav-link" id="paypal-tab" data-toggle="tab" href="#paypal" role="tab">
+ <i class="fab fa-paypal"></i> PayPal
+ </a>
+ </li>
+ <li class="nav-item" role="presentation">
+ <a class="nav-link" id="bank-transfer-tab" data-toggle="tab" href="#bank-transfer" role="tab">
+ <i class="fas fa-university"></i> Bank Transfer
+ </a>
+ </li>
+ </ul>
 
-                        <div class="tab-content mt-4" id="paymentTabContent">
-                            <!-- Credit Card Tab -->
-                            <div class="tab-pane fade show active" id="credit-card" role="tabpanel">
-                                <input type="hidden" name="payment_method" value="credit_card">
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="cardholder_name">Cardholder Name *</label>
-                                            <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" 
-                                                   value="{{ customer.full_name }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="card_number">Card Number *</label>
-                                            <input type="text" class="form-control" id="card_number" name="card_number" 
-                                                   placeholder="1234 5678 9012 3456" maxlength="19" required>
-                                            <small class="form-text text-muted">
-                                                <i class="fas fa-shield-alt"></i> Your card information is encrypted and secure
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="card_expiry">Expiry Date *</label>
-                                            <input type="text" class="form-control" id="card_expiry" name="card_expiry" 
-                                                   placeholder="MM/YY" maxlength="5" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="card_cvv">CVV *</label>
-                                            <input type="text" class="form-control" id="card_cvv" name="card_cvv" 
-                                                   placeholder="123" maxlength="4" required>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+ <div class="tab-content mt-4" id="paymentTabContent">
+ <!-- Credit Card Tab -->
+ <div class="tab-pane fade show active" id="credit-card" role="tabpanel">
+ <input type="hidden" name="payment_method" value="credit_card">
+ 
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="cardholder_name">Cardholder Name *</label>
+ <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" 
+ value="{{ customer.full_name }}" required>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="card_number">Card Number *</label>
+ <input type="text" class="form-control" id="card_number" name="card_number" 
+ placeholder="1234 5678 9012 3456" maxlength="19" required>
+ <small class="form-text text-muted">
+ <i class="fas fa-shield-alt"></i> Your card information is encrypted and secure
+ </small>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="card_expiry">Expiry Date *</label>
+ <input type="text" class="form-control" id="card_expiry" name="card_expiry" 
+ placeholder="MM/YY" maxlength="5" required>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="card_cvv">CVV *</label>
+ <input type="text" class="form-control" id="card_cvv" name="card_cvv" 
+ placeholder="123" maxlength="4" required>
+ </div>
+ </div>
+ </div>
+ </div>
 
-                            <!-- PayPal Tab -->
-                            <div class="tab-pane fade" id="paypal" role="tabpanel">
-                                <input type="hidden" name="payment_method" value="paypal">
-                                
-                                <div class="form-group">
-                                    <label for="paypal_email">PayPal Email Address *</label>
-                                    <input type="email" class="form-control" id="paypal_email" name="paypal_email" 
-                                           value="{{ customer.email }}" placeholder="your@email.com" required>
-                                    <small class="form-text text-muted">
-                                        <i class="fab fa-paypal"></i> You'll be redirected to PayPal to complete payment
-                                    </small>
-                                </div>
-                            </div>
+ <!-- PayPal Tab -->
+ <div class="tab-pane fade" id="paypal" role="tabpanel">
+ <input type="hidden" name="payment_method" value="paypal">
+ 
+ <div class="form-group">
+ <label for="paypal_email">PayPal Email Address *</label>
+ <input type="email" class="form-control" id="paypal_email" name="paypal_email" 
+ value="{{ customer.email }}" placeholder="your@email.com" required>
+ <small class="form-text text-muted">
+ <i class="fab fa-paypal"></i> You'll be redirected to PayPal to complete payment
+ </small>
+ </div>
+ </div>
 
-                            <!-- Bank Transfer Tab -->
-                            <div class="tab-pane fade" id="bank-transfer" role="tabpanel">
-                                <input type="hidden" name="payment_method" value="bank_transfer">
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="bank_name">Bank Name *</label>
-                                            <input type="text" class="form-control" id="bank_name" name="bank_name" 
-                                                   placeholder="Your Bank Name" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="routing_number">Routing Number *</label>
-                                            <input type="text" class="form-control" id="routing_number" name="routing_number" 
-                                                   placeholder="123456789" maxlength="9" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="account_number">Account Number *</label>
-                                    <input type="text" class="form-control" id="account_number" name="account_number" 
-                                           placeholder="Your account number" required>
-                                    <small class="form-text text-muted">
-                                        <i class="fas fa-university"></i> Bank transfers may take 1-3 business days to process
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
+ <!-- Bank Transfer Tab -->
+ <div class="tab-pane fade" id="bank-transfer" role="tabpanel">
+ <input type="hidden" name="payment_method" value="bank_transfer">
+ 
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="bank_name">Bank Name *</label>
+ <input type="text" class="form-control" id="bank_name" name="bank_name" 
+ placeholder="Your Bank Name" required>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="routing_number">Routing Number *</label>
+ <input type="text" class="form-control" id="routing_number" name="routing_number" 
+ placeholder="123456789" maxlength="9" required>
+ </div>
+ </div>
+ </div>
+ 
+ <div class="form-group">
+ <label for="account_number">Account Number *</label>
+ <input type="text" class="form-control" id="account_number" name="account_number" 
+ placeholder="Your account number" required>
+ <small class="form-text text-muted">
+ <i class="fas fa-university"></i> Bank transfers may take 1-3 business days to process
+ </small>
+ </div>
+ </div>
+ </div>
 
-                        <!-- Billing Address -->
-                        <div class="card mt-4 border">
-                            <div class="card-header">
-                                <h6 class="mb-0"><i class="fas fa-map-marker-alt"></i> Billing Address</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="billing_name">Full Name</label>
-                                            <input type="text" class="form-control" id="billing_name" 
-                                                   value="{{ customer.full_name }}" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="billing_email">Email</label>
-                                            <input type="email" class="form-control" id="billing_email" 
-                                                   value="{{ customer.email }}" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="billing_address">Address</label>
-                                    <input type="text" class="form-control" id="billing_address" 
-                                           value="{{ customer.address_line1 or customer.address or 'Not provided' }}" readonly>
-                                </div>
-                            </div>
-                        </div>
+ <!-- Billing Address -->
+ <div class="card mt-4 border">
+ <div class="card-header">
+ <h6 class="mb-0"><i class="fas fa-map-marker-alt"></i> Billing Address</h6>
+ </div>
+ <div class="card-body">
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="billing_name">Full Name</label>
+ <input type="text" class="form-control" id="billing_name" 
+ value="{{ customer.full_name }}" readonly>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="billing_email">Email</label>
+ <input type="email" class="form-control" id="billing_email" 
+ value="{{ customer.email }}" readonly>
+ </div>
+ </div>
+ </div>
+ <div class="form-group">
+ <label for="billing_address">Address</label>
+ <input type="text" class="form-control" id="billing_address" 
+ value="{{ customer.address_line1 or customer.address or 'Not provided' }}" readonly>
+ </div>
+ </div>
+ </div>
 
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-hero btn-lg">
-                                <i class="fas fa-lock"></i> Complete Purchase
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+ <div class="text-center mt-4">
+ <button type="submit" class="btn btn-hero btn-lg">
+ <i class="fas fa-lock"></i> Complete Purchase
+ </button>
+ </div>
+ </form>
+ </div>
+ </div>
+ </div>
 
-        <div class="col-md-4">
-            <!-- Order Summary -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-receipt"></i> Order Summary
-                    </h5>
-                    
-                    {% for book, quantity in cart_items %}
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <h6 class="mb-0">{{ book.title }}</h6>
-                                <small class="text-muted">
-                                    <span class="badge badge-primary badge-sm">{{ book.genre }}</span>
-                                    Qty: {{ quantity }} × ${{ "%.2f"|format(book.price) }}
-                                </small>
-                            </div>
-                            <span class="font-weight-bold">${{ "%.2f"|format(book.price * quantity) }}</span>
-                        </div>
-                        <hr>
-                    {% endfor %}
-                    
-                    <div class="d-flex justify-content-between">
-                        <span>Subtotal:</span>
-                        <span>${{ "%.2f"|format(subtotal) }}</span>
-                    </div>
-                    
-                    {% if discount_amount > 0 %}
-                        <div class="d-flex justify-content-between text-success">
-                            <span>Discount:</span>
-                            <span>-${{ "%.2f"|format(discount_amount) }}</span>
-                        </div>
-                    {% endif %}
-                    
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <strong>Total:</strong>
-                        <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
-                    </div>
-                </div>
-            </div>
+ <div class="col-md-4">
+ <!-- Order Summary -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title">
+ <i class="fas fa-receipt"></i> Order Summary
+ </h5>
+ 
+ {% for book, quantity in cart_items %}
+ <div class="d-flex justify-content-between align-items-center mb-2">
+ <div>
+ <h6 class="mb-0">{{ book.title }}</h6>
+ <small class="text-muted">
+ <span class="badge badge-primary badge-sm">{{ book.genre }}</span>
+ Qty: {{ quantity }} x ${{ "%.2f"|format(book.price) }}
+ </small>
+ </div>
+ <span class="font-weight-bold">${{ "%.2f"|format(book.price * quantity) }}</span>
+ </div>
+ <hr>
+ {% endfor %}
+ 
+ <div class="d-flex justify-content-between">
+ <span>Subtotal:</span>
+ <span>${{ "%.2f"|format(subtotal) }}</span>
+ </div>
+ 
+ {% if discount_amount > 0 %}
+ <div class="d-flex justify-content-between text-success">
+ <span>Discount:</span>
+ <span>-${{ "%.2f"|format(discount_amount) }}</span>
+ </div>
+ {% endif %}
+ 
+ <hr>
+ <div class="d-flex justify-content-between">
+ <strong>Total:</strong>
+ <strong class="text-success">${{ "%.2f"|format(total) }}</strong>
+ </div>
+ </div>
+ </div>
 
-            <!-- Security Info -->
-            <div class="card-hero">
-                <div class="card-body text-center">
-                    <h6 class="card-title">
-                        <i class="fas fa-shield-alt text-success"></i> Secure Checkout
-                    </h6>
-                    <p class="small text-muted">
-                        Your payment information is encrypted and processed securely. 
-                        We never store your full credit card details.
-                    </p>
-                    <div class="d-flex justify-content-center">
-                        <i class="fab fa-cc-visa fa-2x mx-1 text-muted"></i>
-                        <i class="fab fa-cc-mastercard fa-2x mx-1 text-muted"></i>
-                        <i class="fab fa-cc-amex fa-2x mx-1 text-muted"></i>
-                        <i class="fab fa-cc-discover fa-2x mx-1 text-muted"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+ <!-- Security Info -->
+ <div class="card-hero">
+ <div class="card-body text-center">
+ <h6 class="card-title">
+ <i class="fas fa-shield-alt text-success"></i> Secure Checkout
+ </h6>
+ <p class="small text-muted">
+ Your payment information is encrypted and processed securely. 
+ We never store your full credit card details.
+ </p>
+ <div class="d-flex justify-content-center">
+ <i class="fab fa-cc-visa fa-2x mx-1 text-muted"></i>
+ <i class="fab fa-cc-mastercard fa-2x mx-1 text-muted"></i>
+ <i class="fab fa-cc-amex fa-2x mx-1 text-muted"></i>
+ <i class="fab fa-cc-discover fa-2x mx-1 text-muted"></i>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Payment method tab switching
-    document.querySelectorAll('#paymentTabs a').forEach(function(tab) {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Update hidden payment_method input
-            const paymentMethod = this.getAttribute('href').substring(1).replace('-', '_');
-            document.querySelector('input[name="payment_method"]').value = paymentMethod;
-            
-            // Switch tabs
-            document.querySelectorAll('.tab-pane').forEach(function(pane) {
-                pane.classList.remove('show', 'active');
-            });
-            document.querySelectorAll('.nav-link').forEach(function(link) {
-                link.classList.remove('active');
-            });
-            
-            this.classList.add('active');
-            document.querySelector(this.getAttribute('href')).classList.add('show', 'active');
-        });
-    });
-    
-    // Format card number input
-    document.getElementById('card_number').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-        e.target.value = formattedValue;
-    });
-    
-    // Format expiry input
-    document.getElementById('card_expiry').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length >= 2) {
-            value = value.substring(0, 2) + '/' + value.substring(2, 4);
-        }
-        e.target.value = value;
-    });
-    
-    // CVV input validation
-    document.getElementById('card_cvv').addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
-    });
-    
-    // Routing number validation
-    document.getElementById('routing_number').addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
-    });
-    
-    // Account number validation
-    document.getElementById('account_number').addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
-    });
+ // Payment method tab switching
+ document.querySelectorAll('#paymentTabs a').forEach(function(tab) {
+ tab.addEventListener('click', function(e) {
+ e.preventDefault();
+ 
+ // Update hidden payment_method input
+ const paymentMethod = this.getAttribute('href').substring(1).replace('-', '_');
+ document.querySelector('input[name="payment_method"]').value = paymentMethod;
+ 
+ // Switch tabs
+ document.querySelectorAll('.tab-pane').forEach(function(pane) {
+ pane.classList.remove('show', 'active');
+ });
+ document.querySelectorAll('.nav-link').forEach(function(link) {
+ link.classList.remove('active');
+ });
+ 
+ this.classList.add('active');
+ document.querySelector(this.getAttribute('href')).classList.add('show', 'active');
+ });
+ });
+ 
+ // Format card number input
+ document.getElementById('card_number').addEventListener('input', function(e) {
+ let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+ let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+ e.target.value = formattedValue;
+ });
+ 
+ // Format expiry input
+ document.getElementById('card_expiry').addEventListener('input', function(e) {
+ let value = e.target.value.replace(/\D/g, '');
+ if (value.length >= 2) {
+ value = value.substring(0, 2) + '/' + value.substring(2, 4);
+ }
+ e.target.value = value;
+ });
+ 
+ // CVV input validation
+ document.getElementById('card_cvv').addEventListener('input', function(e) {
+ e.target.value = e.target.value.replace(/\D/g, '');
+ });
+ 
+ // Routing number validation
+ document.getElementById('routing_number').addEventListener('input', function(e) {
+ e.target.value = e.target.value.replace(/\D/g, '');
+ });
+ 
+ // Account number validation
+ document.getElementById('account_number').addEventListener('input', function(e) {
+ e.target.value = e.target.value.replace(/\D/g, '');
+ });
 });
 </script>
 {% endblock %}

@@ -1,0 +1,173 @@
+{% extends "base_hero.html" %}
+
+{% block title %}3D Secure Authentication{% endblock %}
+
+{% block content %}
+<div class="main-container">
+ <div class="row justify-content-center">
+ <div class="col-md-6">
+ <div class="card secure-card">
+ <div class="card-header bg-primary text-white">
+ <h4 class="mb-0">
+ <i class="fas fa-shield-alt"></i> 3D Secure Authentication
+ </h4>
+ </div>
+ <div class="card-body">
+ <div class="alert alert-info">
+ <strong>Security Notice:</strong> To complete your payment, we need to verify your identity through 3D Secure authentication.
+ </div>
+ 
+ <div class="text-center mb-4">
+ <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+ <p>A 6-digit verification code has been sent to your registered mobile number.</p>
+ <p class="text-muted small">Please check your SMS messages.</p>
+ </div>
+ 
+ <form method="POST" action="{{ url_for('threeds_verify') }}" class="3ds-form">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+ 
+ <div class="form-group">
+ <label for="challenge_code">
+ <strong>Enter 6-digit verification code:</strong>
+ </label>
+ <input type="text" 
+ class="form-control text-center" 
+ id="challenge_code" 
+ name="challenge_code" 
+ maxlength="6" 
+ pattern="[0-9]{6}"
+ placeholder="000000"
+ required 
+ style="font-size: 1.5rem; letter-spacing: 0.3rem;">
+ </div>
+ 
+ <div class="text-center mb-3">
+ <button type="submit" class="btn btn-primary btn-lg">
+ <i class="fas fa-check"></i> Verify & Complete Payment
+ </button>
+ </div>
+ </form>
+ 
+ <div class="text-center">
+ <div class="alert alert-warning" id="timer-alert">
+ <i class="fas fa-clock"></i> 
+ Time remaining: <span id="countdown">{{ time_remaining | int }}s</span>
+ </div>
+ 
+ <p class="text-muted small">
+ Didn't receive the code? 
+ <a href="#" onclick="alert('In a real implementation, this would resend the code.')">
+ Resend Code
+ </a>
+ </p>
+ 
+ <a href="{{ url_for('checkout') }}" class="btn btn-secondary">
+ <i class="fas fa-arrow-left"></i> Cancel & Return to Checkout
+ </a>
+ </div>
+ </div>
+ </div>
+ 
+ <!-- Security Information -->
+ <div class="card mt-3">
+ <div class="card-body">
+ <h6 class="text-muted">
+ <i class="fas fa-info-circle"></i> Why is this required?
+ </h6>
+ <p class="small text-muted mb-0">
+ 3D Secure authentication adds an extra layer of security to protect your payment. 
+ This verification helps prevent unauthorized use of your card and reduces the risk of fraud.
+ </p>
+ </div>
+ </div>
+ </div>
+ </div>
+</div>
+
+<!-- Development Helper (remove in production) -->
+<div class="row justify-content-center mt-3">
+ <div class="col-md-6">
+ <div class="alert alert-warning">
+ <strong>Development Mode:</strong> For testing purposes, try using code: <code>123456</code>
+ </div>
+ </div>
+</div>
+
+<script>
+// Countdown timer
+let timeRemaining = {{ time_remaining | int }};
+const countdownElement = document.getElementById('countdown');
+const timerAlert = document.getElementById('timer-alert');
+
+function updateCountdown() {
+ if (timeRemaining > 0) {
+ const minutes = Math.floor(timeRemaining / 60);
+ const seconds = timeRemaining % 60;
+ countdownElement.textContent = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+ 
+ if (timeRemaining <= 30) {
+ timerAlert.className = 'alert alert-danger';
+ }
+ 
+ timeRemaining--;
+ setTimeout(updateCountdown, 1000);
+ } else {
+ timerAlert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Challenge expired! Please return to checkout and try again.';
+ timerAlert.className = 'alert alert-danger';
+ document.querySelector('.3ds-form').style.display = 'none';
+ }
+}
+
+// Auto-focus on code input
+document.getElementById('challenge_code').focus();
+
+// Auto-submit when 6 digits entered
+document.getElementById('challenge_code').addEventListener('input', function(e) {
+ if (e.target.value.length === 6) {
+ // Small delay to show complete code
+ setTimeout(() => {
+ document.querySelector('.3ds-form').submit();
+ }, 500);
+ }
+});
+
+// Start countdown
+updateCountdown();
+</script>
+
+<style>
+.secure-card {
+ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+ border: none;
+}
+
+.secure-card .card-header {
+ background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+#challenge_code {
+ font-family: 'Courier New', monospace;
+ background-color: #f8f9fa;
+ border: 2px solid #dee2e6;
+}
+
+#challenge_code:focus {
+ border-color: #007bff;
+ box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.3ds-form {
+ transition: opacity 0.3s;
+}
+
+@keyframes pulse {
+ 0% { transform: scale(1); }
+ 50% { transform: scale(1.05); }
+ 100% { transform: scale(1); }
+}
+
+.btn-primary:hover {
+ animation: pulse 0.5s;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="csrf-token" content="{{ csrf_token() }}">
+ <title>CSRF Token Test</title>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+ <h1>CSRF Token Debug Page</h1>
+ 
+ <div id="results">
+ <h3>Debug Information:</h3>
+ <p><strong>CSRF Token:</strong> <span id="csrf-token-display"></span></p>
+ <p><strong>Status:</strong> <span id="status"></span></p>
+ </div>
+ 
+ <button onclick="testCsrfToken()">Test CSRF Token</button>
+ 
+ <div id="test-results"></div>
+ 
+ <script>
+ // Display the CSRF token
+ const csrfToken = document.querySelector('meta[name=csrf-token]').getAttribute('content');
+ document.getElementById('csrf-token-display').textContent = csrfToken ? csrfToken.substring(0, 20) + '...' : 'NOT FOUND';
+ 
+ function testCsrfToken() {
+ const statusDiv = document.getElementById('status');
+ const resultsDiv = document.getElementById('test-results');
+ 
+ statusDiv.textContent = 'Testing...';
+ 
+ if (!csrfToken) {
+ statusDiv.textContent = 'ERROR: No CSRF token found';
+ return;
+ }
+ 
+ // Test API call
+ fetch('/api/update_order/purchase/1', {
+ method: 'POST',
+ headers: {
+ 'Content-Type': 'application/x-www-form-urlencoded',
+ 'X-CSRFToken': csrfToken,
+ 'X-Requested-With': 'XMLHttpRequest'
+ },
+ body: 'status=Processing'
+ })
+ .then(response => {
+ console.log('Response status:', response.status);
+ console.log('Response headers:', response.headers);
+ 
+ const contentType = response.headers.get('content-type');
+ statusDiv.textContent = `Response: ${response.status} (${contentType})`;
+ 
+ if (contentType && contentType.includes('application/json')) {
+ return response.json();
+ } else {
+ // This is where the error likely occurs - getting HTML instead of JSON
+ return response.text().then(text => {
+ throw new Error(`Expected JSON, got: ${text.substring(0, 100)}`);
+ });
+ }
+ })
+ .then(data => {
+ console.log('Success:', data);
+ resultsDiv.innerHTML = `
+ <h3>[SUCCESS] Success:</h3>
+ <pre>${JSON.stringify(data, null, 2)}</pre>
+ `;
+ statusDiv.textContent = 'SUCCESS';
+ })
+ .catch(error => {
+ console.error('Error:', error);
+ resultsDiv.innerHTML = `
+ <h3>Error:</h3>
+ <pre>${error.message}</pre>
+ `;
+ statusDiv.textContent = 'ERROR';
+ });
+ }
+ </script>
+</body>
+</html>

@@ -1,178 +1,182 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <title>All Orders</title>
-    <style>
-      .legacy-row { background-color: #fff3cd; }
-      .purchase-row { background-color: #d4edda; }
-    </style>
-  </head>
-  <body class="bg-light">
-    <div class="container mt-4">
-      <!-- Navigation Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">All Orders</h1>
-        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
-          <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-      </div>
-      
-      <div class="mb-4">
-        <form method="get" class="form-inline">
-          <div class="form-group mx-2">
-            <label class="mr-2">Start Date</label>
-            <input type="date" name="start_date" class="form-control" value="{{ current_start_date or '' }}">
-          </div>
-          <div class="form-group mx-2">
-            <label class="mr-2">End Date</label>
-            <input type="date" name="end_date" class="form-control" value="{{ current_end_date or '' }}">
-          </div>
-          <div class="form-group mx-2">
-            <label class="mr-2">Status</label>
-            <select name="status" class="form-control">
-              <option value="">All</option>
-              {% for status in statuses %}
-              <option value="{{ status }}" {% if status == current_status %}selected{% endif %}>{{ status }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary mx-2">Filter</button>
-          {% if current_start_date or current_end_date or current_status %}
-          <a href="{{ url_for('all_orders') }}" class="btn btn-secondary">Clear</a>
-          {% endif %}
-        </form>
-      </div>
+ <head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ <meta name="csrf-token" content="{{ csrf_token() }}">
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ <!-- Font Awesome for icons -->
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+ <title>All Orders</title>
+ <style>
+ .legacy-row { background-color: #fff3cd; }
+ .purchase-row { background-color: #d4edda; }
+ </style>
+ </head>
+ <body class="bg-light">
+ <div class="container mt-4">
+ <!-- Navigation Header -->
+ <div class="d-flex justify-content-between align-items-center mb-4">
+ <h1 class="mb-0">All Orders</h1>
+ <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+ <i class="fas fa-arrow-left"></i> Back to Dashboard
+ </a>
+ </div>
+ 
+ <div class="mb-4">
+ <form method="get" class="form-inline">
+ <div class="form-group mx-2">
+ <label class="mr-2">Start Date</label>
+ <input type="date" name="start_date" class="form-control" value="{{ current_start_date or '' }}">
+ </div>
+ <div class="form-group mx-2">
+ <label class="mr-2">End Date</label>
+ <input type="date" name="end_date" class="form-control" value="{{ current_end_date or '' }}">
+ </div>
+ <div class="form-group mx-2">
+ <label class="mr-2">Status</label>
+ <select name="status" class="form-control">
+ <option value="">All</option>
+ {% for status in statuses %}
+ <option value="{{ status }}" {% if status == current_status %}selected{% endif %}>{{ status }}</option>
+ {% endfor %}
+ </select>
+ </div>
+ <button type="submit" class="btn btn-primary mx-2">Filter</button>
+ {% if current_start_date or current_end_date or current_status %}
+ <a href="{{ url_for('all_orders') }}" class="btn btn-secondary">Clear</a>
+ {% endif %}
+ </form>
+ </div>
 
-      <div class="mb-3">
-        {% if current_start_date or current_end_date or current_status %}
-        <a href="{{ url_for('export_purchases_csv', start_date=current_start_date, end_date=current_end_date, status=current_status) }}" 
-           class="btn btn-success">Export Filtered to CSV</a>
-        {% else %}
-        <a href="{{ url_for('export_purchases_csv') }}" class="btn btn-success">Export All to CSV</a>
-        {% endif %}
-      </div>
+ <div class="mb-3">
+ {% if current_start_date or current_end_date or current_status %}
+ <a href="{{ url_for('export_purchases_csv', start_date=current_start_date, end_date=current_end_date, status=current_status) }}" 
+ class="btn btn-success">Export Filtered to CSV</a>
+ {% else %}
+ <a href="{{ url_for('export_purchases_csv') }}" class="btn btn-success">Export All to CSV</a>
+ {% endif %}
+ </div>
 
-      {% if orders %}
-      <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Source</th>
-              <th>Customer</th>
-              <th>Contact</th>
-              <th>Book ISBN</th>
-              <th>Qty</th>
-              <th>Status</th>
-              <th>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for o in orders %}
-            <tr class="{{ o.source }}-row">
-              <td>{{ o.id }}</td>
-              <td>{{ o.source }}</td>
-              <td>{{ o.customer_name }}</td>
-              <td>
-                {{ o.customer_email or '' }}<br>
-                {{ o.customer_phone or '' }}<br>
-                {{ o.customer_address or '' }}
-              </td>
-              <td>{{ o.book_isbn }}</td>
-              <td>{{ o.quantity }}</td>
-              <td>
-                <div class="input-group">
-                  <select class="form-control form-control-sm status-select" 
-                          data-source="{{ o.source }}" 
-                          data-id="{{ o.id }}">
-                    <option value="Pending" {% if o.status=='Pending' %}selected{% endif %}>Pending</option>
-                    <option value="Processing" {% if o.status=='Processing' %}selected{% endif %}>Processing</option>
-                    <option value="Shipped" {% if o.status=='Shipped' %}selected{% endif %}>Shipped</option>
-                    <option value="Completed" {% if o.status=='Completed' %}selected{% endif %}>Completed</option>
-                    <option value="Cancelled" {% if o.status=='Cancelled' %}selected{% endif %}>Cancelled</option>
-                  </select>
-                </div>
-              </td>
-              <td>{{ o.timestamp_str }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {% else %}
-        <p>No orders found matching the criteria.</p>
-      {% endif %}
-    </div>
+ {% if orders %}
+ <div class="table-responsive">
+ <table class="table table-bordered">
+ <thead>
+ <tr>
+ <th>ID</th>
+ <th>Source</th>
+ <th>Customer</th>
+ <th>Contact</th>
+ <th>Book ISBN</th>
+ <th>Qty</th>
+ <th>Status</th>
+ <th>Time</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for o in orders %}
+ <tr class="{{ o.source }}-row">
+ <td>{{ o.id }}</td>
+ <td>{{ o.source }}</td>
+ <td>{{ o.customer_name }}</td>
+ <td>
+ {{ o.customer_email or '' }}<br>
+ {{ o.customer_phone or '' }}<br>
+ {{ o.customer_address or '' }}
+ </td>
+ <td>{{ o.book_isbn }}</td>
+ <td>{{ o.quantity }}</td>
+ <td>
+ <div class="input-group">
+ <select class="form-control form-control-sm status-select" 
+ data-source="{{ o.source }}" 
+ data-id="{{ o.id }}">
+ <option value="Pending" {% if o.status=='Pending' %}selected{% endif %}>Pending</option>
+ <option value="Processing" {% if o.status=='Processing' %}selected{% endif %}>Processing</option>
+ <option value="Shipped" {% if o.status=='Shipped' %}selected{% endif %}>Shipped</option>
+ <option value="Completed" {% if o.status=='Completed' %}selected{% endif %}>Completed</option>
+ <option value="Cancelled" {% if o.status=='Cancelled' %}selected{% endif %}>Cancelled</option>
+ </select>
+ </div>
+ </td>
+ <td>{{ o.timestamp_str }}</td>
+ </tr>
+ {% endfor %}
+ </tbody>
+ </table>
+ </div>
+ {% else %}
+ <p>No orders found matching the criteria.</p>
+ {% endif %}
+ </div>
 
-    <div id="status-message" class="mt-2"></div>
+ <div id="status-message" class="mt-2"></div>
 
-    <!-- JavaScript for handling status updates -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const statusSelects = document.querySelectorAll('.status-select');
-        const statusMessage = document.getElementById('status-message');
-        statusSelects.forEach(select => {
-          select.addEventListener('change', function() {
-            const source = this.dataset.source;
-            const id = this.dataset.id;
-            const status = this.value;
+ <!-- JavaScript for handling status updates -->
+ <script>
+ document.addEventListener('DOMContentLoaded', function() {
+ const statusSelects = document.querySelectorAll('.status-select');
+ const statusMessage = document.getElementById('status-message');
+ const csrfToken = document.querySelector('meta[name=csrf-token]').getAttribute('content');
+ 
+ statusSelects.forEach(select => {
+ select.addEventListener('change', function() {
+ const source = this.dataset.source;
+ const id = this.dataset.id;
+ const status = this.value;
 
-            fetch(`/api/update_order/${source}/${id}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: `status=${encodeURIComponent(status)}`
-            })
-            .then(response => {
-              // Check if response is JSON or HTML
-              const contentType = response.headers.get('content-type');
-              
-              if (response.status === 401) {
-                // Redirect to login if session expired
-                window.location.href = '/login';
-                return;
-              }
-              
-              if (contentType && contentType.includes('application/json')) {
-                return response.json();
-              } else {
-                // If we get HTML instead of JSON, it's likely a redirect to login
-                throw new Error('Session expired. Please refresh the page and log in again.');
-              }
-            })
-            .then(data => {
-              if (!data) return; // Skip if redirected
-              
-              if (data.status === 'success') {
-                statusMessage.textContent = data.message;
-                statusMessage.className = 'alert alert-success';
-                statusMessage.style.display = 'block';
-                
-                // Hide message after 3 seconds
-                setTimeout(() => {
-                  statusMessage.style.display = 'none';
-                }, 3000);
-              } else if (data.error) {
-                statusMessage.textContent = data.error;
-                statusMessage.className = 'alert alert-danger';
-                statusMessage.style.display = 'block';
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              statusMessage.textContent = error.message || 'Error updating status. Please try refreshing the page.';
-              statusMessage.className = 'alert alert-danger';
-              statusMessage.style.display = 'block';
-            });
-          });
-        });
-      });
-    </script>
-  </body>
+ fetch(`/api/update_order/${source}/${id}`, {
+ method: 'POST',
+ headers: {
+ 'Content-Type': 'application/x-www-form-urlencoded',
+ 'X-CSRFToken': csrfToken
+ },
+ body: `status=${encodeURIComponent(status)}`
+ })
+ .then(response => {
+ // Check if response is JSON or HTML
+ const contentType = response.headers.get('content-type');
+ 
+ if (response.status === 401) {
+ // Redirect to login if session expired
+ window.location.href = '/login';
+ return;
+ }
+ 
+ if (contentType && contentType.includes('application/json')) {
+ return response.json();
+ } else {
+ // If we get HTML instead of JSON, it's likely a redirect to login
+ throw new Error('Session expired. Please refresh the page and log in again.');
+ }
+ })
+ .then(data => {
+ if (!data) return; // Skip if redirected
+ 
+ if (data.status === 'success') {
+ statusMessage.textContent = data.message;
+ statusMessage.className = 'alert alert-success';
+ statusMessage.style.display = 'block';
+ 
+ // Hide message after 3 seconds
+ setTimeout(() => {
+ statusMessage.style.display = 'none';
+ }, 3000);
+ } else if (data.error) {
+ statusMessage.textContent = data.error;
+ statusMessage.className = 'alert alert-danger';
+ statusMessage.style.display = 'block';
+ }
+ })
+ .catch(error => {
+ console.error('Error:', error);
+ statusMessage.textContent = error.message || 'Error updating status. Please try refreshing the page.';
+ statusMessage.className = 'alert alert-danger';
+ statusMessage.style.display = 'block';
+ });
+ });
+ });
+ });
+ </script>
+ </body>
 </html>

@@ -1,47 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Checkout Test</title>
+ <title>Simple Checkout Test</title>
 </head>
 <body>
-    <h1>Simple Checkout Test</h1>
-    
-    <form method="POST" action="/process_checkout">
-        <div>
-            <label>Payment Method:</label>
-            <input type="radio" name="payment_method" value="credit_card" checked> Credit Card
-        </div>
-        
-        <div>
-            <label>Card Number:</label>
-            <input type="text" name="card_number" value="4242424242424242" required>
-        </div>
-        
-        <div>
-            <label>Expiry:</label>
-            <input type="text" name="expiry" value="12/26" required>
-        </div>
-        
-        <div>
-            <label>CVV:</label>
-            <input type="text" name="cvv" value="123" required>
-        </div>
-        
-        <div>
-            <label>Cardholder Name:</label>
-            <input type="text" name="cardholder_name" value="Test User" required>
-        </div>
-        
-        <div>
-            <button type="submit">Submit Test</button>
-        </div>
-    </form>
-    
-    <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            console.log('Form submitting...', new FormData(this));
-            alert('Form is submitting!');
-        });
-    </script>
+ <h1>Simple Checkout Test</h1>
+ 
+ <form method="POST" action="/process_checkout">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <div>
+ <label>Payment Method:</label>
+ <input type="radio" name="payment_method" value="credit_card" checked> Credit Card
+ </div>
+ 
+ <div>
+ <label>Card Number:</label>
+ <input type="text" name="card_number" value="4242424242424242" required>
+ </div>
+ 
+ <div>
+ <label>Expiry:</label>
+ <input type="text" name="expiry" value="12/26" required>
+ </div>
+ 
+ <div>
+ <label>CVV:</label>
+ <input type="text" name="cvv" value="123" required>
+ </div>
+ 
+ <div>
+ <label>Cardholder Name:</label>
+ <input type="text" name="cardholder_name" value="Test User" required>
+ </div>
+ 
+ <div>
+ <button type="submit">Submit Test</button>
+ </div>
+ </form>
+ 
+ <script>
+ document.querySelector('form').addEventListener('submit', function(e) {
+ console.log('Form submitting...', new FormData(this));
+ alert('Form is submitting!');
+ });
+ </script>
 </body>
 </html>

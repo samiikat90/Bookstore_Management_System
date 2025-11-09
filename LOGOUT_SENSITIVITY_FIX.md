@@ -19,13 +19,13 @@ let isNavigating = false;
 
 // Detect clicks on internal links
 document.addEventListener('click', function(event) {
-  const link = event.target.closest('a');
-  if (link && link.href && link.href.includes(window.location.origin)) {
-    isNavigating = true;
-    setTimeout(function() {
-      isNavigating = false;
-    }, 1000);
-  }
+ const link = event.target.closest('a');
+ if (link && link.href && link.href.includes(window.location.origin)) {
+ isNavigating = true;
+ setTimeout(function() {
+ isNavigating = false;
+ }, 1000);
+ }
 });
 ```
 
@@ -33,9 +33,9 @@ document.addEventListener('click', function(event) {
 ```javascript
 // Only logout if NOT navigating within the app
 window.addEventListener('beforeunload', function(event) {
-  if (!isNavigating) {
-    performLogout();
-  }
+ if (!isNavigating) {
+ performLogout();
+ }
 });
 ```
 
@@ -54,7 +54,7 @@ window.addEventListener('beforeunload', function(event) {
 
 ## Updated Templates
 - `admin_dashboard.html` - Fixed overly sensitive logout
-- `catalog.html` - Fixed overly sensitive logout  
+- `catalog.html` - Fixed overly sensitive logout 
 - `edit_book.html` - Fixed overly sensitive logout
 
 ## User Experience Now

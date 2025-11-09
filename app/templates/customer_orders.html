@@ -4,194 +4,194 @@
 
 {% block content %}
 <div class="main-container">
-    <div class="text-center mb-4">
-        <h1 class="page-title">
-            <i class="fas fa-book-reader"></i> My Reading Journey
-        </h1>
-        <p class="lead text-muted">Track your literary adventures and discoveries</p>
-    </div>
+ <div class="text-center mb-4">
+ <h1 class="page-title">
+ <i class="fas fa-book-reader"></i> My Reading Journey
+ </h1>
+ <p class="lead text-muted">Track your literary adventures and discoveries</p>
+ </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <!-- Account Sidebar -->
-            <div class="card-hero mb-4">
-                <div class="card-body">
-                    <h5 class="card-title text-center">
-                        <i class="fas fa-compass"></i> Navigation
-                    </h5>
-                    <div class="list-group list-group-flush">
-                        <a href="{{ url_for('customer_dashboard') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-home"></i> Dashboard
-                        </a>
-                        <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-user"></i> Account Information
-                        </a>
-                        <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action active" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); border-color: #8B4513; color: white; font-weight: 600;">
-                            <i class="fas fa-shopping-bag"></i> Order History
-                        </a>
-                        <a href="{{ url_for('customer_notifications') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-bell"></i> Notifications
-                        </a>
-                        <a href="{{ url_for('catalog_view') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-book-open"></i> Browse Catalog
-                        </a>
-                        {% if not (current_user.is_authenticated and current_user.is_manager) %}
-                        <a href="{{ url_for('view_cart') }}" class="list-group-item list-group-item-action">
-                            <i class="fas fa-shopping-cart"></i> Shopping Cart
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+ <div class="row">
+ <div class="col-md-4">
+ <!-- Account Sidebar -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title text-center">
+ <i class="fas fa-compass"></i> Navigation
+ </h5>
+ <div class="list-group list-group-flush">
+ <a href="{{ url_for('customer_dashboard') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-home"></i> Dashboard
+ </a>
+ <a href="{{ url_for('customer_account') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-user"></i> Account Information
+ </a>
+ <a href="{{ url_for('customer_orders') }}" class="list-group-item list-group-item-action active" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); border-color: #8B4513; color: white; font-weight: 600;">
+ <i class="fas fa-shopping-bag"></i> Order History
+ </a>
+ <a href="{{ url_for('customer_notifications') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-bell"></i> Notifications
+ </a>
+ <a href="{{ url_for('catalog_view') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-book-open"></i> Browse Catalog
+ </a>
+ {% if not (current_user.is_authenticated and current_user.is_manager) %}
+ <a href="{{ url_for('view_cart') }}" class="list-group-item list-group-item-action">
+ <i class="fas fa-shopping-cart"></i> Shopping Cart
+ </a>
+ {% endif %}
+ </div>
+ </div>
+ </div>
 
-            {% if purchase_groups %}
-            <!-- Reading Stats -->
-            <div class="card-hero">
-                <div class="card-body text-center">
-                    <h5 class="card-title">
-                        <i class="fas fa-chart-line"></i> Reading Stats
-                    </h5>
-                    
-                    <div class="mb-3">
-                        <h4 class="text-primary">{{ purchase_groups|length }}</h4>
-                        <small class="text-muted">Order{{ 's' if purchase_groups|length != 1 else '' }}</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <h4 class="text-success">
-                            {% set total_items = namespace(value=0) %}
-                            {% for date, purchases in purchase_groups.items() %}
-                                {% for item in purchases %}
-                                    {% set total_items.value = total_items.value + item.purchase.quantity %}
-                                {% endfor %}
-                            {% endfor %}
-                            {{ total_items.value }}
-                        </h4>
-                        <small class="text-muted">Book{{ 's' if total_items.value != 1 else '' }} Collected</small>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-info">
-                            {% set total_spent = namespace(value=0) %}
-                            {% for date, purchases in purchase_groups.items() %}
-                                {% for item in purchases %}
-                                    {% if item.book %}
-                                        {% set total_spent.value = total_spent.value + (item.book.price * item.purchase.quantity) %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endfor %}
-                            ${{ "%.2f"|format(total_spent.value) }}
-                        </h4>
-                        <small class="text-muted">Total Investment</small>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </div>
+ {% if purchase_groups %}
+ <!-- Reading Stats -->
+ <div class="card-hero">
+ <div class="card-body text-center">
+ <h5 class="card-title">
+ <i class="fas fa-chart-line"></i> Reading Stats
+ </h5>
+ 
+ <div class="mb-3">
+ <h4 class="text-primary">{{ purchase_groups|length }}</h4>
+ <small class="text-muted">Order{{ 's' if purchase_groups|length != 1 else '' }}</small>
+ </div>
+ 
+ <div class="mb-3">
+ <h4 class="text-success">
+ {% set total_items = namespace(value=0) %}
+ {% for date, purchases in purchase_groups.items() %}
+ {% for item in purchases %}
+ {% set total_items.value = total_items.value + item.purchase.quantity %}
+ {% endfor %}
+ {% endfor %}
+ {{ total_items.value }}
+ </h4>
+ <small class="text-muted">Book{{ 's' if total_items.value != 1 else '' }} Collected</small>
+ </div>
+ 
+ <div>
+ <h4 class="text-info">
+ {% set total_spent = namespace(value=0) %}
+ {% for date, purchases in purchase_groups.items() %}
+ {% for item in purchases %}
+ {% if item.book %}
+ {% set total_spent.value = total_spent.value + (item.book.price * item.purchase.quantity) %}
+ {% endif %}
+ {% endfor %}
+ {% endfor %}
+ ${{ "%.2f"|format(total_spent.value) }}
+ </h4>
+ <small class="text-muted">Total Investment</small>
+ </div>
+ </div>
+ </div>
+ {% endif %}
+ </div>
 
-        <div class="col-md-8">
-            <!-- Order History -->
-            <div class="card-hero">
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <i class="fas fa-history"></i> Purchase History
-                    </h4>
-                    
-                    {% if purchase_groups %}
-                        {% for date, purchases in purchase_groups.items() %}
-                            <div class="card mb-4 border">
-                                <div class="card-header" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); color: white;">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-calendar-day"></i> 
-                                        {{ date.strftime('%B %d, %Y') }}
-                                    </h6>
-                                </div>
-                                <div class="card-body bg-light">
-                                    <div class="row">
-                                        {% for item in purchases %}
-                                            <div class="col-md-6 mb-3">
-                                                <div class="card-hero h-100">
-                                                    <div class="card-body">
-                                                        {% if item.book %}
-                                                            <div class="text-center mb-2">
-                                                                <i class="fas fa-book fa-2x text-muted"></i>
-                                                            </div>
-                                                            <h6 class="card-title">{{ item.book.title }}</h6>
-                                                            <p class="text-muted mb-2">
-                                                                <i class="fas fa-user"></i> {{ item.book.author }}
-                                                            </p>
-                                                            <p class="mb-2">
-                                                                <span class="badge badge-primary">{{ item.book.genre }}</span>
-                                                            </p>
-                                                            <div class="small text-muted mb-2">
-                                                                <div><strong>ISBN:</strong> {{ item.book.isbn }}</div>
-                                                                <div><strong>Quantity:</strong> {{ item.purchase.quantity }}</div>
-                                                                <div><strong>Unit Price:</strong> ${{ "%.2f"|format(item.book.price) }}</div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <span class="badge {{ item.purchase.get_status_badge_class() }}">
-                                                                    <i class="{{ item.purchase.get_status_icon() }}"></i>
-                                                                    {{ item.purchase.status }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center">
-                                                                <span class="badge badge-success">
-                                                                    Total: ${{ "%.2f"|format(item.book.price * item.purchase.quantity) }}
-                                                                </span>
-                                                            </div>
-                                                        {% else %}
-                                                            <div class="text-center mb-2">
-                                                                <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
-                                                            </div>
-                                                            <h6 class="card-title text-muted">Book No Longer Available</h6>
-                                                            <div class="small text-muted mb-2">
-                                                                <div><strong>ISBN:</strong> {{ item.purchase.book_isbn }}</div>
-                                                                <div><strong>Quantity:</strong> {{ item.purchase.quantity }}</div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <span class="badge {{ item.purchase.get_status_badge_class() }}">
-                                                                    <i class="{{ item.purchase.get_status_icon() }}"></i>
-                                                                    {{ item.purchase.status }}
-                                                                </span>
-                                                            </div>
-                                                        {% endif %}
-                                                        
-                                                        <div class="text-center mt-2">
-                                                            <small class="text-muted">
-                                                                <i class="fas fa-clock"></i> 
-                                                                {{ item.purchase.timestamp.strftime('%I:%M %p') }}
-                                                            </small>
-                                                        </div>
-                                                        
-                                                        <div class="text-center mt-2">
-                                                            <a href="{{ url_for('customer_order_detail', purchase_id=item.purchase.id) }}" 
-                                                               class="btn btn-sm btn-outline-primary">
-                                                                <i class="fas fa-eye"></i> View Details
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-center py-5">
-                            <i class="fas fa-book-open fa-4x text-muted mb-4"></i>
-                            <h3 class="text-muted mb-3">Your Literary Journey Awaits</h3>
-                            <p class="text-muted mb-4">
-                                You haven't started your collection yet. Every great reader's journey begins with a single book.
-                            </p>
-                            <a href="{{ url_for('catalog_view') }}" class="btn-hero">
-                                <i class="fas fa-compass"></i> Discover Your First Adventure
-                            </a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+ <div class="col-md-8">
+ <!-- Order History -->
+ <div class="card-hero">
+ <div class="card-body">
+ <h4 class="card-title">
+ <i class="fas fa-history"></i> Purchase History
+ </h4>
+ 
+ {% if purchase_groups %}
+ {% for date, purchases in purchase_groups.items() %}
+ <div class="card mb-4 border">
+ <div class="card-header" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); color: white;">
+ <h6 class="mb-0">
+ <i class="fas fa-calendar-day"></i> 
+ {{ date.strftime('%B %d, %Y') }}
+ </h6>
+ </div>
+ <div class="card-body bg-light">
+ <div class="row">
+ {% for item in purchases %}
+ <div class="col-md-6 mb-3">
+ <div class="card-hero h-100">
+ <div class="card-body">
+ {% if item.book %}
+ <div class="text-center mb-2">
+ <i class="fas fa-book fa-2x text-muted"></i>
+ </div>
+ <h6 class="card-title">{{ item.book.title }}</h6>
+ <p class="text-muted mb-2">
+ <i class="fas fa-user"></i> {{ item.book.author }}
+ </p>
+ <p class="mb-2">
+ <span class="badge badge-primary">{{ item.book.genre }}</span>
+ </p>
+ <div class="small text-muted mb-2">
+ <div><strong>ISBN:</strong> {{ item.book.isbn }}</div>
+ <div><strong>Quantity:</strong> {{ item.purchase.quantity }}</div>
+ <div><strong>Unit Price:</strong> ${{ "%.2f"|format(item.book.price) }}</div>
+ </div>
+ <div class="mb-2">
+ <span class="badge {{ item.purchase.get_status_badge_class() }}">
+ <i class="{{ item.purchase.get_status_icon() }}"></i>
+ {{ item.purchase.status }}
+ </span>
+ </div>
+ <div class="text-center">
+ <span class="badge badge-success">
+ Total: ${{ "%.2f"|format(item.book.price * item.purchase.quantity) }}
+ </span>
+ </div>
+ {% else %}
+ <div class="text-center mb-2">
+ <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+ </div>
+ <h6 class="card-title text-muted">Book No Longer Available</h6>
+ <div class="small text-muted mb-2">
+ <div><strong>ISBN:</strong> {{ item.purchase.book_isbn }}</div>
+ <div><strong>Quantity:</strong> {{ item.purchase.quantity }}</div>
+ </div>
+ <div class="mb-2">
+ <span class="badge {{ item.purchase.get_status_badge_class() }}">
+ <i class="{{ item.purchase.get_status_icon() }}"></i>
+ {{ item.purchase.status }}
+ </span>
+ </div>
+ {% endif %}
+ 
+ <div class="text-center mt-2">
+ <small class="text-muted">
+ <i class="fas fa-clock"></i> 
+ {{ item.purchase.timestamp.strftime('%I:%M %p') }}
+ </small>
+ </div>
+ 
+ <div class="text-center mt-2">
+ <a href="{{ url_for('customer_order_detail', purchase_id=item.purchase.id) }}" 
+ class="btn btn-sm btn-outline-primary">
+ <i class="fas fa-eye"></i> View Details
+ </a>
+ </div>
+ </div>
+ </div>
+ </div>
+ {% endfor %}
+ </div>
+ </div>
+ </div>
+ {% endfor %}
+ {% else %}
+ <div class="text-center py-5">
+ <i class="fas fa-book-open fa-4x text-muted mb-4"></i>
+ <h3 class="text-muted mb-3">Your Literary Journey Awaits</h3>
+ <p class="text-muted mb-4">
+ You haven't started your collection yet. Every great reader's journey begins with a single book.
+ </p>
+ <a href="{{ url_for('catalog_view') }}" class="btn-hero">
+ <i class="fas fa-compass"></i> Discover Your First Adventure
+ </a>
+ </div>
+ {% endif %}
+ </div>
+ </div>
+ </div>
+ </div>
 </div>
 {% endblock %}

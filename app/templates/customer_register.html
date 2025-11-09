@@ -4,277 +4,278 @@
 
 {% block content %}
 <div class="row justify-content-center" style="min-height: 70vh; align-items: center;">
-    <div class="col-md-10 col-lg-8">
-        <div class="main-container">
-            <div class="text-center mb-4">
-                <h2 class="page-title"><i class="fas fa-scroll"></i> Begin Your Literary Journey</h2>
-                <p class="text-muted">Create your account to unlock the world of books and personalized notifications</p>
-            </div>
+ <div class="col-md-10 col-lg-8">
+ <div class="main-container">
+ <div class="text-center mb-4">
+ <h2 class="page-title"><i class="fas fa-scroll"></i> Begin Your Literary Journey</h2>
+ <p class="text-muted">Create your account to unlock the world of books and personalized notifications</p>
+ </div>
 
-            <form method="POST" action="{{ url_for('customer_register') }}">
-                <!-- Basic Information -->
-                <div class="card-hero mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-user-circle"></i> Account Information
-                        </h5>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="username"><i class="fas fa-at"></i> Username</label>
-                                    <input type="text" class="form-control" id="username" name="username" 
-                                           placeholder="Choose a unique username" required minlength="3">
-                                    <small class="form-text text-muted">At least 3 characters</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
-                                    <input type="email" class="form-control" id="email" name="email" 
-                                           placeholder="your.email@example.com" required>
-                                    <small class="form-text text-muted">Used for notifications and account recovery</small>
-                                </div>
-                            </div>
-                        </div>
+ <form method="POST" action="{{ url_for('customer_register') }}">
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <!-- Basic Information -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title">
+ <i class="fas fa-user-circle"></i> Account Information
+ </h5>
+ 
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="username"><i class="fas fa-at"></i> Username</label>
+ <input type="text" class="form-control" id="username" name="username" 
+ placeholder="Choose a unique username" required minlength="3">
+ <small class="form-text text-muted">At least 3 characters</small>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+ <input type="email" class="form-control" id="email" name="email" 
+ placeholder="your.email@example.com" required>
+ <small class="form-text text-muted">Used for notifications and account recovery</small>
+ </div>
+ </div>
+ </div>
 
-                        <div class="form-group">
-                            <label for="full_name"><i class="fas fa-id-card"></i> Full Name</label>
-                            <input type="text" class="form-control" id="full_name" name="full_name" 
-                                   placeholder="Your full name" required>
-                        </div>
+ <div class="form-group">
+ <label for="full_name"><i class="fas fa-id-card"></i> Full Name</label>
+ <input type="text" class="form-control" id="full_name" name="full_name" 
+ placeholder="Your full name" required>
+ </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="password"><i class="fas fa-lock"></i> Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" 
-                                           placeholder="Create a secure password" required minlength="6">
-                                    <small class="form-text text-muted">At least 6 characters</small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
-                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
-                                           placeholder="Confirm your password" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="password"><i class="fas fa-lock"></i> Password</label>
+ <input type="password" class="form-control" id="password" name="password" 
+ placeholder="Create a secure password" required minlength="6">
+ <small class="form-text text-muted">At least 6 characters</small>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="confirm_password"><i class="fas fa-lock"></i> Confirm Password</label>
+ <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+ placeholder="Confirm your password" required>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-                <!-- Contact Information -->
-                <div class="card-hero mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-address-card"></i> Contact Information 
-                            <small class="text-muted">(Optional)</small>
-                        </h5>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" 
-                                           placeholder="(555) 123-4567">
-                                </div>
-                            </div>
-                        </div>
+ <!-- Contact Information -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title">
+ <i class="fas fa-address-card"></i> Contact Information 
+ <small class="text-muted">(Optional)</small>
+ </h5>
+ 
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+ <input type="tel" class="form-control" id="phone" name="phone" 
+ placeholder="(555) 123-4567">
+ </div>
+ </div>
+ </div>
 
-                        <div class="form-group">
-                            <label for="addressLine1"><i class="fas fa-map-marker-alt"></i> Address Line 1</label>
-                            <input type="text" class="form-control" id="addressLine1" name="addressLine1" 
-                                   placeholder="Street address, P.O. box, company name, c/o">
-                        </div>
+ <div class="form-group">
+ <label for="addressLine1"><i class="fas fa-map-marker-alt"></i> Address Line 1</label>
+ <input type="text" class="form-control" id="addressLine1" name="addressLine1" 
+ placeholder="Street address, P.O. box, company name, c/o">
+ </div>
 
-                        <div class="form-group">
-                            <label for="addressLine2">Address Line 2</label>
-                            <input type="text" class="form-control" id="addressLine2" name="addressLine2" 
-                                   placeholder="Apartment, suite, unit, building, floor, etc.">
-                        </div>
+ <div class="form-group">
+ <label for="addressLine2">Address Line 2</label>
+ <input type="text" class="form-control" id="addressLine2" name="addressLine2" 
+ placeholder="Apartment, suite, unit, building, floor, etc.">
+ </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="city"><i class="fas fa-city"></i> City</label>
-                                    <input type="text" class="form-control" id="city" name="city" 
-                                           placeholder="City">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="state"><i class="fas fa-flag"></i> State</label>
-                                    <input type="text" class="form-control" id="state" name="state" 
-                                           placeholder="State">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="zip"><i class="fas fa-mail-bulk"></i> Zip Code</label>
-                                    <input type="text" class="form-control" id="zip" name="zip" 
-                                           placeholder="12345">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="city"><i class="fas fa-city"></i> City</label>
+ <input type="text" class="form-control" id="city" name="city" 
+ placeholder="City">
+ </div>
+ </div>
+ <div class="col-md-4">
+ <div class="form-group">
+ <label for="state"><i class="fas fa-flag"></i> State</label>
+ <input type="text" class="form-control" id="state" name="state" 
+ placeholder="State">
+ </div>
+ </div>
+ <div class="col-md-2">
+ <div class="form-group">
+ <label for="zip"><i class="fas fa-mail-bulk"></i> Zip Code</label>
+ <input type="text" class="form-control" id="zip" name="zip" 
+ placeholder="12345">
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-                <!-- Notification Preferences -->
-                <div class="card-hero mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-bell"></i> Notification Preferences
-                        </h5>
-                        <p class="text-muted mb-3">
-                            Stay informed about your favorite books and discover new ones in your preferred genres.
-                        </p>
-                        
-                        <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" id="receive_marketing" name="receive_marketing" checked>
-                            <label class="form-check-label" for="receive_marketing">
-                                <i class="fas fa-envelope-open-text"></i> 
-                                <strong>General Marketing</strong> - Receive newsletters about new releases, sales, and promotions
-                            </label>
-                        </div>
+ <!-- Notification Preferences -->
+ <div class="card-hero mb-4">
+ <div class="card-body">
+ <h5 class="card-title">
+ <i class="fas fa-bell"></i> Notification Preferences
+ </h5>
+ <p class="text-muted mb-3">
+ Stay informed about your favorite books and discover new ones in your preferred genres.
+ </p>
+ 
+ <div class="form-check mb-3">
+ <input type="checkbox" class="form-check-input" id="receive_marketing" name="receive_marketing" checked>
+ <label class="form-check-label" for="receive_marketing">
+ <i class="fas fa-envelope-open-text"></i> 
+ <strong>General Marketing</strong> - Receive newsletters about new releases, sales, and promotions
+ </label>
+ </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="book_interests">
-                                        <i class="fas fa-book"></i> Book Title Interests
-                                    </label>
-                                    <textarea class="form-control" id="book_interests" name="book_interests" rows="3" 
-                                              placeholder="Enter book titles you're interested in (one per line)&#10;e.g. The Great Gatsby&#10;To Kill a Mockingbird&#10;1984"></textarea>
-                                    <small class="form-text text-muted">
-                                        Get notified when these specific books become available
-                                    </small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="genre_interests">
-                                        <i class="fas fa-tags"></i> Genre Interests
-                                    </label>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="fiction" name="genres" value="Fiction">
-                                                <label class="form-check-label" for="fiction">Fiction</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="mystery" name="genres" value="Mystery">
-                                                <label class="form-check-label" for="mystery">Mystery</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="romance" name="genres" value="Romance">
-                                                <label class="form-check-label" for="romance">Romance</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="scifi" name="genres" value="Science Fiction">
-                                                <label class="form-check-label" for="scifi">Science Fiction</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="fantasy" name="genres" value="Fantasy">
-                                                <label class="form-check-label" for="fantasy">Fantasy</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="biography" name="genres" value="Biography">
-                                                <label class="form-check-label" for="biography">Biography</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="history" name="genres" value="History">
-                                                <label class="form-check-label" for="history">History</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="selfhelp" name="genres" value="Self-Help">
-                                                <label class="form-check-label" for="selfhelp">Self-Help</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="horror" name="genres" value="Horror">
-                                                <label class="form-check-label" for="horror">Horror</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="thriller" name="genres" value="Thriller">
-                                                <label class="form-check-label" for="thriller">Thriller</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="adventure" name="genres" value="Adventure">
-                                                <label class="form-check-label" for="adventure">Adventure</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="children" name="genres" value="Children">
-                                                <label class="form-check-label" for="children">Children</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="ya" name="genres" value="Young Adult">
-                                                <label class="form-check-label" for="ya">Young Adult</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="poetry" name="genres" value="Poetry">
-                                                <label class="form-check-label" for="poetry">Poetry</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="drama" name="genres" value="Drama">
-                                                <label class="form-check-label" for="drama">Drama</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="philosophy" name="genres" value="Philosophy">
-                                                <label class="form-check-label" for="philosophy">Philosophy</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="psychology" name="genres" value="Psychology">
-                                                <label class="form-check-label" for="psychology">Psychology</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="business" name="genres" value="Business">
-                                                <label class="form-check-label" for="business">Business</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="health" name="genres" value="Health & Wellness">
-                                                <label class="form-check-label" for="health">Health & Wellness</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="travel" name="genres" value="Travel">
-                                                <label class="form-check-label" for="travel">Travel</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <small class="form-text text-muted">
-                                        Get notified about new books in these genres
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+ <div class="row">
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="book_interests">
+ <i class="fas fa-book"></i> Book Title Interests
+ </label>
+ <textarea class="form-control" id="book_interests" name="book_interests" rows="3" 
+ placeholder="Enter book titles you're interested in (one per line)&#10;e.g. The Great Gatsby&#10;To Kill a Mockingbird&#10;1984"></textarea>
+ <small class="form-text text-muted">
+ Get notified when these specific books become available
+ </small>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="form-group">
+ <label for="genre_interests">
+ <i class="fas fa-tags"></i> Genre Interests
+ </label>
+ <div class="row">
+ <div class="col-6">
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="fiction" name="genres" value="Fiction">
+ <label class="form-check-label" for="fiction">Fiction</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="mystery" name="genres" value="Mystery">
+ <label class="form-check-label" for="mystery">Mystery</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="romance" name="genres" value="Romance">
+ <label class="form-check-label" for="romance">Romance</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="scifi" name="genres" value="Science Fiction">
+ <label class="form-check-label" for="scifi">Science Fiction</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="fantasy" name="genres" value="Fantasy">
+ <label class="form-check-label" for="fantasy">Fantasy</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="biography" name="genres" value="Biography">
+ <label class="form-check-label" for="biography">Biography</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="history" name="genres" value="History">
+ <label class="form-check-label" for="history">History</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="selfhelp" name="genres" value="Self-Help">
+ <label class="form-check-label" for="selfhelp">Self-Help</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="horror" name="genres" value="Horror">
+ <label class="form-check-label" for="horror">Horror</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="thriller" name="genres" value="Thriller">
+ <label class="form-check-label" for="thriller">Thriller</label>
+ </div>
+ </div>
+ <div class="col-6">
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="adventure" name="genres" value="Adventure">
+ <label class="form-check-label" for="adventure">Adventure</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="children" name="genres" value="Children">
+ <label class="form-check-label" for="children">Children</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="ya" name="genres" value="Young Adult">
+ <label class="form-check-label" for="ya">Young Adult</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="poetry" name="genres" value="Poetry">
+ <label class="form-check-label" for="poetry">Poetry</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="drama" name="genres" value="Drama">
+ <label class="form-check-label" for="drama">Drama</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="philosophy" name="genres" value="Philosophy">
+ <label class="form-check-label" for="philosophy">Philosophy</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="psychology" name="genres" value="Psychology">
+ <label class="form-check-label" for="psychology">Psychology</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="business" name="genres" value="Business">
+ <label class="form-check-label" for="business">Business</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="health" name="genres" value="Health & Wellness">
+ <label class="form-check-label" for="health">Health & Wellness</label>
+ </div>
+ <div class="form-check">
+ <input type="checkbox" class="form-check-input" id="travel" name="genres" value="Travel">
+ <label class="form-check-label" for="travel">Travel</label>
+ </div>
+ </div>
+ </div>
+ <small class="form-text text-muted">
+ Get notified about new books in these genres
+ </small>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
 
-                <div class="text-center">
-                    <button type="submit" class="btn-hero btn-lg mr-3">
-                        <i class="fas fa-user-plus"></i> Create My Account
-                    </button>
-                    <a href="{{ url_for('customer_login') }}" class="btn-outline-hero">
-                        <i class="fas fa-sign-in-alt"></i> Already have an account?
-                    </a>
-                </div>
-            </form>
-        </div>
-    </div>
+ <div class="text-center">
+ <button type="submit" class="btn-hero btn-lg mr-3">
+ <i class="fas fa-user-plus"></i> Create My Account
+ </button>
+ <a href="{{ url_for('customer_login') }}" class="btn-outline-hero">
+ <i class="fas fa-sign-in-alt"></i> Already have an account?
+ </a>
+ </div>
+ </form>
+ </div>
+ </div>
 </div>
 
 <script>
 // Password confirmation validation
 document.getElementById('confirm_password').addEventListener('input', function() {
-    const password = document.getElementById('password').value;
-    const confirmPassword = this.value;
-    
-    if (password !== confirmPassword) {
-        this.setCustomValidity('Passwords do not match');
-    } else {
-        this.setCustomValidity('');
-    }
+ const password = document.getElementById('password').value;
+ const confirmPassword = this.value;
+ 
+ if (password !== confirmPassword) {
+ this.setCustomValidity('Passwords do not match');
+ } else {
+ this.setCustomValidity('');
+ }
 });
 </script>
 {% endblock %}

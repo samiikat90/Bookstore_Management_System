@@ -8,7 +8,7 @@ I've successfully integrated the **discount code system** that was added to the 
 
 ### 1. **Predefined Discount Codes**
 - **SAVE10**: 10% off orders over $30
-- **BOOK20**: 20% off orders over $50  
+- **BOOK20**: 20% off orders over $50 
 - **FALL25**: 25% off orders over $100
 - **STUDENT15**: 15% off orders over $25
 - **WINTER30**: 30% off orders over $75
@@ -41,11 +41,11 @@ I've successfully integrated the **discount code system** that was added to the 
 ### Discount Configuration
 ```python
 DISCOUNT_CODES = {
-    'SAVE10': [0.10, 30.0],   # 10% off orders over $30
-    'BOOK20': [0.20, 50.0],   # 20% off orders over $50
-    'FALL25': [0.25, 100.0],  # 25% off orders over $100
-    'STUDENT15': [0.15, 25.0], # 15% off orders over $25
-    'WINTER30': [0.30, 75.0]   # 30% off orders over $75
+ 'SAVE10': [0.10, 30.0], # 10% off orders over $30
+ 'BOOK20': [0.20, 50.0], # 20% off orders over $50
+ 'FALL25': [0.25, 100.0], # 25% off orders over $100
+ 'STUDENT15': [0.15, 25.0], # 15% off orders over $25
+ 'WINTER30': [0.30, 75.0] # 30% off orders over $75
 }
 ```
 

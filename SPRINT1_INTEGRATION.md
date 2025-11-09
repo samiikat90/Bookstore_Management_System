@@ -41,11 +41,11 @@ The Sprint1.zip file has been successfully integrated into your bookstore manage
 ### New Table: `sales`
 ```sql
 CREATE TABLE sales (
-    id INTEGER PRIMARY KEY,
-    book_id VARCHAR(50) NOT NULL,     -- ISBN of purchased book
-    quantity INTEGER NOT NULL,        -- Number of copies purchased
-    total_price FLOAT NOT NULL,      -- Total price for this item
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+ id INTEGER PRIMARY KEY,
+ book_id VARCHAR(50) NOT NULL, -- ISBN of purchased book
+ quantity INTEGER NOT NULL, -- Number of copies purchased
+ total_price FLOAT NOT NULL, -- Total price for this item
+ timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 

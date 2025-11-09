@@ -29,16 +29,16 @@ Added automatic user logout when the browser is closed to enhance security by en
 # Session configuration
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = False  # Set True for HTTPS
+app.config['SESSION_COOKIE_SECURE'] = False # Set True for HTTPS
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Modified login to not remember user
-login_user(user, remember=False)  # Session expires with browser
+login_user(user, remember=False) # Session expires with browser
 
 # New AJAX logout endpoint
 @app.route('/logout_ajax', methods=['POST'])
 def logout_ajax():
-    # Handles automatic logout requests from JavaScript
+ # Handles automatic logout requests from JavaScript
 ```
 
 ### Frontend Changes (Templates)
@@ -54,10 +54,10 @@ Added JavaScript to protected templates:
 let isLoggedOut = false;
 
 function performLogout() {
-  if (!isLoggedOut) {
-    isLoggedOut = true;
-    navigator.sendBeacon('/logout_ajax', new FormData());
-  }
+ if (!isLoggedOut) {
+ isLoggedOut = true;
+ navigator.sendBeacon('/logout_ajax', new FormData());
+ }
 }
 
 // Event listeners for browser close detection
@@ -68,11 +68,11 @@ window.addEventListener('pagehide', performLogout);
 
 ## Security Benefits
 
-**Prevents Session Hijacking**: Sessions automatically expire when browser closes  
-**Shared Computer Security**: Users can't forget to logout on shared computers  
-**Automatic Cleanup**: Server-side sessions are properly cleared  
-**2FA Reset**: Two-factor authentication status is reset on logout  
-**No Persistent Cookies**: No "remember me" functionality for admin accounts  
+**Prevents Session Hijacking**: Sessions automatically expire when browser closes 
+**Shared Computer Security**: Users can't forget to logout on shared computers 
+**Automatic Cleanup**: Server-side sessions are properly cleared 
+**2FA Reset**: Two-factor authentication status is reset on logout 
+**No Persistent Cookies**: No "remember me" functionality for admin accounts 
 
 ## User Experience
 
@@ -84,7 +84,7 @@ window.addEventListener('pagehide', performLogout);
 
 ### Browser Compatibility:
 - **Chrome/Edge**: Full support for all features
-- **Firefox**: Full support for all features  
+- **Firefox**: Full support for all features 
 - **Safari**: Full support for all features
 - **Mobile Browsers**: Basic support (may vary by device)
 

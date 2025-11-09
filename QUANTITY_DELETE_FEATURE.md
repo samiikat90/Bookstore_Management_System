@@ -9,8 +9,8 @@ The delete function now supports **quantity-based deletion** instead of only com
 
 1. **Click Delete Button**: Click the red "Delete" button next to any book in the catalog
 2. **Enter Quantity**: A prompt appears asking how many copies to delete
-   - Default value is the current quantity (for complete deletion)
-   - You can enter any number from 1 to the current quantity
+ - Default value is the current quantity (for complete deletion)
+ - You can enter any number from 1 to the current quantity
 3. **Confirmation**: A second dialog confirms your action with clear messaging
 4. **Result**: Either partial quantity reduction or complete book removal
 
@@ -30,11 +30,11 @@ The delete function now supports **quantity-based deletion** instead of only com
 
 ### Safety Features
 
-**Input Validation**: Prevents invalid quantities (negative, zero, or exceeding available)  
-**Pending Order Protection**: Blocks complete deletion if pending orders exist  
-**Double Confirmation**: Two-step process prevents accidental deletion  
-**Clear Messaging**: Different messages for partial vs complete deletion  
-**Manager Authentication**: Requires admin login with 2FA  
+**Input Validation**: Prevents invalid quantities (negative, zero, or exceeding available) 
+**Pending Order Protection**: Blocks complete deletion if pending orders exist 
+**Double Confirmation**: Two-step process prevents accidental deletion 
+**Clear Messaging**: Different messages for partial vs complete deletion 
+**Manager Authentication**: Requires admin login with 2FA 
 
 ### Example Use Cases
 
