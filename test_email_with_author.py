@@ -73,6 +73,6 @@ if __name__ == "__main__":
  print(f"Overall test result: {'SUCCESS' if success else 'FAILED'}")
  
  if success:
- print("Email notifications should now work during checkout!")
+    print("Email notifications should now work during checkout!")
  else:
- print("Still have issues - check the error messages above.")
+	 print("Still have issues - check the error messages above.")

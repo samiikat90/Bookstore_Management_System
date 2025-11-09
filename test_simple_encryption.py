@@ -9,7 +9,7 @@ import os
 # Add the app directory to the Python path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
 
-from encryption_utils import DataEncryption
+from app.encryption_utils import DataEncryption
 
 def test_basic_encryption():
     """Test basic encryption/decryption functionality."""

@@ -43,7 +43,7 @@ whitespace_issues = cursor.fetchall()
 if whitespace_issues:
  print(f"\nStatus values with whitespace issues:")
  for status in whitespace_issues:
- print(f" '{status[0]}' (repr: {repr(status[0])})")
+  print(f" '{status[0]}' (repr: {repr(status[0])})")
 else:
  print("\nNo whitespace issues found in status values")
 
