@@ -611,6 +611,16 @@ def load_user(user_id):
         return None
 
 
+# CSRF token context processor
+@app.context_processor
+def inject_csrf_token():
+    """Provide csrf_token function to templates."""
+    def csrf_token():
+        # Since CSRF is disabled, return an empty string
+        return ""
+    return dict(csrf_token=csrf_token)
+
+
 @login_manager.unauthorized_handler
 def unauthorized():
     # Check if this is an API request
